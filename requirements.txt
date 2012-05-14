@@ -1,0 +1,4 @@
+Django==1.4
+South
+psycopg2
+lxml
