@@ -1,5 +1,14 @@
 from django.db import models
 
+class FetchableByIdentifier():
+    
+    def get_by_id(self, namespace, value):
+        return self.select_related(depth=1).get(
+            identifiers__namespace=namespace,
+            identifiers__value=value
+        )
+
+
 class Source(models.Model):
     """
     A source is used to denote the origin of a piece of information.
@@ -38,7 +47,7 @@ class Notice(models.Model):
         help_text="The date/time which this notices expires")
     
     slug = models.SlugField(unique=True)
-    source = models.ForeignKey(Source)
+    sources = models.ManyToManyField(Source)
     
     # TODO: Notice type, e.g., disruption, general information, etc
 
@@ -73,6 +82,10 @@ class Identifier(models.Model):
             return self.namespace + ': ' + self.value
 
 
+class OrganisationManager(models.Manager, FetchableByIdentifier):
+    pass
+
+
 class Organisation(models.Model):
     
     TYPES = (
@@ -85,5 +98,6 @@ class Organisation(models.Model):
     
     slug = models.SlugField(unique=True)
     identifiers = models.ManyToManyField(Identifier)
-    source = models.ForeignKey(Source)
+    sources = models.ManyToManyField(Source)
     
+    objects = OrganisationManager()

@@ -104,8 +104,8 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
     'tch.common',
-    'tch.stops',
-    'south'
+    'tch.importers',
+    'tch.stops'
 )
 
 # A sample logging configuration. The only tangible logging

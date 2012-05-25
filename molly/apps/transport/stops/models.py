@@ -1,13 +1,31 @@
 from django.contrib.gis.db import models
 
-from tch.common.models import Identifier, Notice, Organisation, Source
+from tch.common.models import Identifier, Notice, Organisation, Source, FetchableByIdentifier
 
-class LocalityManager(models.GeoManager):
+class FetchableBySource():
     
     def get_by_source_id(self, source_url, source_file, source_id):
         return self.select_related(depth=1).get(sources__source_url=source_url,
                                                 sources__source_file=source_file,
                                                 sources__source_id=source_id)
+    
+    def get_by_source(self, source):
+        return self.select_related(depth=1).get(sources=source)
+
+
+class SlugCachingManager():
+    
+    def get_by_slug(self, slug):
+        if not hasattr(self, '_cache'):
+            self._cache = {}
+        
+        if slug not in self._cache:
+            self._cache[slug] = self.get(slug=slug)
+        return self._cache[slug]
+
+
+class LocalityManager(models.GeoManager, FetchableBySource, FetchableByIdentifier):
+    pass
 
 
 class Locality(models.Model):
@@ -30,7 +48,11 @@ class Locality(models.Model):
     
     def __unicode__(self):
         return self.slug
-    
+
+
+class FacilityTypeManager(SlugCachingManager, models.Manager):
+    pass
+
 
 class FacilityType(models.Model):
     """
@@ -39,10 +61,12 @@ class FacilityType(models.Model):
     """
     
     name = models.CharField(max_length=200)
-    description = models.TextField(blank=True)
+    description = models.TextField(null=True)
     
     slug = models.SlugField(unique=True)
     sources = models.ManyToManyField(Source)
+    
+    objects = FacilityTypeManager()
 
 
 class Facility(models.Model):
@@ -63,6 +87,16 @@ class Facility(models.Model):
     objects = models.GeoManager()
 
 
+class TypeManager(SlugCachingManager, models.Manager):
+    
+    def get_or_create(self, slug, type):
+        try:
+            return self.get_by_slug(slug), False
+        except Type.DoesNotExist:
+            self._cache[slug] = self.create(slug=slug, type=type)
+            return self.get_by_slug(slug), True
+
+
 class Type(models.Model):
     """
     A type indicates what type of stop this is
@@ -70,6 +104,12 @@ class Type(models.Model):
     
     type = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
+    
+    objects = TypeManager()
+
+
+class InterchangeManager(models.GeoManager, FetchableBySource):
+    pass
 
 
 class Interchange(models.Model):
@@ -79,12 +119,14 @@ class Interchange(models.Model):
     of stops in one location, or a collection of platforms at a tram station.
     """
     
-    centre = models.PointField(help_text="The centre of this interchange")
-    area = models.PolygonField(help_text="The area which this interchange covers")
+    centre = models.PointField(help_text="The centre of this interchange",
+                               null=True)
+    area = models.PolygonField(
+        help_text="The area which this interchange covers", null=True)
     
-    administrator = models.ForeignKey(Organisation,
+    administrator = models.ForeignKey(Organisation, null=True,
         related_name="administered_interchanges")
-    operator = models.ForeignKey(Organisation,
+    operator = models.ForeignKey(Organisation, null=True,
         related_name="operated_interchanges")
     
     notices = models.ManyToManyField(Notice)
@@ -96,7 +138,11 @@ class Interchange(models.Model):
     identifiers = models.ManyToManyField(Identifier)
     sources = models.ManyToManyField(Source)
 
-    objects = models.GeoManager()
+    objects = InterchangeManager()
+
+
+class StopManager(models.GeoManager, FetchableBySource):
+    pass
 
 
 class Stop(models.Model):
@@ -111,25 +157,18 @@ class Stop(models.Model):
     as well as logical artefact.
     """
     
-    location = models.PointField(help_text="The location of this stop")
-    
-    common_name = models.CharField(max_length=200, help_text="""
-        The human readable identifier for this stop""")
-    
-    identifier = models.CharField(max_length=200, null=True, blank=True,
-        help_text="""An identifier which can help differentiate a stop in a
-        group of stops (e.g., Stop A6 or 'Towards Manchester')""")
+    location = models.PointField(help_text="The location of this stop", null=True)
     
     type = models.ForeignKey(Type)
     facilities = models.ManyToManyField(Facility)
     
-    primary_locality = models.ForeignKey(Locality, related_name="+")
+    primary_locality = models.ForeignKey(Locality, related_name="+", null=True)
     localities = models.ManyToManyField(Locality)
     interchanges = models.ManyToManyField(Interchange)
     
-    administrator = models.ForeignKey(Organisation,
+    administrator = models.ForeignKey(Organisation, null=True,
         related_name="administered_stops")
-    operator = models.ForeignKey(Organisation,
+    operator = models.ForeignKey(Organisation, null=True,
         related_name="operated_stops")
     
     notices = models.ManyToManyField(Notice)
@@ -138,20 +177,22 @@ class Stop(models.Model):
     identifiers = models.ManyToManyField(Identifier)
     sources = models.ManyToManyField(Source)
 
-    objects = models.GeoManager()
+    objects = StopManager()
 
 
-class Platform(models.Model):
+class CallingPointManager(models.GeoManager, FetchableBySource):
+    pass
+
+
+class CallingPoint(models.Model):
     """
     This is a platform, or berth, or similar, 'sub-stop' within a stop
     """
     
-    location = models.PointField(help_text="The location of this platform")
+    location = models.PointField(help_text="The location of this platform",
+                                 null=True)
     
-    common_name = models.CharField(max_length=200,
-        help_text="The human readable identifier for this stop")
-    
-    stop = models.ForeignKey(Stop)
+    stop = models.ForeignKey(Stop, null=True)
     
     type = models.ForeignKey(Type)
     facilities = models.ManyToManyField(Facility)
@@ -161,4 +202,4 @@ class Platform(models.Model):
     identifiers = models.ManyToManyField(Identifier)
     sources = models.ManyToManyField(Source)
 
-    objects = models.GeoManager()
+    objects = CallingPointManager()
