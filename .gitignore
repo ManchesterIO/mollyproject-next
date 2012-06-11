@@ -3,3 +3,5 @@
 *.pyc
 local_settings.py
 *.komodoproject
+.idea
+*.egg-info

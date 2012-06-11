@@ -3,7 +3,7 @@ import xml.etree.cElementTree as ElementTree
 from django.contrib.gis.geos import Point
 
 from tch.common.models import Identifier
-from tch.importers.common import ZippedUrlImporter, Parser
+from tch.importerslegacy.common import ZippedUrlImporter, Parser
 from tch.stops.models import CallingPoint, Locality, Stop, Type
 
 class NaptanImporter(ZippedUrlImporter):

@@ -2,54 +2,6 @@ from django.contrib.gis.db import models
 
 from tch.common.models import Identifier, Notice, Organisation, Source, FetchableByIdentifier
 
-class FetchableBySource():
-    
-    def get_by_source_id(self, source_url, source_file, source_id):
-        return self.select_related(depth=1).get(sources__source_url=source_url,
-                                                sources__source_file=source_file,
-                                                sources__source_id=source_id)
-    
-    def get_by_source(self, source):
-        return self.select_related(depth=1).get(sources=source)
-
-
-class SlugCachingManager():
-    
-    def get_by_slug(self, slug):
-        if not hasattr(self, '_cache'):
-            self._cache = {}
-        
-        if slug not in self._cache:
-            self._cache[slug] = self.get(slug=slug)
-        return self._cache[slug]
-
-
-class LocalityManager(models.GeoManager, FetchableBySource, FetchableByIdentifier):
-    pass
-
-
-class Locality(models.Model):
-    """
-    A locality is an area or region which stops or interchanges belong to,
-    and which users may want to travel to.
-    """
-    
-    centre = models.PointField(help_text="The centre of this locality",
-                               null=True)
-    area = models.PolygonField(help_text="The area which this locality covers",
-                               null=True)
-    parent = models.ForeignKey("self", null=True)
-    
-    slug = models.SlugField(unique=True)
-    identifiers = models.ManyToManyField(Identifier)
-    sources = models.ManyToManyField(Source)
-    
-    objects = LocalityManager()
-    
-    def __unicode__(self):
-        return self.slug
-
-
 class FacilityTypeManager(SlugCachingManager, models.Manager):
     pass
 

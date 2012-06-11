@@ -2,8 +2,6 @@ import httplib
 import tempfile
 from zipfile import ZipFile
 
-from django.core.exceptions import ObjectDoesNotExist
-
 class ZippedUrlImporter():
     
     def __init__(self, http_connection=None):
