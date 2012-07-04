@@ -1,17 +1,19 @@
 import geojson
-from tch.identifier import IdentifierList
+from tch.identifier import Identifiers
 
 NPTG_REGION_CODE_NAMESPACE = "nptg/RegionCode"
+NPTG_DISTRICT_CODE_NAMESPACE = "nptg/DistrictCode"
+NPTG_LOCALITY_CODE_NAMESPACE = "nptg/LocalityCode"
 
 class Locality(object):
 
     @property
     def identifiers(self):
-        return IdentifierList(getattr(self, '_identifiers', []))
+        return getattr(self, '_identifiers', Identifiers())
 
     @identifiers.setter
     def identifiers(self, identifiers):
-        self._identifiers = identifiers
+        self._identifiers = Identifiers(identifiers)
 
     def as_dict(self):
         serialised = {}

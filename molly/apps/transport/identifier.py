@@ -1,18 +1,38 @@
-class Identifier(object):
+from collections import namedtuple
 
-    def __init__(self, namespace=None, value=None):
-        self.namespace = namespace
-        self.value = value
+class Identifier(namedtuple("Identifier", ["namespace", "value", "lang"])):
+
+    def __new__(cls, namespace=None, value=None, lang=None):
+        return super(Identifier, cls).__new__(cls, namespace, value, lang)
 
     def as_dict(self):
-        return {
+        serialised = {
             'namespace': self.namespace,
             'value': self.value
         }
+        if self.lang is not None:
+            serialised['lang'] = self.lang
+        return serialised
 
-class IdentifierList(list):
+    def __eq__(self, other):
+        return self.as_dict() == other.as_dict()
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(tuple(self.as_dict().items()))
+
+
+class Identifiers(set):
 
     def by_namespace(self, namespace):
+        """
+        Returns the subset of all identifiers in this list which have the given
+        namespace.
+        """
+        results = set()
         for identifier in self:
             if identifier.namespace == namespace:
-                return identifier.value
+                results.add(identifier)
+        return results

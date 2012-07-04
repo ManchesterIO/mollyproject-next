@@ -4,6 +4,7 @@
         <Region CreationDateTime="2006-01-25T07:54:31" ModificationDateTime="2006-01-25T07:54:31" RevisionNumber="42">
             <RegionCode>EA</RegionCode>
             <Name xml:lang="en">East Anglia</Name>
+            <Name xml:lang="de">Something in German</Name>
             <Country>England</Country>
             <AdministrativeAreas>
                 <AdministrativeArea CreationDateTime="2006-01-25T07:54:33" ModificationDateTime="2006-01-25T07:54:33" RevisionNumber="0">

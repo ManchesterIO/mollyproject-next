@@ -57,8 +57,7 @@ class NptgParser(Parser):
                     locality.parent = self._localities[locality.parent_]
                     locality.save()
                 elem.clear()
-    
-    
+
     def _process_region(self, elem):
         region_code = elem.find('{http://www.naptan.org.uk/}RegionCode').text
         version = elem.attrib['RevisionNumber']
