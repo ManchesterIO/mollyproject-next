@@ -1,4 +1,5 @@
 import os
+from shapely.geometry.point import Point
 import unittest2 as unittest
 from tch.identifier import Identifier
 
@@ -21,7 +22,7 @@ class NptgParserTest(unittest.TestCase):
         self.assertEqual(self._TEST_URL + "/NPTG.xml", locality.sources[0].url)
 
     def test_parse_returns_correct_number_of_items(self):
-        self.assertEqual(7, len(list(self._import_from_test_data())))
+        self.assertEqual(8, len(list(self._import_from_test_data())))
 
     def test_source_version_is_correctly_set_on_region(self):
         locality = self._get_imported_region()
@@ -65,7 +66,7 @@ class NptgParserTest(unittest.TestCase):
 
     def test_district_has_correct_url(self):
         locality = self._get_imported_district()
-        self.assertEqual("/EA/29", locality.url)
+        self.assertEqual("/29", locality.url)
 
     def test_imported_locality_has_correct_url(self):
         locality = self._get_imported_locality()
@@ -75,6 +76,24 @@ class NptgParserTest(unittest.TestCase):
         expected_identifier = Identifier(namespace=NPTG_LOCALITY_CODE_NAMESPACE, value='E0034964')
         locality = self._get_imported_locality()
         self.assertIn(expected_identifier, locality.identifiers)
+
+    def test_locality_name_is_set_on_locality(self):
+        expected_identifier = Identifier(namespace='human', value='Amesbury', lang='en')
+        locality = self._get_imported_locality()
+        self.assertIn(expected_identifier, locality.identifiers)
+
+    def test_locality_location_is_set(self):
+        expected_location = Point(-2.4966503699, 51.3259016941)
+        locality = self._get_imported_locality()
+        self.assertEqual(expected_location.xy, locality.geography.xy)
+
+    def test_locality_has_correct_parent(self):
+        locality = self._get_imported_locality()
+        self.assertEqual("/310", locality.parent_url)
+
+    def test_child_locality_has_correct_parent(self):
+        locality = self._get_imported_child_locality()
+        self.assertEqual("/E0052932", locality.parent_url)
 
     def _import_from_test_data(self):
         nptg_parser = NptgParser()
@@ -88,3 +107,6 @@ class NptgParserTest(unittest.TestCase):
 
     def _get_imported_locality(self):
         return list(self._import_from_test_data())[6]
+
+    def _get_imported_child_locality(self):
+        return list(self._import_from_test_data())[7]

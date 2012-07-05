@@ -18,8 +18,14 @@ class SourceTest(unittest.TestCase):
         self.assertIn('version', source_dict)
         self.assertEquals(self._TEST_VERSION, source_dict['version'])
 
+    def test_two_sources_are_equal(self):
+        self.assertEqual(self._get_test_source(), self._get_test_source())
+
     def _get_test_source_dict(self):
+        return self._get_test_source().as_dict()
+
+    def _get_test_source(self):
         source = Source()
         source.url = self._TEST_URL
         source.version = self._TEST_VERSION
-        return source.as_dict()
+        return source

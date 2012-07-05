@@ -1,4 +1,5 @@
 from xml.etree.ElementTree import iterparse
+from shapely.geometry.point import Point
 from tch.identifier import Identifier
 from tch.locality import Locality, NPTG_REGION_CODE_NAMESPACE, NPTG_DISTRICT_CODE_NAMESPACE, \
     NPTG_LOCALITY_CODE_NAMESPACE
@@ -17,6 +18,11 @@ class NptgParser(object):
     _REGION_DISTRICT_NAME_XPATH = './{http://www.naptan.org.uk/}Name'
     _DISTRICT_CODE_XPATH = './{http://www.naptan.org.uk/}NptgDistrictCode'
     _LOCALITY_CODE_XPATH = './{http://www.naptan.org.uk/}NptgLocalityCode'
+    _LOCALITY_NAME_XPATH = './{http://www.naptan.org.uk/}Descriptor/{http://www.naptan.org.uk/}LocalityName'
+    _LOCALITY_LATITUDE_XPATH = './{http://www.naptan.org.uk/}Location/{http://www.naptan.org.uk/}Translation/{http://www.naptan.org.uk/}Latitude'
+    _LOCALITY_LONGITUDE_XPATH = './{http://www.naptan.org.uk/}Location/{http://www.naptan.org.uk/}Translation/{http://www.naptan.org.uk/}Longitude'
+    _LOCALITY_DISTRICT_REF_XPATH = './{http://www.naptan.org.uk/}NptgDistrictRef'
+    _LOCALITY_PARENT_REF_XPATH = './{http://www.naptan.org.uk/}ParentNptgLocalityRef'
 
     def import_from_file(self, file, source_url):
         self._source_url = source_url
@@ -59,7 +65,7 @@ class NptgParser(object):
         locality = self._build_base_locality(elem)
         district_code = elem.find(self._DISTRICT_CODE_XPATH).text
 
-        locality.url = region.url + "/" + district_code
+        locality.url = "/" + district_code
         locality.parent_url = region.url
         locality.identifiers = [
             Identifier(namespace=NPTG_DISTRICT_CODE_NAMESPACE, value=district_code)
@@ -71,18 +77,37 @@ class NptgParser(object):
 
     def _add_names_from_elem(self, locality, elem):
         for name_elem in elem.findall(self._REGION_DISTRICT_NAME_XPATH):
-            locality.identifiers.add(
-                Identifier(namespace="human", value=name_elem.text, lang=name_elem.attrib.get(self._LANGUAGE_ATTRIB))
-            )
+            locality.identifiers.add(self._build_name_identifier_from_elem(name_elem))
 
     def _build_locality(self, elem):
         locality = self._build_base_locality(elem)
+
         locality_code = elem.find(self._LOCALITY_CODE_XPATH).text
+        name_elem = elem.find(self._LOCALITY_NAME_XPATH)
+        lat = elem.find(self._LOCALITY_LATITUDE_XPATH).text
+        lon = elem.find(self._LOCALITY_LONGITUDE_XPATH).text
+        parent_elem = elem.find(self._LOCALITY_PARENT_REF_XPATH)
+
+        if parent_elem is None:
+            district_ref = elem.find(self._LOCALITY_DISTRICT_REF_XPATH).text
+            locality.parent_url = '/' + district_ref
+        else:
+            locality.parent_url = '/' + parent_elem.text
 
         locality.url = "/" + locality_code
 
         locality.identifiers = [
-            Identifier(namespace=NPTG_LOCALITY_CODE_NAMESPACE, value=locality_code)
+            Identifier(namespace=NPTG_LOCALITY_CODE_NAMESPACE, value=locality_code),
+            self._build_name_identifier_from_elem(name_elem)
         ]
 
+        locality.geography = Point(float(lon), float(lat))
+
         return locality
+
+    def _build_name_identifier_from_elem(self, elem):
+        lang = elem.attrib.get(self._LANGUAGE_ATTRIB)
+        if lang is not None:
+            lang = lang.lower()
+
+        return Identifier(namespace="human", value=elem.text, lang=lang)

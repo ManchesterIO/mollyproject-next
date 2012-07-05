@@ -9,3 +9,6 @@ class Source(object):
             'url': self.url,
             'version': self.version
         }
+
+    def __eq__(self, other):
+        return self.as_dict() == other.as_dict()

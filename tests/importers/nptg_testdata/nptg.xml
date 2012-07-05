@@ -65,5 +65,26 @@
                 </Translation>
             </Location>
         </NptgLocality>
+        <NptgLocality CreationDateTime="2005-10-05T11:18:23" ModificationDateTime="2005-10-05T11:18:23" RevisionNumber="0">
+            <NptgLocalityCode>E0034965</NptgLocalityCode>
+            <Descriptor>
+                <LocalityName xml:lang="EN">Ashgrove</LocalityName>
+                <Qualify>
+                    <QualifierName xml:lang="en">Peasedown St John</QualifierName>
+                </Qualify>
+            </Descriptor>
+            <ParentNptgLocalityRef CreationDateTime="2005-01-11T10:51:15" ModificationDateTime="2005-01-11T10:51:15" RevisionNumber="0">E0052932</ParentNptgLocalityRef>
+            <AdministrativeAreaRef>001</AdministrativeAreaRef>
+            <NptgDistrictRef>310</NptgDistrictRef>
+            <SourceLocalityType>Lo</SourceLocalityType>
+            <Location>
+                <Translation>
+                    <Easting>370798</Easting>
+                    <Northing>157864</Northing>
+                    <Longitude>-2.4204220959</Longitude>
+                    <Latitude>51.3191233645</Latitude>
+                </Translation>
+            </Location>
+        </NptgLocality>
     </NptgLocalities>
 </NationalPublicTransportGazetteer>
