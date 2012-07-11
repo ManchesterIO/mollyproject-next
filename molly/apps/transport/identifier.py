@@ -28,8 +28,7 @@ class Identifiers(set):
 
     def by_namespace(self, namespace):
         """
-        Returns the subset of all identifiers in this list which have the given
-        namespace.
+        the subset of all identifiers in this set which have the given namespace.
         """
         results = set()
         for identifier in self:

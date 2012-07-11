@@ -7,9 +7,18 @@ NPTG_LOCALITY_CODE_NAMESPACE = "nptg/LocalityCode"
 
 class Locality(object):
 
+    def __init__(self):
+        self._identifiers = Identifiers()
+
+    @staticmethod
+    def from_dict(locality_dict):
+        locality = Locality()
+        if 'url' in locality_dict: locality.url = locality_dict['url']
+        return locality
+
     @property
     def identifiers(self):
-        return getattr(self, '_identifiers', Identifiers())
+        return self._identifiers
 
     @identifiers.setter
     def identifiers(self, identifiers):
@@ -30,13 +39,9 @@ class Locality(object):
             serialised['geography_centroid'] = encoder.default(self.geography.centroid)
 
         if hasattr(self, 'sources'):
-            serialised['sources'] = map(
-                lambda source: source.as_dict(),
-                self.sources)
+            serialised['sources'] = map(lambda source: source.as_dict(), self.sources)
 
         if len(self.identifiers) > 0:
-            serialised['identifiers'] = map(
-                lambda identifier: identifier.as_dict(),
-                self.identifiers)
+            serialised['identifiers'] = map(lambda identifier: identifier.as_dict(), self.identifiers)
 
         return serialised

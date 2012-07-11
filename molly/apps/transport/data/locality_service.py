@@ -1,10 +1,10 @@
-class LocalityMongoDbService(object):
+class LocalityService(object):
 
-    def __init__(self, mongodb_connection):
-        self._collection = mongodb_connection.localities
+    def __init__(self, collection):
+        self._collection = collection
 
     def locality_by_url(self, locality):
-        return self._collection.find_one({'url': locality.url})
+        return self._collection.select_by_url(locality.url)
 
     def insert_and_merge(self, locality):
         existing_locality = self.locality_by_url(locality)
@@ -24,5 +24,13 @@ class LocalityMongoDbService(object):
         return True
 
     def _merge_localities(self, existing_locality, locality):
+        self._merge_attribute('parent_url', existing_locality, locality)
+        self._merge_attribute('geography', existing_locality, locality)
+        existing_locality.identifiers.update(locality.identifiers)
         existing_locality.sources += locality.sources
         return existing_locality
+
+    def _merge_attribute(self, attribute, existing_locality, locality):
+        if hasattr(locality, attribute):
+            setattr(existing_locality, attribute, getattr(locality, attribute))
+

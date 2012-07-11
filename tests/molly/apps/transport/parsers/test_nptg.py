@@ -3,7 +3,7 @@ from shapely.geometry.point import Point
 import unittest2 as unittest
 from tch.identifier import Identifier
 
-from tch.importers.nptg import NptgParser
+from tch.parsers.nptg import NptgParser
 from tch.locality import NPTG_REGION_CODE_NAMESPACE, \
     NPTG_DISTRICT_CODE_NAMESPACE, NPTG_LOCALITY_CODE_NAMESPACE
 
