@@ -21,6 +21,20 @@ class NptgParserTest(unittest.TestCase):
         locality = self._import_from_test_data().next()
         self.assertEqual(self._TEST_URL + "/NPTG.xml", locality.sources[0].url)
 
+    def test_licence_is_correctly_set_on_localities(self):
+        locality = self._import_from_test_data().next()
+        self.assertEqual("Open Government Licence", locality.sources[0].licence)
+
+    def test_licence_url_is_correctly_set_on_localities(self):
+        locality = self._import_from_test_data().next()
+        self.assertEqual("http://www.nationalarchives.gov.uk/doc/open-government-licence/",
+            locality.sources[0].licence_url)
+
+    def test_attribution_is_correctly_set_on_localities(self):
+        locality = self._import_from_test_data().next()
+        self.assertEqual("Contains public sector information licensed under the Open Government Licence v1.0",
+            locality.sources[0].attribution)
+
     def test_parse_returns_correct_number_of_items(self):
         self.assertEqual(8, len(list(self._import_from_test_data())))
 

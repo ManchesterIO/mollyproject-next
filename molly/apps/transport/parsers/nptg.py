@@ -24,6 +24,10 @@ class NptgParser(object):
     _LOCALITY_DISTRICT_REF_XPATH = './{http://www.naptan.org.uk/}NptgDistrictRef'
     _LOCALITY_PARENT_REF_XPATH = './{http://www.naptan.org.uk/}ParentNptgLocalityRef'
 
+    _LICENCE = "Open Government Licence"
+    _LICENCE_URL = "http://www.nationalarchives.gov.uk/doc/open-government-licence/"
+    _ATTRIBUTION = "Contains public sector information licensed under the Open Government Licence v1.0"
+
     def import_from_file(self, file, source_url):
         self._source_url = source_url
         for event, elem in iterparse(file, events=('start', 'end',)):
@@ -41,7 +45,13 @@ class NptgParser(object):
     def _build_base_locality(self, elem):
         locality = Locality()
         locality.sources = [
-            Source(url=self._source_url + "/" + self._source_file, version=elem.attrib['RevisionNumber'])
+            Source(
+                url=self._source_url + "/" + self._source_file,
+                version=elem.attrib['RevisionNumber'],
+                licence=self._LICENCE,
+                licence_url=self._LICENCE_URL,
+                attribution=self._ATTRIBUTION
+            )
         ]
         return locality
 
