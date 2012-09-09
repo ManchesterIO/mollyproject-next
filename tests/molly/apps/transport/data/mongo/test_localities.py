@@ -36,6 +36,10 @@ class LocalityMongoDbTest(unittest.TestCase):
 
         self.assertEqual(expected_id, mock_connection.save.call_args[0][0]['_id'])
 
+    def test_url_is_indexed(self):
+        locality_mongo_db, mock_connection = self._build_db_with_mock_connection(None)
+        mock_connection.ensure_index.assert_called_once_with('url')
+
     def _build_db_with_mock_connection(self, result):
         mock_connection = Mock()
         mock_connection.find_one = Mock(return_value=result)

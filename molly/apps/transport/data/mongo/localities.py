@@ -4,6 +4,7 @@ class LocalityMongoDb(object):
 
     def __init__(self, collection):
         self._collection = collection
+        self._collection.ensure_index('url')
 
     def _query_by_url(self, url):
         return self._collection.find_one({'url': url})

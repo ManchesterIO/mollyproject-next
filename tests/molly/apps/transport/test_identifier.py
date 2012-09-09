@@ -1,6 +1,5 @@
 import unittest2 as unittest
 from tch.identifier import Identifier
-from tch.source import Source
 
 class IdentifierTest(unittest.TestCase):
 
