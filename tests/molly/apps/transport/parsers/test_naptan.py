@@ -1,7 +1,7 @@
 import os
 import unittest2 as unittest
 from tch.parsers.naptan import NaptanParser
-from tch.stop import CallingPoint, Stop
+from tch.stop import CallingPoint, Stop, Interchange
 
 class NaptanParserTest(unittest.TestCase):
 
@@ -55,12 +55,18 @@ class NaptanParserTest(unittest.TestCase):
         self.assertEquals(['/gb/639000011/calling_point'], self._get_bus_stop().calling_points)
 
     def test_taxi_ranks_are_not_yielded(self):
-        self.assertNotIn('/gb/6490TX001', map(lambda s: s.url, self._import_from_test_data()))
+        self.assertNotIn('/gb/6490TX001', self._get_stops_by_url().keys())
+
+    def test_single_terminal_airports_are_yielded_as_stops(self):
+        stops_dict = self._get_stops_by_url()
+        self.assertIsInstance(stops_dict['/gb/9200ABZ1'], Stop)
+
+    def test_multiple_terminal_airports_are_returned_as_interchange(self):
+        stops_dict = self._get_stops_by_url()
+        self.assertIsInstance(stops_dict['/gb/9200MAN0'], Interchange)
 
     def _import_from_test_data(self):
-        parser = NaptanParser()
-        stops = parser.import_from_file(self._test_file, self._TEST_URL)
-        return stops
+        return NaptanParser().import_from_file(self._test_file, self._TEST_URL)
 
     def _get_bus_stop(self):
         return self._import_from_test_data().next()
@@ -68,6 +74,9 @@ class NaptanParserTest(unittest.TestCase):
     def _get_bus_calling_point(self):
         return list(self._import_from_test_data())[1]
 
+    def _get_stops_by_url(self):
+        stops = list(self._import_from_test_data())
+        return dict(zip(map(lambda s: s.url, stops), stops))
 
 if __name__ == '__main__':
     unittest.main()

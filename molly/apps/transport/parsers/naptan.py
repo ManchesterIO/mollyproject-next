@@ -1,7 +1,7 @@
 from xml.etree.cElementTree import iterparse
 
 from tch.source import Source
-from tch.stop import Stop, CallingPoint
+from tch.stop import Interchange, Stop, CallingPoint
 
 class NaptanParser(object):
 
@@ -29,28 +29,40 @@ class NaptanParser(object):
                         bus_stop, calling_point = self._build_bus_stop(elem)
                         yield bus_stop
                         yield calling_point
-                        elem.clear()
+
+                    elif stop_type == 'GAT':
+                        yield self._build_airport(elem)
+
+                    elem.clear()
+
 
     def _build_bus_stop(self, elem):
-        stop = Stop()
+        stop = self._build_base(elem)
+
         calling_point = CallingPoint()
+        calling_point.sources = stop.sources
+        calling_point.url = stop.url + '/calling_point'
 
-        atco_code = elem.find(self._ATCO_CODE_XPATH).text
+        stop.calling_points = [calling_point.url]
+        calling_point.parent_stop = stop.url
 
-        sources = [Source(
+        return stop, calling_point
+
+    def _build_airport(self, elem):
+        point_type = Interchange if self._get_atco_code(elem).endswith('0') else Stop
+        return self._build_base(elem, point_type)
+
+    def _build_base(self, elem, point_type=Stop):
+        point = point_type()
+        point.sources = [Source(
             url=self._source_url + '/' + self._source_file,
             version=elem.attrib['RevisionNumber'],
             licence=self._LICENCE,
             licence_url=self._LICENCE_URL,
             attribution=self._ATTRIBUTION
         )]
-        stop.sources = sources
-        calling_point.sources = sources
+        point.url = '/gb/' + self._get_atco_code(elem)
+        return point
 
-        stop.url = '/gb/' + atco_code
-        calling_point.url = '/gb/' + atco_code + '/calling_point'
-
-        stop.calling_points = [calling_point.url]
-        calling_point.parent_stop = stop.url
-
-        return stop, calling_point
+    def _get_atco_code(self, elem):
+        return elem.find(self._ATCO_CODE_XPATH).text

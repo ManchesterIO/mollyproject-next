@@ -4,3 +4,7 @@ class Stop(object):
 
 class CallingPoint(object):
     pass
+
+
+class Interchange(object):
+    pass
