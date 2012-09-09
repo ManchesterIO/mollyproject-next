@@ -33,4 +33,3 @@ class LocalityService(object):
     def _merge_attribute(self, attribute, existing_locality, locality):
         if hasattr(locality, attribute):
             setattr(existing_locality, attribute, getattr(locality, attribute))
-

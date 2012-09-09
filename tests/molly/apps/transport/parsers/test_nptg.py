@@ -44,7 +44,7 @@ class NptgParserTest(unittest.TestCase):
 
     def test_region_url_is_derived_from_region_code(self):
         locality = self._get_imported_region()
-        self.assertEqual("/EA", locality.url)
+        self.assertEqual("/gb/EA", locality.url)
 
     def test_region_code_is_identifier_on_region(self):
         expected_identifier = Identifier(namespace=NPTG_REGION_CODE_NAMESPACE, value="EA")
@@ -76,15 +76,15 @@ class NptgParserTest(unittest.TestCase):
 
     def test_district_has_correct_parent(self):
         locality = self._get_imported_district()
-        self.assertEqual("/EA", locality.parent_url)
+        self.assertEqual("/gb/EA", locality.parent_url)
 
     def test_district_has_correct_url(self):
         locality = self._get_imported_district()
-        self.assertEqual("/29", locality.url)
+        self.assertEqual("/gb/29", locality.url)
 
     def test_imported_locality_has_correct_url(self):
         locality = self._get_imported_locality()
-        self.assertEquals("/E0034964", locality.url)
+        self.assertEquals("/gb/E0034964", locality.url)
 
     def test_locality_code_is_set_on_locality(self):
         expected_identifier = Identifier(namespace=NPTG_LOCALITY_CODE_NAMESPACE, value='E0034964')
@@ -103,11 +103,11 @@ class NptgParserTest(unittest.TestCase):
 
     def test_locality_has_correct_parent(self):
         locality = self._get_imported_locality()
-        self.assertEqual("/310", locality.parent_url)
+        self.assertEqual("/gb/310", locality.parent_url)
 
     def test_child_locality_has_correct_parent(self):
         locality = self._get_imported_child_locality()
-        self.assertEqual("/E0052932", locality.parent_url)
+        self.assertEqual("/gb/E0052932", locality.parent_url)
 
     def _import_from_test_data(self):
         nptg_parser = NptgParser()

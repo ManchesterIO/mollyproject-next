@@ -1,5 +1,7 @@
-from xml.etree.ElementTree import iterparse
+from xml.etree.cElementTree import iterparse
+
 from shapely.geometry.point import Point
+
 from tch.identifier import Identifier
 from tch.locality import Locality, NPTG_REGION_CODE_NAMESPACE, NPTG_DISTRICT_CODE_NAMESPACE, \
     NPTG_LOCALITY_CODE_NAMESPACE
@@ -59,7 +61,7 @@ class NptgParser(object):
         locality = self._build_base_locality(elem)
         region_code = elem.find(self._REGION_CODE_XPATH).text
 
-        locality.url = "/" + region_code
+        locality.url = "/gb/" + region_code
         locality.identifiers = [
             Identifier(namespace=NPTG_REGION_CODE_NAMESPACE, value=region_code)
         ]
@@ -75,7 +77,7 @@ class NptgParser(object):
         locality = self._build_base_locality(elem)
         district_code = elem.find(self._DISTRICT_CODE_XPATH).text
 
-        locality.url = "/" + district_code
+        locality.url = "/gb/" + district_code
         locality.parent_url = region.url
         locality.identifiers = [
             Identifier(namespace=NPTG_DISTRICT_CODE_NAMESPACE, value=district_code)
@@ -100,11 +102,11 @@ class NptgParser(object):
 
         if parent_elem is None:
             district_ref = elem.find(self._LOCALITY_DISTRICT_REF_XPATH).text
-            locality.parent_url = '/' + district_ref
+            locality.parent_url = '/gb/' + district_ref
         else:
-            locality.parent_url = '/' + parent_elem.text
+            locality.parent_url = '/gb/' + parent_elem.text
 
-        locality.url = "/" + locality_code
+        locality.url = "/gb/" + locality_code
 
         locality.identifiers = [
             Identifier(namespace=NPTG_LOCALITY_CODE_NAMESPACE, value=locality_code),
