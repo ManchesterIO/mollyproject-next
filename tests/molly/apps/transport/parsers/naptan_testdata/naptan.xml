@@ -98,6 +98,43 @@
             </PlusbusZones>
             <Notes>-</Notes>
         </StopPoint>
+        <StopPoint CreationDateTime="2009-09-16T00:00:00" Modification="new" Status="active">
+            <AtcoCode>6490IM1778</AtcoCode>
+            <NaptanCode>26427368</NaptanCode>
+            <Descriptor>
+                <CommonName xml:lang="en">Sir James Duncan Gardens</CommonName>
+                <Street xml:lang="en">Montrose Road</Street>
+                <Indicator xml:lang="en">opp</Indicator>
+            </Descriptor>
+            <Place>
+                <NptgLocalityRef>ES002278</NptgLocalityRef>
+                <LocalityCentre>0</LocalityCentre>
+                <Location>
+                    <Translation>
+                        <GridType>UKOS</GridType>
+                        <Easting>346325</Easting>
+                        <Northing>750865</Northing>
+                        <Longitude>-2.8768819675</Longitude>
+                        <Latitude>56.6465005126</Latitude>
+                    </Translation>
+                </Location>
+            </Place>
+            <StopClassification>
+                <StopType>BCT</StopType>
+                <OnStreet>
+                    <Bus>
+                        <BusStopType>CUS</BusStopType>
+                        <TimingStatus>TIP</TimingStatus>
+                        <UnmarkedPoint>
+                            <Bearing>
+                                <CompassPoint>E</CompassPoint>
+                            </Bearing>
+                        </UnmarkedPoint>
+                    </Bus>
+                </OnStreet>
+            </StopClassification>
+            <AdministrativeAreaRef>113</AdministrativeAreaRef>
+        </StopPoint>
         <StopPoint CreationDateTime="2004-05-11T00:00:00" ModificationDateTime="2007-11-20T00:00:00"
                    Modification="revise" RevisionNumber="1" Status="active">
             <AtcoCode>6490TX001</AtcoCode>
@@ -181,14 +218,16 @@
                 </PlusbusZoneRef>
             </PlusbusZones>
         </StopPoint>
-        <StopPoint CreationDateTime="2004-03-23T00:00:00" ModificationDateTime="2010-03-05T13:31:00" Modification="revise" RevisionNumber="3" Status="active">
+        <StopPoint CreationDateTime="2004-03-23T00:00:00" ModificationDateTime="2010-03-05T13:31:00"
+                   Modification="revise" RevisionNumber="3" Status="active">
             <AtcoCode>9200MAN0</AtcoCode>
             <Descriptor>
                 <CommonName>Manchester Airport</CommonName>
                 <Street>-</Street>
             </Descriptor>
             <AlternativeDescriptors>
-                <Descriptor CreationDateTime="2006-11-30T10:21:00" ModificationDateTime="2006-11-30T10:21:00" Modification="new" RevisionNumber="0" Status="active">
+                <Descriptor CreationDateTime="2006-11-30T10:21:00" ModificationDateTime="2006-11-30T10:21:00"
+                            Modification="new" RevisionNumber="0" Status="active">
                     <CommonName>Ringway</CommonName>
                     <Street>Not Specified</Street>
                 </Descriptor>
@@ -362,6 +401,242 @@
                 </PlusbusZoneRef>
             </PlusbusZones>
         </StopPoint>
-
+        <StopPoint CreationDateTime="2010-08-12T16:05:00" ModificationDateTime="2010-08-12T16:10:00"
+                   Modification="revise" RevisionNumber="1" Status="active">
+            <AtcoCode>9300ACH</AtcoCode>
+            <Descriptor>
+                <CommonName>Arden - Cameron House Pier</CommonName>
+                <Street>-</Street>
+            </Descriptor>
+            <Place>
+                <NptgLocalityRef>N0068327</NptgLocalityRef>
+                <LocalityCentre>0</LocalityCentre>
+                <Location>
+                    <Translation>
+                        <GridType>UKOS</GridType>
+                        <Easting>237623</Easting>
+                        <Northing>683193</Northing>
+                        <Longitude>-4.6063089717</Longitude>
+                        <Latitude>56.0140564486</Latitude>
+                    </Translation>
+                </Location>
+            </Place>
+            <StopClassification>
+                <StopType>FER</StopType>
+                <OffStreet>
+                    <Ferry>
+                        <AccessArea/>
+                        <AnnotatedFerryRef>
+                            <FerryRef>ACH</FerryRef>
+                            <Name>Arden - Cameron House Pier</Name>
+                            <Location>
+                                <GridType>UKOS</GridType>
+                                <Easting>237623</Easting>
+                                <Northing>683193</Northing>
+                            </Location>
+                        </AnnotatedFerryRef>
+                    </Ferry>
+                </OffStreet>
+            </StopClassification>
+            <StopAreas>
+                <StopAreaRef CreationDateTime="2010-08-12T16:10:00" ModificationDateTime="2010-08-12T16:10:00"
+                             Modification="new" RevisionNumber="0" Status="active">930GACH
+                </StopAreaRef>
+            </StopAreas>
+            <AdministrativeAreaRef>146</AdministrativeAreaRef>
+        </StopPoint>
+        <StopPoint CreationDateTime="2011-06-08T12:01:00" ModificationDateTime="2011-06-08T12:05:00"
+                   Modification="revise" RevisionNumber="1" Status="active">
+            <AtcoCode>9300MTS</AtcoCode>
+            <Descriptor>
+                <CommonName>Transporter Bridge South Side</CommonName>
+                <Street>Ferry Road</Street>
+            </Descriptor>
+            <Place>
+                <NptgLocalityRef>E0039258</NptgLocalityRef>
+                <Suburb>Middlesbrough</Suburb>
+                <LocalityCentre>0</LocalityCentre>
+                <Location>
+                    <Translation>
+                        <GridType>UKOS</GridType>
+                        <Easting>449945</Easting>
+                        <Northing>521217</Northing>
+                        <Longitude>-1.2287311931</Longitude>
+                        <Latitude>54.5837009451</Latitude>
+                    </Translation>
+                </Location>
+            </Place>
+            <StopClassification>
+                <StopType>FER</StopType>
+                <OffStreet>
+                    <Ferry>
+                        <AccessArea/>
+                        <AnnotatedFerryRef>
+                            <FerryRef>MTS</FerryRef>
+                            <Name>Transporter Bridge South Side</Name>
+                            <Location>
+                                <GridType>UKOS</GridType>
+                                <Easting>449945</Easting>
+                                <Northing>521217</Northing>
+                            </Location>
+                        </AnnotatedFerryRef>
+                    </Ferry>
+                </OffStreet>
+            </StopClassification>
+            <StopAreas>
+                <StopAreaRef CreationDateTime="2011-06-08T12:04:00" ModificationDateTime="2011-06-08T12:04:00"
+                             Modification="new" RevisionNumber="0" Status="active">930GMTS
+                </StopAreaRef>
+            </StopAreas>
+            <AdministrativeAreaRef>146</AdministrativeAreaRef>
+        </StopPoint>
+        <StopPoint CreationDateTime="2011-06-08T12:02:00" ModificationDateTime="2011-10-10T15:52:00"
+                   Modification="revise" RevisionNumber="3" Status="active">
+            <AtcoCode>9300MTS1</AtcoCode>
+            <Descriptor>
+                <CommonName>Transporter Bridge South Side</CommonName>
+                <Street>Ferry Road</Street>
+                <Indicator>Landing Stage</Indicator>
+            </Descriptor>
+            <Place>
+                <NptgLocalityRef>E0039258</NptgLocalityRef>
+                <Suburb>Middlesbrough</Suburb>
+                <LocalityCentre>0</LocalityCentre>
+                <Location>
+                    <Translation>
+                        <GridType>UKOS</GridType>
+                        <Easting>449946</Easting>
+                        <Northing>521228</Northing>
+                        <Longitude>-1.2287138545</Longitude>
+                        <Latitude>54.5837996949</Latitude>
+                    </Translation>
+                </Location>
+            </Place>
+            <StopClassification>
+                <StopType>FBT</StopType>
+                <OffStreet>
+                    <Ferry>
+                        <Berth/>
+                    </Ferry>
+                </OffStreet>
+            </StopClassification>
+            <StopAreas>
+                <StopAreaRef CreationDateTime="2011-06-08T12:04:00" ModificationDateTime="2011-06-08T12:04:00"
+                             Modification="new" RevisionNumber="0" Status="active">930GMTS
+                </StopAreaRef>
+            </StopAreas>
+            <AdministrativeAreaRef>146</AdministrativeAreaRef>
+        </StopPoint>
+        <StopPoint CreationDateTime="2010-01-04T11:54:00" ModificationDateTime="2010-01-04T11:56:00"
+                   Modification="revise" RevisionNumber="1" Status="active">
+            <AtcoCode>9300EIB</AtcoCode>
+            <Descriptor>
+                <CommonName>East India Pier</CommonName>
+                <Street>-</Street>
+            </Descriptor>
+            <Place>
+                <NptgLocalityRef>N0065148</NptgLocalityRef>
+                <LocalityCentre>0</LocalityCentre>
+                <Location>
+                    <Translation>
+                        <GridType>UKOS</GridType>
+                        <Easting>538716</Easting>
+                        <Northing>180582</Northing>
+                        <Longitude>-0.002616846</Longitude>
+                        <Latitude>51.5071564039</Latitude>
+                    </Translation>
+                </Location>
+            </Place>
+            <StopClassification>
+                <StopType>FER</StopType>
+                <OffStreet>
+                    <Ferry>
+                        <AccessArea/>
+                        <AnnotatedFerryRef>
+                            <FerryRef>EIB</FerryRef>
+                            <Name>East India Pier</Name>
+                            <Location>
+                                <GridType>UKOS</GridType>
+                                <Easting>538716</Easting>
+                                <Northing>180582</Northing>
+                            </Location>
+                        </AnnotatedFerryRef>
+                    </Ferry>
+                </OffStreet>
+            </StopClassification>
+            <StopAreas>
+                <StopAreaRef CreationDateTime="2010-01-04T11:56:00" ModificationDateTime="2010-01-04T11:56:00"
+                             Modification="new" RevisionNumber="0" Status="active">930GEIB</StopAreaRef>
+            </StopAreas>
+            <AdministrativeAreaRef>146</AdministrativeAreaRef>
+        </StopPoint>
+        <StopPoint CreationDateTime="2012-01-12T17:39:00" ModificationDateTime="2012-01-12T17:39:00" Modification="new"
+                   RevisionNumber="0" Status="active">
+            <AtcoCode>9300EIB1</AtcoCode>
+            <Descriptor>
+                <CommonName>East India Pier</CommonName>
+                <Street>-</Street>
+            </Descriptor>
+            <Place>
+                <NptgLocalityRef>N0065148</NptgLocalityRef>
+                <LocalityCentre>0</LocalityCentre>
+                <Location>
+                    <Translation>
+                        <GridType>UKOS</GridType>
+                        <Easting>538721</Easting>
+                        <Northing>180575</Northing>
+                        <Longitude>-0.0025475973</Longitude>
+                        <Latitude>51.5070922737</Latitude>
+                    </Translation>
+                </Location>
+            </Place>
+            <StopClassification>
+                <StopType>FBT</StopType>
+                <OffStreet>
+                    <Ferry>
+                        <Berth/>
+                    </Ferry>
+                </OffStreet>
+            </StopClassification>
+            <AdministrativeAreaRef>146</AdministrativeAreaRef>
+        </StopPoint>
+        <StopPoint CreationDateTime="2009-01-12T17:58:00" ModificationDateTime="2009-01-12T17:59:00" Modification="revise" RevisionNumber="1" Status="active">
+            <AtcoCode>9300STR</AtcoCode>
+            <Descriptor>
+                <CommonName>Stranraer Ferry Terminal</CommonName>
+                <Street>A717 Harbour Street</Street>
+            </Descriptor>
+            <Place>
+                <NptgLocalityRef>ES003513</NptgLocalityRef>
+                <LocalityCentre>0</LocalityCentre>
+                <Location>
+                    <Translation>
+                        <GridType>UKOS</GridType>
+                        <Easting>206295</Easting>
+                        <Northing>561178</Northing>
+                        <Longitude>-5.023099998</Longitude>
+                        <Latitude>54.9076431923</Latitude>
+                    </Translation>
+                </Location>
+            </Place>
+            <StopClassification>
+                <StopType>FER</StopType>
+                <OffStreet>
+                    <Ferry>
+                        <AccessArea/>
+                        <AnnotatedFerryRef>
+                            <FerryRef>STR</FerryRef>
+                            <Name>Stranraer Ferry Terminal</Name>
+                            <Location>
+                                <GridType>UKOS</GridType>
+                                <Easting>206295</Easting>
+                                <Northing>561178</Northing>
+                            </Location>
+                        </AnnotatedFerryRef>
+                    </Ferry>
+                </OffStreet>
+            </StopClassification>
+            <AdministrativeAreaRef>146</AdministrativeAreaRef>
+        </StopPoint>
     </StopPoints>
 </NaPTAN>

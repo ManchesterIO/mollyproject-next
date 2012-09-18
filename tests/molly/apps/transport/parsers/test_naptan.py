@@ -1,7 +1,7 @@
 import os
 import unittest2 as unittest
 from tch.parsers.naptan import NaptanParser
-from tch.stop import CallingPoint, Stop, Interchange
+from tch.stop import CallingPoint, Stop
 
 class NaptanParserTest(unittest.TestCase):
 
@@ -52,7 +52,7 @@ class NaptanParserTest(unittest.TestCase):
         self.assertEquals('/gb/639000011', self._get_bus_calling_point().parent_stop)
 
     def test_bus_stop_has_calling_point_as_child(self):
-        self.assertEquals(['/gb/639000011/calling_point'], self._get_bus_stop().calling_points)
+        self.assertEquals({'/gb/639000011/calling_point'}, self._get_bus_stop().calling_points)
 
     def test_taxi_ranks_are_not_yielded(self):
         self.assertNotIn('/gb/6490TX001', self._get_stops_by_url().keys())
@@ -61,9 +61,56 @@ class NaptanParserTest(unittest.TestCase):
         stops_dict = self._get_stops_by_url()
         self.assertIsInstance(stops_dict['/gb/9200ABZ1'], Stop)
 
-    def test_multiple_terminal_airports_are_returned_as_interchange(self):
+    def test_airport_terminals_are_yielded_as_calling_points(self):
         stops_dict = self._get_stops_by_url()
-        self.assertIsInstance(stops_dict['/gb/9200MAN0'], Interchange)
+        self.assertIsInstance(stops_dict['/gb/9200MAN1'], CallingPoint)
+
+    def test_airport_terminals_have_airport_as_parent(self):
+        terminal = self._get_stops_by_url()['/gb/9200MAN1']
+        self.assertEquals('/gb/9200MAN0', terminal.parent_stop)
+
+    def test_airports_have_terminals_as_calling_points(self):
+        airport = self._get_stops_by_url()['/gb/9200MAN0']
+        self.assertEquals(
+            {'/gb/9200MAN1', '/gb/9200MAN2', '/gb/9200MAN3'},
+            airport.calling_points
+        )
+
+    def test_ferry_terminals_are_yielded_as_stops(self):
+        stops_dict = self._get_stops_by_url()
+        self.assertIsInstance(stops_dict['/gb/9300ACH'], Stop)
+
+    def test_ferry_berths_are_yielded_as_calling_points(self):
+        stops_dict = self._get_stops_by_url()
+        self.assertIsInstance(stops_dict['/gb/9300MTS1'], CallingPoint)
+
+    def test_berthless_ferry_terminals_have_generated_calling_point(self):
+        stops_dict = self._get_stops_by_url()
+        stop = stops_dict['/gb/9300ACH']
+        calling_point_url = stop.calling_points.pop()
+        self.assertIsInstance(stops_dict[calling_point_url], CallingPoint)
+
+    def test_ferry_terminals_with_berths_have_calling_point_from_naptan(self):
+        stops_dict = self._get_stops_by_url()
+        stop = stops_dict['/gb/9300MTS']
+        self.assertEquals(1, len(stop.calling_points))
+        self.assertEquals({'/gb/9300MTS1'}, stop.calling_points)
+
+    def test_things_without_revision_numbers_default_to_0(self):
+        stops_dict = self._get_stops_by_url()
+        stop = stops_dict['/gb/6490IM1778']
+        self.assertEquals('0', stop.sources[0].version)
+
+    def test_ferry_terminals_without_stop_area_imply_group(self):
+        stops_dict = self._get_stops_by_url()
+        stop = stops_dict['/gb/9300EIB']
+        self.assertEquals(1, len(stop.calling_points))
+        self.assertEquals({'/gb/9300EIB1'}, stop.calling_points)
+
+    def test_berths_have_terminal_as_parent_stop(self):
+        stops_dict = self._get_stops_by_url()
+        stop = stops_dict['/gb/9300MTS1']
+        self.assertEquals('/gb/9300MTS', stop.parent_stop)
 
     def _import_from_test_data(self):
         return NaptanParser().import_from_file(self._test_file, self._TEST_URL)
