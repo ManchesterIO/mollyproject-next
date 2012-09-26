@@ -61,6 +61,10 @@ class NaptanParserTest(unittest.TestCase):
         stops_dict = self._get_stops_by_url()
         self.assertIsInstance(stops_dict['/gb/9200ABZ1'], Stop)
 
+    def test_single_terminal_airports_have_a_calling_point(self):
+        stops_dict = self._get_stops_by_url()
+        self.assertIsInstance(stops_dict['/gb/9200ABZ1/calling_point'], CallingPoint)
+
     def test_airport_terminals_are_yielded_as_calling_points(self):
         stops_dict = self._get_stops_by_url()
         self.assertIsInstance(stops_dict['/gb/9200MAN1'], CallingPoint)
@@ -75,6 +79,17 @@ class NaptanParserTest(unittest.TestCase):
             {'/gb/9200MAN1', '/gb/9200MAN2', '/gb/9200MAN3'},
             airport.calling_points
         )
+
+    def test_airports_with_terminals_do_not_have_own_calling_point(self):
+        self.assertNotIn('/gb/9200MAN0/calling_point', self._get_stops_by_url())
+
+    def test_airport_calling_point_has_correct_parent(self):
+        stops = self._get_stops_by_url()
+        self.assertEquals('/gb/9200ABZ1', stops['/gb/9200ABZ1/calling_point'].parent_url)
+
+    def test_airport_with_no_terminals_includes_calling_points(self):
+        stops = self._get_stops_by_url()
+        self.assertEquals({'/gb/9200ABZ1/calling_point'}, stops['/gb/9200ABZ1'].calling_points)
 
     def test_ferry_terminals_are_yielded_as_stops(self):
         stops_dict = self._get_stops_by_url()

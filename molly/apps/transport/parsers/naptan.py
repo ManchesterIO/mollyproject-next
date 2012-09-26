@@ -86,7 +86,17 @@ class NaptanParser(object):
         airport = self._build_base(elem, CallingPoint if is_terminal else Stop)
         if is_terminal:
             airport.parent_stop = '/gb/' + parent_atco_code
+            calling_point_url = self._airports[parent_atco_code].url + '/calling_point'
+            if calling_point_url in self._airports:
+                self._airports[parent_atco_code].calling_points.remove(calling_point_url)
+                del self._airports[calling_point_url]
             self._airports[parent_atco_code].calling_points.add(airport.url)
+        else:
+            calling_point = self._build_base(elem, CallingPoint)
+            calling_point.url += '/calling_point'
+            calling_point.parent_url = airport.url
+            airport.calling_points.add(calling_point.url)
+            self._airports[calling_point.url] = calling_point
 
         self._airports[atco_code] = airport
 
