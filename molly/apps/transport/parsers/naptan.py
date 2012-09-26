@@ -37,13 +37,13 @@ class NaptanParser(object):
                     elif stop_type == 'GAT':
                         self._build_airport(elem)
 
-                    elif stop_type == 'FER':
-                        stop, calling_point, group = self._build_port(elem)
+                    elif stop_type in ('FER', 'MET'):
+                        stop, calling_point, group = self._build_station(elem)
                         self._ports[group] = [stop]
                         self._port_calling_points[group] = calling_point
 
-                    elif stop_type == 'FBT':
-                        calling_point, group = self._build_berth(elem)
+                    elif stop_type in ('FBT', 'PLT'):
+                        calling_point, group = self._build_calling_point(elem)
                         self._ports[group].append(calling_point)
 
                     elem.clear()
@@ -100,13 +100,13 @@ class NaptanParser(object):
 
         self._airports[atco_code] = airport
 
-    def _build_port(self, elem):
+    def _build_station(self, elem):
         stop, calling_point = self._build_stop_with_calling_point(elem)
         group = self._get_group_id(elem, False)
 
         return stop, calling_point, group
 
-    def _build_berth(self, elem):
+    def _build_calling_point(self, elem):
         calling_point = self._build_base(elem, CallingPoint)
         group = self._get_group_id(elem, True)
 

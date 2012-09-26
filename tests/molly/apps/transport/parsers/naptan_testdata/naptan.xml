@@ -440,8 +440,7 @@
             </StopClassification>
             <StopAreas>
                 <StopAreaRef CreationDateTime="2010-08-12T16:10:00" ModificationDateTime="2010-08-12T16:10:00"
-                             Modification="new" RevisionNumber="0" Status="active">930GACH
-                </StopAreaRef>
+                             Modification="new" RevisionNumber="0" Status="active">930GACH</StopAreaRef>
             </StopAreas>
             <AdministrativeAreaRef>146</AdministrativeAreaRef>
         </StopPoint>
@@ -485,8 +484,7 @@
             </StopClassification>
             <StopAreas>
                 <StopAreaRef CreationDateTime="2011-06-08T12:04:00" ModificationDateTime="2011-06-08T12:04:00"
-                             Modification="new" RevisionNumber="0" Status="active">930GMTS
-                </StopAreaRef>
+                             Modification="new" RevisionNumber="0" Status="active">930GMTS</StopAreaRef>
             </StopAreas>
             <AdministrativeAreaRef>146</AdministrativeAreaRef>
         </StopPoint>
@@ -522,8 +520,7 @@
             </StopClassification>
             <StopAreas>
                 <StopAreaRef CreationDateTime="2011-06-08T12:04:00" ModificationDateTime="2011-06-08T12:04:00"
-                             Modification="new" RevisionNumber="0" Status="active">930GMTS
-                </StopAreaRef>
+                             Modification="new" RevisionNumber="0" Status="active">930GMTS</StopAreaRef>
             </StopAreas>
             <AdministrativeAreaRef>146</AdministrativeAreaRef>
         </StopPoint>
@@ -688,6 +685,70 @@
                                 Modification="new" RevisionNumber="0" Status="active">ABDARE
                 </PlusbusZoneRef>
             </PlusbusZones>
+        </StopPoint>
+        <StopPoint CreationDateTime="2012-03-21T14:29:00" ModificationDateTime="2012-03-21T14:35:00" Modification="revise" RevisionNumber="1" Status="active">
+            <AtcoCode>9400ZZALGWP</AtcoCode>
+            <Descriptor>
+                <CommonName>Emirates Greenwich Peninsula (Air Line terminal)</CommonName>
+                <Street>East Parkside</Street>
+            </Descriptor>
+            <Place>
+                <NptgLocalityRef>N0077702</NptgLocalityRef>
+                <LocalityCentre>0</LocalityCentre>
+                <Location>
+                    <Translation>
+                        <GridType>UKOS</GridType>
+                        <Easting>539422</Easting>
+                        <Northing>179724</Northing>
+                        <Longitude>0.0072106498</Longitude>
+                        <Latitude>51.4992726379</Latitude>
+                    </Translation>
+                </Location>
+            </Place>
+            <StopClassification>
+                <StopType>MET</StopType>
+                <OffStreet>
+                    <Metro>
+                        <AccessArea/>
+                    </Metro>
+                </OffStreet>
+            </StopClassification>
+            <StopAreas>
+                <StopAreaRef CreationDateTime="2012-03-21T14:35:00" ModificationDateTime="2012-03-21T14:35:00" Modification="new" RevisionNumber="0" Status="active">940GZZALGWP</StopAreaRef>
+            </StopAreas>
+            <AdministrativeAreaRef>147</AdministrativeAreaRef>
+        </StopPoint>
+        <StopPoint CreationDateTime="2012-03-21T14:32:00" ModificationDateTime="2012-03-21T14:35:00" Modification="revise" RevisionNumber="1" Status="active">
+            <AtcoCode>9400ZZALGWP1</AtcoCode>
+            <Descriptor>
+                <CommonName>Emirates Greenwich Peninsula (Air Line terminal)</CommonName>
+                <Street>East Parkside</Street>
+            </Descriptor>
+            <Place>
+                <NptgLocalityRef>N0077702</NptgLocalityRef>
+                <LocalityCentre>0</LocalityCentre>
+                <Location>
+                    <Translation>
+                        <GridType>UKOS</GridType>
+                        <Easting>539425</Easting>
+                        <Northing>179724</Northing>
+                        <Longitude>0.0072538423</Longitude>
+                        <Latitude>51.4992718984</Latitude>
+                    </Translation>
+                </Location>
+            </Place>
+            <StopClassification>
+                <StopType>PLT</StopType>
+                <OffStreet>
+                    <Metro>
+                        <Platform/>
+                    </Metro>
+                </OffStreet>
+            </StopClassification>
+            <StopAreas>
+                <StopAreaRef CreationDateTime="2012-03-21T14:35:00" ModificationDateTime="2012-03-21T14:35:00" Modification="new" RevisionNumber="0" Status="active">940GZZALGWP</StopAreaRef>
+            </StopAreas>
+            <AdministrativeAreaRef>147</AdministrativeAreaRef>
         </StopPoint>
     </StopPoints>
 </NaPTAN>

@@ -132,6 +132,14 @@ class NaptanParserTest(unittest.TestCase):
         self.assertIn('/gb/9100ABDARE', stops)
         self.assertIn('/gb/9100ABDARE/calling_point', stops)
 
+    def test_metro_stations_are_yielded(self):
+        stops = self._get_stops_by_url()
+        self.assertIsInstance(stops['/gb/9400ZZALGWP'], Stop)
+
+    def test_metro_platforms_are_yielded(self):
+        stops = self._get_stops_by_url()
+        self.assertIsInstance(stops['/gb/9400ZZALGWP1'], CallingPoint)
+
     def _import_from_test_data(self):
         return NaptanParser().import_from_file(self._test_file, self._TEST_URL)
 
