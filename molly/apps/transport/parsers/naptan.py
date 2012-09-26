@@ -16,10 +16,18 @@ class NaptanParser(object):
     _LICENCE_URL = "http://www.nationalarchives.gov.uk/doc/open-government-licence/"
     _ATTRIBUTION = "Contains public sector information licensed under the Open Government Licence v1.0"
 
+    def _build_bus_station(self, elem, stop):
+        bay = self._build_base(elem, CallingPoint)
+        stop = self._build_base(elem, Stop)
+        stop.url += '/bus_station'
+        bay.parent_url = stop.url
+        stop.calling_points.add(bay.url)
+        return bay, stop
+
     def import_from_file(self, file, source_url):
         self._airports = dict()
-        self._ports = dict()
-        self._port_calling_points = dict()
+        self._stations = dict()
+        self._calling_points = dict()
         self._source_url = source_url
         for event, elem in iterparse(file, events=('start', 'end',)):
             if elem.tag == self._ROOT_ELEM and event == 'start':
@@ -29,33 +37,43 @@ class NaptanParser(object):
                 if elem.tag == self._STOP_POINT_ELEM:
                     stop_type = elem.find(self._STOP_TYPE_XPATH).text
 
+                    # BCT: Bus Stop, RLY: Railway Station
                     if stop_type in ('BCT', 'RLY'):
                         stop, calling_point = self._build_stop_with_calling_point(elem)
                         yield stop
                         yield calling_point
 
+                    # GAT: Airport/terminal
                     elif stop_type == 'GAT':
                         self._build_airport(elem)
 
+                    # FER: Ferry port, MET: Metro station
                     elif stop_type in ('FER', 'MET'):
                         stop, calling_point, group = self._build_station(elem)
-                        self._ports[group] = [stop]
-                        self._port_calling_points[group] = calling_point
+                        self._stations[group] = [stop]
+                        self._calling_points[group] = calling_point
 
+                    # FBT: Ferry berth, PLT: Metro platform
                     elif stop_type in ('FBT', 'PLT'):
                         calling_point, group = self._build_calling_point(elem)
-                        self._ports[group].append(calling_point)
+                        self._stations[group].append(calling_point)
+
+                    # BCS: Marked bus station bay, BCQ: Variable bus station bay
+                    elif stop_type in ('BCS', 'BCQ'):
+                        bay, stop = self._build_bus_station(elem, stop)
+                        yield bay
+                        yield stop
 
                     elem.clear()
 
         for airport in self._airports.values():
             yield airport
 
-        for group, port_entities in self._ports.iteritems():
+        for group, port_entities in self._stations.iteritems():
             if len(port_entities) == 1:
-                yield self._port_calling_points[group]
+                yield self._calling_points[group]
             else:
-                port_entities[0].calling_points.remove(self._port_calling_points[group].url)
+                port_entities[0].calling_points.remove(self._calling_points[group].url)
 
             for port_entity in port_entities:
                 yield port_entity
@@ -112,8 +130,8 @@ class NaptanParser(object):
 
         # This makes the assumption that the ferry port is seen before any of the
         # individual berths are - this appears to be true in the current NaPTAN dump
-        self._ports[group][0].calling_points.add(calling_point.url)
-        calling_point.parent_stop = self._ports[group][0].url
+        self._stations[group][0].calling_points.add(calling_point.url)
+        calling_point.parent_stop = self._stations[group][0].url
 
         return calling_point, group
 

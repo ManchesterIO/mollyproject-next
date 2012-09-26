@@ -140,6 +140,23 @@ class NaptanParserTest(unittest.TestCase):
         stops = self._get_stops_by_url()
         self.assertIsInstance(stops['/gb/9400ZZALGWP1'], CallingPoint)
 
+    def test_bus_stations_bays_are_yielded_as_calling_points(self):
+        stops = self._get_stops_by_url()
+        self.assertIsInstance(stops['/gb/639070011'], CallingPoint)
+
+    def test_bus_station_bays_yield_stops_to_contain_them(self):
+        stops = self._get_stops_by_url()
+        bay = stops['/gb/639070011']
+        self.assertIsInstance(stops[bay.parent_url], Stop)
+        self.assertIn('/gb/639070011', stops[bay.parent_url].calling_points)
+
+    def test_bus_stations_variable_bays_are_yielded_as_calling_points(self):
+        stops = self._get_stops_by_url()
+        self.assertIsInstance(stops['/gb/1400LE0400'], CallingPoint)
+
+    # TODO: Handle bus station bays which are in a stop group
+    # TODO: Handle bus station bays which share a name but are *not* in a stop group
+
     def _import_from_test_data(self):
         return NaptanParser().import_from_file(self._test_file, self._TEST_URL)
 

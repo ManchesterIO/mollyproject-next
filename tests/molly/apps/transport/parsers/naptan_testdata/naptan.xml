@@ -135,6 +135,92 @@
             </StopClassification>
             <AdministrativeAreaRef>113</AdministrativeAreaRef>
         </StopPoint>
+        <StopPoint CreationDateTime="2007-05-04T13:01:00" ModificationDateTime="2009-11-05T12:03:00"
+                   Modification="revise" RevisionNumber="5" Status="active">
+            <AtcoCode>639070011</AtcoCode>
+            <NaptanCode>23236985</NaptanCode>
+            <Descriptor>
+                <CommonName>Union Square Bus Station</CommonName>
+                <Landmark>Bus Station</Landmark>
+                <Street>Guild Street</Street>
+                <Indicator>Stance 1</Indicator>
+            </Descriptor>
+            <AlternativeDescriptors>
+                <Descriptor CreationDateTime="2007-08-29T09:34:00" ModificationDateTime="2007-08-29T09:34:00"
+                            Modification="revise" RevisionNumber="1" Status="active"
+                        >
+                    <CommonName>Aberdeen Bus Station</CommonName>
+                    <Landmark>Guild Street Bus Station</Landmark>
+                    <Street>Guild Street</Street>
+                </Descriptor>
+            </AlternativeDescriptors>
+            <Place>
+                <NptgLocalityRef>ES000011</NptgLocalityRef>
+                <Suburb>City Cenre</Suburb>
+                <Town>Aberdeen</Town>
+                <LocalityCentre>1</LocalityCentre>
+                <Location>
+                    <Translation>
+                        <GridType>UKOS</GridType>
+                        <Easting>394272</Easting>
+                        <Northing>805974</Northing>
+                        <Longitude>-2.0962947635</Longitude>
+                        <Latitude>57.1446122534</Latitude>
+                    </Translation>
+                </Location>
+            </Place>
+            <StopClassification>
+                <StopType>BCS</StopType>
+                <OffStreet>
+                    <BusAndCoach>
+                        <Bay>
+                            <TimingStatus>PPT</TimingStatus>
+                        </Bay>
+                    </BusAndCoach>
+                </OffStreet>
+            </StopClassification>
+            <AdministrativeAreaRef>111</AdministrativeAreaRef>
+            <PlusbusZones>
+                <PlusbusZoneRef CreationDateTime="2010-10-07T14:27:15" ModificationDateTime="2010-10-07T14:27:15"
+                                Modification="new" RevisionNumber="0" Status="active">ABRDEEN
+                </PlusbusZoneRef>
+            </PlusbusZones>
+        </StopPoint>
+        <StopPoint CreationDateTime="2007-01-24T12:00:00" ModificationDateTime="2010-04-07T14:42:00"
+                   Modification="revise" RevisionNumber="2" Status="active">
+            <AtcoCode>1400LE0400</AtcoCode>
+            <NaptanCode>esudgdjp</NaptanCode>
+            <Descriptor>
+                <CommonName>Bus Station</CommonName>
+                <Landmark>Bus Station</Landmark>
+                <Street>Eastgate Street</Street>
+            </Descriptor>
+            <Place>
+                <NptgLocalityRef>E0046046</NptgLocalityRef>
+                <LocalityCentre>0</LocalityCentre>
+                <Location>
+                    <Translation>
+                        <GridType>UKOS</GridType>
+                        <Easting>541778</Easting>
+                        <Northing>110266</Northing>
+                        <Longitude>0.013733971</Longitude>
+                        <Latitude>50.8745070423</Latitude>
+                    </Translation>
+                </Location>
+            </Place>
+            <StopClassification>
+                <StopType>BCQ</StopType>
+                <OffStreet>
+                    <BusAndCoach>
+                        <VariableBay>
+                            <TimingStatus>OTH</TimingStatus>
+                        </VariableBay>
+                    </BusAndCoach>
+                </OffStreet>
+            </StopClassification>
+            <AdministrativeAreaRef>079</AdministrativeAreaRef>
+        </StopPoint>
+
         <StopPoint CreationDateTime="2004-05-11T00:00:00" ModificationDateTime="2007-11-20T00:00:00"
                    Modification="revise" RevisionNumber="1" Status="active">
             <AtcoCode>6490TX001</AtcoCode>
@@ -440,7 +526,8 @@
             </StopClassification>
             <StopAreas>
                 <StopAreaRef CreationDateTime="2010-08-12T16:10:00" ModificationDateTime="2010-08-12T16:10:00"
-                             Modification="new" RevisionNumber="0" Status="active">930GACH</StopAreaRef>
+                             Modification="new" RevisionNumber="0" Status="active">930GACH
+                </StopAreaRef>
             </StopAreas>
             <AdministrativeAreaRef>146</AdministrativeAreaRef>
         </StopPoint>
@@ -484,7 +571,8 @@
             </StopClassification>
             <StopAreas>
                 <StopAreaRef CreationDateTime="2011-06-08T12:04:00" ModificationDateTime="2011-06-08T12:04:00"
-                             Modification="new" RevisionNumber="0" Status="active">930GMTS</StopAreaRef>
+                             Modification="new" RevisionNumber="0" Status="active">930GMTS
+                </StopAreaRef>
             </StopAreas>
             <AdministrativeAreaRef>146</AdministrativeAreaRef>
         </StopPoint>
@@ -520,7 +608,8 @@
             </StopClassification>
             <StopAreas>
                 <StopAreaRef CreationDateTime="2011-06-08T12:04:00" ModificationDateTime="2011-06-08T12:04:00"
-                             Modification="new" RevisionNumber="0" Status="active">930GMTS</StopAreaRef>
+                             Modification="new" RevisionNumber="0" Status="active">930GMTS
+                </StopAreaRef>
             </StopAreas>
             <AdministrativeAreaRef>146</AdministrativeAreaRef>
         </StopPoint>
@@ -686,7 +775,8 @@
                 </PlusbusZoneRef>
             </PlusbusZones>
         </StopPoint>
-        <StopPoint CreationDateTime="2012-03-21T14:29:00" ModificationDateTime="2012-03-21T14:35:00" Modification="revise" RevisionNumber="1" Status="active">
+        <StopPoint CreationDateTime="2012-03-21T14:29:00" ModificationDateTime="2012-03-21T14:35:00"
+                   Modification="revise" RevisionNumber="1" Status="active">
             <AtcoCode>9400ZZALGWP</AtcoCode>
             <Descriptor>
                 <CommonName>Emirates Greenwich Peninsula (Air Line terminal)</CommonName>
@@ -714,11 +804,14 @@
                 </OffStreet>
             </StopClassification>
             <StopAreas>
-                <StopAreaRef CreationDateTime="2012-03-21T14:35:00" ModificationDateTime="2012-03-21T14:35:00" Modification="new" RevisionNumber="0" Status="active">940GZZALGWP</StopAreaRef>
+                <StopAreaRef CreationDateTime="2012-03-21T14:35:00" ModificationDateTime="2012-03-21T14:35:00"
+                             Modification="new" RevisionNumber="0" Status="active">940GZZALGWP
+                </StopAreaRef>
             </StopAreas>
             <AdministrativeAreaRef>147</AdministrativeAreaRef>
         </StopPoint>
-        <StopPoint CreationDateTime="2012-03-21T14:32:00" ModificationDateTime="2012-03-21T14:35:00" Modification="revise" RevisionNumber="1" Status="active">
+        <StopPoint CreationDateTime="2012-03-21T14:32:00" ModificationDateTime="2012-03-21T14:35:00"
+                   Modification="revise" RevisionNumber="1" Status="active">
             <AtcoCode>9400ZZALGWP1</AtcoCode>
             <Descriptor>
                 <CommonName>Emirates Greenwich Peninsula (Air Line terminal)</CommonName>
@@ -746,7 +839,9 @@
                 </OffStreet>
             </StopClassification>
             <StopAreas>
-                <StopAreaRef CreationDateTime="2012-03-21T14:35:00" ModificationDateTime="2012-03-21T14:35:00" Modification="new" RevisionNumber="0" Status="active">940GZZALGWP</StopAreaRef>
+                <StopAreaRef CreationDateTime="2012-03-21T14:35:00" ModificationDateTime="2012-03-21T14:35:00"
+                             Modification="new" RevisionNumber="0" Status="active">940GZZALGWP
+                </StopAreaRef>
             </StopAreas>
             <AdministrativeAreaRef>147</AdministrativeAreaRef>
         </StopPoint>
