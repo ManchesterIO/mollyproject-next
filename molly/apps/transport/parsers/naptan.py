@@ -29,9 +29,9 @@ class NaptanParser(object):
                 if elem.tag == self._STOP_POINT_ELEM:
                     stop_type = elem.find(self._STOP_TYPE_XPATH).text
 
-                    if stop_type == 'BCT':
-                        bus_stop, calling_point = self._build_stop_with_calling_point(elem)
-                        yield bus_stop
+                    if stop_type in ('BCT', 'RLY'):
+                        stop, calling_point = self._build_stop_with_calling_point(elem)
+                        yield stop
                         yield calling_point
 
                     elif stop_type == 'GAT':

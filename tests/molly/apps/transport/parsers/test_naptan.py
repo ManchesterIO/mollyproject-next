@@ -127,6 +127,11 @@ class NaptanParserTest(unittest.TestCase):
         stop = stops_dict['/gb/9300MTS1']
         self.assertEquals('/gb/9300MTS', stop.parent_stop)
 
+    def test_rail_stations_get_stop_and_calling_point(self):
+        stops = self._get_stops_by_url()
+        self.assertIn('/gb/9100ABDARE', stops)
+        self.assertIn('/gb/9100ABDARE/calling_point', stops)
+
     def _import_from_test_data(self):
         return NaptanParser().import_from_file(self._test_file, self._TEST_URL)
 
