@@ -10,6 +10,41 @@ from flaskext.babel import lazy_gettext as _
 
 class Provider(object):
 
+    def __init__(self, config):
+        self._config = config
+
+    attribution = {
+        'licence_name': _('Open Government Licence'),
+        'licence_url': _('http://www.nationalarchives.gov.uk/doc/open-government-licence/'),
+        'attribution_text': _('Contains public sector information provided by the Met Office')
+    }
+
+    def latest_observations(self):
+        response = json.load(
+            urlopen('http://datapoint.metoffice.gov.uk/public/data/val/wxobs/all' +
+                '/json/{location_id}?res=hourly&key={api_key}'.format(**self._config))
+        )
+
+        source_observation = response['SiteRep']['DV']['Location']['Period'][-1]['Rep'][-1]
+        minutes_since_midnight = timedelta(minutes=int(source_observation['$']))
+        print
+        obs_time = datetime(
+            *time.strptime(response['SiteRep']['DV']['Location']['Period'][-1]['value'], "%Y-%m-%dZ")[:6],
+            tzinfo=utc
+        )
+        obs_time += minutes_since_midnight
+
+        return {
+            'type': self.WEATHER_TYPES.get(source_observation['W']),
+            'temperature': u'{} °C'.format(source_observation['T']),
+            'wind_speed': '{} mph'.format(source_observation['S']),
+            'gust_speed': '{} mph'.format(source_observation['G']) if 'G' in source_observation else 'N/A',
+            'wind_direction': source_observation['D'],
+            'pressure': '{} mb'.format(source_observation['P']),
+            'obs_location': capwords(response['SiteRep']['DV']['Location']['name']),
+            'obs_time': obs_time
+        }
+
     WEATHER_TYPES = {
         'NA': _('Not available'),
         '0': _('Clear night'),
@@ -44,40 +79,3 @@ class Provider(object):
         '29': _('Thunder shower'),
         '30': _('Thunder')
     }
-
-    def __init__(self, config):
-        self._config = config
-
-    def latest_observations(self):
-        response = json.load(
-            urlopen('http://datapoint.metoffice.gov.uk/public/data/val/wxobs/all' +
-                '/json/{location_id}?res=hourly&key={api_key}'.format(**self._config))
-        )
-
-        source_observation = response['SiteRep']['DV']['Location']['Period'][-1]['Rep'][-1]
-        minutes_since_midnight = timedelta(minutes=int(source_observation['$']))
-        print
-        obs_time = datetime(
-            *time.strptime(response['SiteRep']['DV']['Location']['Period'][-1]['value'], "%Y-%m-%dZ")[:6],
-            tzinfo=utc
-        )
-        obs_time += minutes_since_midnight
-
-        return {
-            'type': self.WEATHER_TYPES.get(source_observation['W']),
-            'temperature': u'{} °C'.format(source_observation['T']),
-            'wind_speed': '{} mph'.format(source_observation['S']),
-            'gust_speed': '{} mph'.format(source_observation['G']) if 'G' in source_observation else 'N/A',
-            'wind_direction': source_observation['D'],
-            'pressure': '{} mb'.format(source_observation['P']),
-            'obs_location': capwords(response['SiteRep']['DV']['Location']['name']),
-            'obs_time': obs_time
-        }
-
-    @property
-    def attribution(self):
-        return {
-            'licence_name': _('Open Government Licence'),
-            'licence_url': _('http://www.nationalarchives.gov.uk/doc/open-government-licence/'),
-            'attribution_text': _('Contains public sector information provided by the Met Office')
-        }

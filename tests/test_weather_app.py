@@ -11,7 +11,7 @@ class WeatherAppTest(unittest.TestCase):
     def setUp(self):
         self._app = Flask(__name__)
         self._babel = Babel(self._app)
-        self._weather_app = WeatherApp('weather', {})
+        self._weather_app = WeatherApp('weather', {}, [None])
         self._app.register_blueprint(self._weather_app.blueprint, url_prefix="/weather")
 
     def test_module_is_set_correctly(self):

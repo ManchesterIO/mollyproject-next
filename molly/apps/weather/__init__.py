@@ -10,7 +10,7 @@ class App(object):
     def __init__(self, instance_name, config, providers=[]):
         self.instance_name = instance_name
         self.blueprint = Blueprint('weather', __name__)
-        self.blueprint.add_url_rule('/', 'observations', ObservationsEndpoint().get)
+        self.blueprint.add_url_rule('/', 'observations', ObservationsEndpoint(providers.pop()).get)
 
         self.homepage_widget_params = {}
         self.human_name = _('Weather')
