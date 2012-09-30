@@ -1,6 +1,8 @@
 import json
+from flask import Flask
 from mock import Mock
 import unittest2 as unittest
+from werkzeug.exceptions import NotAcceptable
 
 from molly.apps.homepage.endpoints import HomepageEndpoint
 
@@ -24,13 +26,20 @@ class EndpointTestCase(unittest.TestCase):
         self.assertEquals(self.APP_INDEX_URL, app['index_url'])
 
     def test_response_has_correct_mime_type(self):
-        response = HomepageEndpoint([]).get()
+        with Flask(__name__).test_request_context('/', headers=[('Accept', 'application/json')]):
+            response = HomepageEndpoint([]).get()
         self.assertEquals("application/json", response.headers.get('Content-Type'))
+
+    def test_json_responses_throw_406_error(self):
+        with Flask(__name__).test_request_context('/'):
+            self.assertRaises(NotAcceptable, HomepageEndpoint([]).get)
 
     def _get_response_dict(self):
         apps = [self._build_mock_app()]
-        self._endpoint = HomepageEndpoint(apps)
-        return json.loads(self._endpoint.get().data).get('applications')
+        flask_app = Flask(__name__)
+        with flask_app.test_request_context('/', headers=[('Accept', 'application/json')]):
+            self._endpoint = HomepageEndpoint(apps)
+            return json.loads(self._endpoint.get().data).get('applications')
 
     def _build_mock_app(self):
         app = Mock()

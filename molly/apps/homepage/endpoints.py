@@ -1,5 +1,3 @@
-from flask import Response
-import json
 from molly.apps.common.endpoints import Endpoint
 
 class HomepageEndpoint(Endpoint):
