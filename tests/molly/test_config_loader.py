@@ -13,8 +13,7 @@ from tests.test_providers.provider import Provider as TestProvider
 class ConfigLoaderTestCase(unittest.TestCase):
 
     def setUp(self):
-        self._app = Mock()
-        self._config_loader = ConfigLoader(self._app)
+        self._config_loader = ConfigLoader()
 
     def tearDown(self):
         SIMPLE_TEST_CONFIG.reset()
@@ -27,10 +26,6 @@ class ConfigLoaderTestCase(unittest.TestCase):
     def test_config_loader_loads_apps(self):
         apps = self._config_loader.load_from_config(SIMPLE_TEST_CONFIG)
         self.assertEquals('test', apps[0].instance_name)
-
-    def test_config_loader_loads_apps_with_correct_flask_app(self):
-        apps = self._config_loader.load_from_config(SIMPLE_TEST_CONFIG)
-        self.assertEquals(self._app, apps[0].app)
 
     def test_config_loader_passes_config_dict_to_app(self):
         apps = self._config_loader.load_from_config(SIMPLE_TEST_CONFIG)

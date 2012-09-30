@@ -3,9 +3,6 @@ from importlib import import_module
 
 class ConfigLoader(object):
 
-    def __init__(self, app):
-        self._flask_app = app
-
     def load_from_config(self, config):
         apps = []
         parser = ConfigParser()
@@ -45,7 +42,7 @@ class ConfigLoader(object):
             app_module = import_module(module_name)
         except ImportError:
             raise ConfigError("Unable to find module: " + config['module'])
-        return app_module.App(self._flask_app, name, config, providers)
+        return app_module.App(name, config, providers)
 
 
 class ConfigError(Exception):
