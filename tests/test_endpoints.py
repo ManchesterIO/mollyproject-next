@@ -1,4 +1,5 @@
 import json
+from flask import Flask
 from mock import Mock
 import unittest2 as unittest
 
@@ -16,9 +17,13 @@ class ObservationsEndpointTest(unittest.TestCase):
         self._endpoint = ObservationsEndpoint(self._provider)
 
     def test_observations_included_in_response(self):
-        response = json.loads(self._endpoint.get().data)
+        response = self._get_response_json()
         self.assertEquals(self._OBSERVATION, response['observation'])
 
     def test_attribution_included_in_response(self):
-        response = json.loads(self._endpoint.get().data)
+        response = self._get_response_json()
         self.assertEquals(self._ATTRIBUTION, response['attribution'])
+
+    def _get_response_json(self):
+        with Flask(__name__).test_request_context('/', headers=[('Accept', 'application/json')]):
+            return json.loads(self._endpoint.get().data)

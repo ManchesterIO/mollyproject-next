@@ -1,4 +1,5 @@
 # coding=utf-8
+from mock import Mock
 import unittest2 as unittest
 
 from flask import Flask
@@ -8,11 +9,12 @@ from molly.apps.weather import App as WeatherApp
 
 class WeatherAppTest(unittest.TestCase):
 
+    _OBSERVATION = {'hello': 'world'}
+
     def setUp(self):
-        self._app = Flask(__name__)
-        self._babel = Babel(self._app)
-        self._weather_app = WeatherApp('weather', {}, [None])
-        self._app.register_blueprint(self._weather_app.blueprint, url_prefix="/weather")
+        self._provider = Mock()
+        self._provider.latest_observations = Mock(return_value=self._OBSERVATION)
+        self._weather_app = WeatherApp('weather', {}, [self._provider])
 
     def test_module_is_set_correctly(self):
         self.assertEquals('molly.apps.weather', self._weather_app.module)
@@ -24,10 +26,24 @@ class WeatherAppTest(unittest.TestCase):
         self.assertEquals('Weather', self._weather_app.human_name)
 
     def test_human_name_is_i18n(self):
-        with self._app.test_request_context('/'):
-            self._babel.localeselector(lambda: 'fr')
+        app = self._get_flask()
+        babel = Babel(app)
+        with app.test_request_context('/'):
+            babel.localeselector(lambda: 'fr')
             self.assertEquals(u'Météo', unicode(self._weather_app.human_name))
 
     def test_index_url_is_correct(self):
-        with self._app.test_request_context('/'):
+        app = self._get_flask()
+        app.register_blueprint(self._weather_app.blueprint, url_prefix="/weather")
+        with app.test_request_context('/'):
             self.assertEquals('/weather/', self._weather_app.index_url)
+
+    def test_latest_observations_are_used_in_homepage_widget(self):
+        self.assertEquals({
+            'latest_observation': self._OBSERVATION
+        }, self._weather_app.homepage_widget_params)
+
+    def _get_flask(self):
+        app = Flask(__name__)
+        app.register_blueprint(self._weather_app.blueprint, url_prefix="/weather")
+        return app

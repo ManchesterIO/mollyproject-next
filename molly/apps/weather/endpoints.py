@@ -1,16 +1,12 @@
-import json
+from molly.apps.common.endpoints import Endpoint
 
-from flask import Response
-
-class ObservationsEndpoint(object):
+class ObservationsEndpoint(Endpoint):
 
     def __init__(self, provider):
         self._provider = provider
 
     def get(self):
-        response = Response()
-        response.data = json.dumps({
+        return self._json_response({
             'observation': self._provider.latest_observations(),
             'attribution': self._provider.attribution
-        }, default=unicode)
-        return response
+        })
