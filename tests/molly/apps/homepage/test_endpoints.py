@@ -23,6 +23,10 @@ class EndpointTestCase(unittest.TestCase):
         self.assertEquals(self.HUMAN_NAME, app['human_name'])
         self.assertEquals(self.APP_INDEX_URL, app['index_url'])
 
+    def test_response_has_correct_mime_type(self):
+        response = HomepageEndpoint([]).get()
+        self.assertEquals("application/json", response.headers.get('Content-Type'))
+
     def _get_response_dict(self):
         apps = [self._build_mock_app()]
         self._endpoint = HomepageEndpoint(apps)

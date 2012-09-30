@@ -1,17 +1,16 @@
 from flask import Response
 import json
+from molly.apps.common.endpoints import Endpoint
 
-class HomepageEndpoint(object):
+class HomepageEndpoint(Endpoint):
 
     def __init__(self, apps):
         self._apps = apps
 
     def get(self):
-        response = Response()
-        response.data = json.dumps({
+        return self._json_response({
             'applications': self._get_apps_json()
         })
-        return response
 
     def _get_apps_json(self):
         apps_json = []
