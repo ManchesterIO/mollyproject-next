@@ -28,7 +28,6 @@ class Provider(object):
 
         source_observation = response['SiteRep']['DV']['Location']['Period'][-1]['Rep'][-1]
         minutes_since_midnight = timedelta(minutes=int(source_observation['$']))
-        print
         obs_time = datetime(
             *time.strptime(response['SiteRep']['DV']['Location']['Period'][-1]['value'], "%Y-%m-%dZ")[:6],
             tzinfo=utc
