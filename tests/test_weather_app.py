@@ -17,7 +17,7 @@ class WeatherAppTest(unittest.TestCase):
         self._weather_app = WeatherApp('weather', {}, [self._provider])
 
     def test_module_is_set_correctly(self):
-        self.assertEquals('molly.apps.weather', self._weather_app.module)
+        self.assertEquals('http://mollyproject.org/apps/weather', self._weather_app.module)
 
     def test_instance_name_is_set_correctly(self):
         self.assertEquals('weather', self._weather_app.instance_name)
@@ -32,16 +32,8 @@ class WeatherAppTest(unittest.TestCase):
             babel.localeselector(lambda: 'fr')
             self.assertEquals(u'Météo', unicode(self._weather_app.human_name))
 
-    def test_index_url_is_correct(self):
-        app = self._get_flask()
-        app.register_blueprint(self._weather_app.blueprint, url_prefix="/weather")
-        with app.test_request_context('/'):
-            self.assertEquals('/weather/', self._weather_app.index_url)
-
-    def test_latest_observations_are_used_in_homepage_widget(self):
-        self.assertEquals({
-            'latest_observation': self._OBSERVATION
-        }, self._weather_app.homepage_widget_params)
+    def test_latest_observations_are_used_in_link(self):
+        self.assertEquals([self._OBSERVATION], self._weather_app.links)
 
     def _get_flask(self):
         app = Flask(__name__)
