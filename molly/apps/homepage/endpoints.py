@@ -7,6 +7,7 @@ class HomepageEndpoint(Endpoint):
 
     def get(self):
         return self._json_response({
+            'self': 'http://mollyproject.org/apps/homepage',
             'applications': self._get_apps_json()
         })
 
@@ -18,9 +19,8 @@ class HomepageEndpoint(Endpoint):
 
     def _get_app_json(self, app):
         return {
-            'module': app.module,
+            'self': app.module,
             'instance_name': app.instance_name,
             'human_name': app.human_name,
-            'index_url': app.index_url,
-            'widget_params': app.homepage_widget_params
+            'links': app.links
         }
