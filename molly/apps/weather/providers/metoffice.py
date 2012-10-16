@@ -7,17 +7,18 @@ import time
 from urllib2 import urlopen
 
 from flaskext.babel import lazy_gettext as _
+from molly.apps.common.attribution import Attribution
 
 class Provider(object):
 
     def __init__(self, config):
         self._config = config
 
-    attribution = {
-        'licence_name': _('Open Government Licence'),
-        'licence_url': _('http://www.nationalarchives.gov.uk/doc/open-government-licence/'),
-        'attribution_text': _('Contains public sector information provided by the Met Office')
-    }
+    attribution = Attribution(
+        licence_name='Open Government Licence',
+        licence_url='http://www.nationalarchives.gov.uk/doc/open-government-licence/',
+        attribution_text='Contains public sector information provided by the Met Office'
+    )
 
     def latest_observations(self):
         response = json.load(
@@ -42,7 +43,7 @@ class Provider(object):
             'wind_direction': source_observation['D'],
             'pressure': '{} mb'.format(source_observation['P']),
             'obs_location': capwords(response['SiteRep']['DV']['Location']['name']),
-            'obs_time': obs_time
+            'obs_time': obs_time.isoformat()
         }
 
     WEATHER_TYPES = {

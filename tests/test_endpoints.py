@@ -3,12 +3,14 @@ from flask import Flask
 from mock import Mock
 import unittest2 as unittest
 
+from molly.apps.common.attribution import Attribution
+
 from molly.apps.weather.endpoints import ObservationsEndpoint
 
 class ObservationsEndpointTest(unittest.TestCase):
 
     _OBSERVATION = {'hello': 'world'}
-    _ATTRIBUTION = {'attibution': 'Yes'}
+    _ATTRIBUTION = Attribution()
 
     def setUp(self):
         self._provider = Mock()
@@ -22,7 +24,7 @@ class ObservationsEndpointTest(unittest.TestCase):
 
     def test_attribution_included_in_response(self):
         response = self._get_response_json()
-        self.assertEquals(self._ATTRIBUTION, response['attribution'])
+        self.assertEquals(self._ATTRIBUTION.as_dict(), response['attribution'])
 
     def test_self_included_in_response(self):
         response = self._get_response_json()

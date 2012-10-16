@@ -37,15 +37,22 @@ class MetOfficeTest(unittest.TestCase):
             'wind_direction': 'SW',
             'pressure': '1016 mb',
             'obs_location': 'Heathrow',
-            'obs_time': datetime(2012, 9, 30, 16, 0, tzinfo=utc)
+            'obs_time': datetime(2012, 9, 30, 16, 0, tzinfo=utc).isoformat()
         }, observation)
 
     def test_provider_shows_correct_attribution(self):
-        self.assertEquals({
-                'licence_name': 'Open Government Licence',
-                'licence_url': 'http://www.nationalarchives.gov.uk/doc/open-government-licence/',
-                'attribution_text': 'Contains public sector information provided by the Met Office'
-            }, self._provider.attribution)
+        self.assertEquals(
+            'Open Government Licence',
+            self._provider.attribution.licence_name
+        )
+        self.assertEquals(
+            'http://www.nationalarchives.gov.uk/doc/open-government-licence/',
+            self._provider.attribution.licence_url
+        )
+        self.assertEquals(
+            'Contains public sector information provided by the Met Office',
+            self._provider.attribution.attribution_text
+        )
 
 OBSERVATION_FEED = """
 {"SiteRep":{"Wx":{"Param":[{"name":"F","units":"","$":"Feels Like Temperature"},
