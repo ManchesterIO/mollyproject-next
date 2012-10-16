@@ -29,6 +29,13 @@ Contents:
    developers/contributing
    license
 
+API:
+
+.. toctree::
+    :glob:
+
+    api/*/*
+
 Indices and tables
 ==================
 
