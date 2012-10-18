@@ -1,0 +1,5 @@
+Flask
+gunicorn
+unittest2
+mock
+Flask-Babel
