@@ -13,12 +13,11 @@ class App(object):
 
         self.human_name = _('Weather')
 
+        self._observations_endpoint = ObservationsEndpoint(self.instance_name, self._provider)
+
         self.blueprint = Blueprint(self.instance_name, __name__)
-        self.blueprint.add_url_rule(
-            '/', 'observation',
-            ObservationsEndpoint(self.instance_name, self._provider).get
-        )
+        self.blueprint.add_url_rule('/', 'observation', self._observations_endpoint.get)
 
     @property
     def links(self):
-        return [self._provider.latest_observations()]
+        return [self._observations_endpoint.component()]

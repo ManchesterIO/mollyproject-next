@@ -7,10 +7,13 @@ class ObservationsEndpoint(Endpoint):
         self._provider = provider
         self._href = lambda: url_for(instance_name + '.observation', _external=True)
 
-    def get(self):
-        return self._json_response({
+    def component(self):
+        return {
             'self': 'http://mollyproject.org/apps/weather/observation',
             'href': self._href(),
             'observation': self._provider.latest_observations(),
             'attribution': self._provider.attribution.as_dict()
-        })
+        }
+
+    def get(self):
+        return self._json_response(self.component())
