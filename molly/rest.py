@@ -7,7 +7,6 @@ from molly.config import ConfigLoader
 from molly.apps.homepage import App as Homepage
 
 flask_app = Flask(__name__)
-flask_app.debug = True
 Babel(flask_app)
 
 with open(os.environ.get('MOLLY_CONFIG', 'conf/default.conf')) as fd:

@@ -49,3 +49,12 @@ The observation object consists of the following fields:
 +--------------------+---------------------------------------------------------+-----------------------------------+
 | ``type``           | A short description of the current type of weather      | Free-text string                  |
 +--------------------+---------------------------------------------------------+-----------------------------------+
+| ``type_id``        | An identifier for the current type of weather (please   | One of:                           |
+|                    | note that there is not a one-to-one mapping between     |  * sun                            |
+|                    | this and type - type can contain more detailed          |  * cloud                          |
+|                    | information.                                            |  * rain                           |
+|                    |                                                         |  * snow                           |
+|                    |                                                         |  * fog                            |
+|                    |                                                         |  * clear_night                    |
+|                    |                                                         |  * thunder                        |
++--------------------+---------------------------------------------------------+-----------------------------------+
