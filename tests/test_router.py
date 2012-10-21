@@ -13,7 +13,9 @@ class RouterTest(unittest.TestCase):
         self._request_factory.request.return_value = self.build_mock_response()
         self._component_factory = Mock()
         self._page_decorator = Mock()
-        self._router = Router(self._request_factory, self._component_factory, self._page_decorator)
+        self._page_decorator_factory = Mock()
+        self._page_decorator_factory.get_decorator = Mock(return_value=self._page_decorator)
+        self._router = Router(self._request_factory, self._component_factory, self._page_decorator_factory)
 
     def test_calling_router_makes_appropriate_backend_request(self):
         self._router('')

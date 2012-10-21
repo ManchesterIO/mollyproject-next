@@ -1,0 +1,6 @@
+{% for component in components %}
+<section class="weather-homepage-widget">
+    <h1><a href="{{ component.href }}">{% trans %}Weather{% endtrans %}</a></h1>
+    {{ component.render()|safe }}
+</section>
+{% endfor %}

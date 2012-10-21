@@ -1,0 +1,5 @@
+<ol class="homepage-applications-list">
+    {% for application in applications %}
+        <li>{{ application.render()|safe }}</li>
+    {% endfor %}
+</ol>
