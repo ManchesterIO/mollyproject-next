@@ -1,4 +1,4 @@
-import unittest
+import unittest2 as unittest
 from mock import Mock
 from shapely.geometry.point import Point
 from tch.data.locality_service import LocalityService
