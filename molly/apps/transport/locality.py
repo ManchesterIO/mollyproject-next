@@ -1,14 +1,18 @@
 import geojson
 from tch.identifier import Identifiers
 
-NPTG_REGION_CODE_NAMESPACE = "nptg/RegionCode"
-NPTG_DISTRICT_CODE_NAMESPACE = "nptg/DistrictCode"
-NPTG_LOCALITY_CODE_NAMESPACE = "nptg/LocalityCode"
+NPTG_REGION_CODE_NAMESPACE = "nptg:RegionCode"
+NPTG_DISTRICT_CODE_NAMESPACE = "nptg:DistrictCode"
+NPTG_LOCALITY_CODE_NAMESPACE = "nptg:LocalityCode"
 
 class Locality(object):
 
     def __init__(self):
         self._identifiers = Identifiers()
+        self.url = None
+        self.parent_url = None
+        self.geography = None
+        self.sources = set()
 
     @staticmethod
     def from_dict(locality_dict):
@@ -25,23 +29,16 @@ class Locality(object):
         self._identifiers = Identifiers(identifiers)
 
     def as_dict(self):
-        serialised = {}
+        serialised = {
+            'url': self.url,
+            'parent_url': self.parent_url,
+            'sources': map(lambda source: source.as_dict(), self.sources),
+            'identifiers': map(lambda identifier: identifier.as_dict(), self.identifiers)
+        }
 
-        if hasattr(self, 'url'):
-            serialised['url'] = self.url
-
-        if hasattr(self, 'parent_url'):
-            serialised['parent_url'] = self.parent_url
-
-        if hasattr(self, 'geography'):
+        if self.geography:
             encoder = geojson.GeoJSONEncoder()
             serialised['geography'] = encoder.default(self.geography)
             serialised['geography_centroid'] = encoder.default(self.geography.centroid)
-
-        if hasattr(self, 'sources'):
-            serialised['sources'] = map(lambda source: source.as_dict(), self.sources)
-
-        if len(self.identifiers) > 0:
-            serialised['identifiers'] = map(lambda identifier: identifier.as_dict(), self.identifiers)
 
         return serialised

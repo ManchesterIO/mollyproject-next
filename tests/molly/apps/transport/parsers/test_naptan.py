@@ -1,7 +1,8 @@
 import os
 import unittest2 as unittest
+from tch.identifier import Identifier
 from tch.parsers.naptan import NaptanParser
-from tch.stop import CallingPoint, Stop
+from tch.stop import CallingPoint, Stop, ATCO_NAMESPACE, CRS_NAMESPACE, TIPLOC_NAMESPACE
 
 class NaptanParserTest(unittest.TestCase):
 
@@ -156,6 +157,18 @@ class NaptanParserTest(unittest.TestCase):
 
     # TODO: Handle bus station bays which are in a stop group
     # TODO: Handle bus station bays which share a name but are *not* in a stop group
+
+    def test_atco_code_is_an_identifier(self):
+        stops = self._get_stops_by_url()
+        self.assertIn(Identifier(namespace=ATCO_NAMESPACE, value='9100ABDARE') , stops['/gb/9100ABDARE'].identifiers)
+
+    def test_crs_code_is_an_identifier(self):
+        stops = self._get_stops_by_url()
+        self.assertIn(Identifier(namespace=CRS_NAMESPACE, value='ABA') , stops['/gb/9100ABDARE'].identifiers)
+
+    def test_tiploc_code_is_an_identifier(self):
+        stops = self._get_stops_by_url()
+        self.assertIn(Identifier(namespace=TIPLOC_NAMESPACE, value='ABDARE') , stops['/gb/9100ABDARE'].identifiers)
 
     def _import_from_test_data(self):
         return NaptanParser().import_from_file(self._test_file, self._TEST_URL)

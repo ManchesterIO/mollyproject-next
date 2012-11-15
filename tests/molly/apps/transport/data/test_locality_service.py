@@ -33,7 +33,7 @@ class LocalityServiceTest(unittest.TestCase):
 
     def test_insert_and_merge_posts_does_insert_when_post_exists_and_source_not_in_sources(self):
         db_locality = self._build_locality()
-        db_locality.sources = []
+        db_locality.sources = set()
         mock_connection = self._build_mock_connection(db_locality)
 
         self._insert_and_merge_locality(mock_connection)
@@ -42,8 +42,8 @@ class LocalityServiceTest(unittest.TestCase):
 
     def test_insert_and_merge_posts_maintains_other_sources_when_merging(self):
         db_locality = self._build_locality()
-        db_locality.sources[0].url = 'other_source'
-        other_source = db_locality.sources[0]
+        other_source = Source(url='http://www.othersource.com', version=2)
+        db_locality.sources = {other_source}
         mock_connection = self._build_mock_connection(db_locality)
 
         self._insert_and_merge_locality(mock_connection)
@@ -60,11 +60,11 @@ class LocalityServiceTest(unittest.TestCase):
     def test_insert_and_merge_includes_new_source_when_merging(self):
         mock_connection, old_source = self._build_mock_connection_with_old_source()
         locality = self._insert_and_merge_locality(mock_connection)
-        self.assertIn(locality.sources[0], self._get_inserted_locality(mock_connection).sources)
+        self.assertIn(locality.sources.pop(), self._get_inserted_locality(mock_connection).sources)
 
     def test_insert_and_merge_replaces_parent_url(self):
         expected_url = "/new_test"
-        old_locality = self._build_old_locality()
+        old_locality, old_source = self._build_old_locality()
         new_locality = self._build_locality()
         new_locality.parent_url = expected_url
 
@@ -73,7 +73,7 @@ class LocalityServiceTest(unittest.TestCase):
         self.assertEqual(expected_url, self._get_inserted_locality(mock_connection).parent_url)
 
     def test_insert_and_merge_leaves_parent_url_when_unset(self):
-        old_locality = self._build_old_locality()
+        old_locality, old_source = self._build_old_locality()
         new_locality = self._build_locality()
         delattr(new_locality, 'parent_url')
 
@@ -83,7 +83,7 @@ class LocalityServiceTest(unittest.TestCase):
 
     def test_insert_and_merge_replaces_geography(self):
         expected_geography = Point(-1, -1)
-        old_locality = self._build_old_locality()
+        old_locality, old_source = self._build_old_locality()
         new_locality = self._build_locality()
         new_locality.geography = expected_geography
 
@@ -92,7 +92,7 @@ class LocalityServiceTest(unittest.TestCase):
         self.assertEqual(expected_geography.xy, self._get_inserted_locality(mock_connection).geography.xy)
 
     def test_insert_and_merge_leaves_parent_geography_when_unset(self):
-        old_locality = self._build_old_locality()
+        old_locality, old_source = self._build_old_locality()
         new_locality = self._build_locality()
         delattr(new_locality, 'geography')
 
@@ -101,7 +101,7 @@ class LocalityServiceTest(unittest.TestCase):
         self.assertEqual(Point(0, 0).xy, self._get_inserted_locality(mock_connection).geography.xy)
 
     def test_insert_and_merge_adds_new_identifiers(self):
-        old_locality = self._build_old_locality()
+        old_locality, old_source = self._build_old_locality()
         new_locality, identifier = self._build_locality_with_different_identifier()
 
         mock_connection = self._insert_and_merge_with(new_locality, old_locality)
@@ -109,7 +109,7 @@ class LocalityServiceTest(unittest.TestCase):
         self.assertIn(identifier, self._get_inserted_locality(mock_connection).identifiers)
 
     def test_insert_and_merge_retains_old_identifiers(self):
-        old_locality = self._build_old_locality()
+        old_locality, old_source = self._build_old_locality()
         new_locality, identifier = self._build_locality_with_different_identifier()
 
         mock_connection = self._insert_and_merge_with(new_locality, old_locality)
@@ -135,15 +135,16 @@ class LocalityServiceTest(unittest.TestCase):
         locality = Locality()
         locality.url = self.URL
         locality.parent_url = self.PARENT_URL
-        locality.sources = [Source(url='http://www.example.com', version=2)]
+        locality.sources = {Source(url='http://www.example.com', version=2)}
         locality.geography = Point(0, 0)
         locality.identifiers = [self.IDENTIFIER]
         return locality
 
     def _build_old_locality(self):
         old_locality = self._build_locality()
-        old_locality.sources[0].version = 0
-        return old_locality
+        source = Source(url='http://www.example.com', version=0)
+        old_locality.sources = {source}
+        return old_locality, source
 
     def _build_locality_with_different_identifier(self):
         new_locality = self._build_locality()
@@ -157,6 +158,6 @@ class LocalityServiceTest(unittest.TestCase):
         return mock_connection
 
     def _build_mock_connection_with_old_source(self):
-        db_locality = self._build_old_locality()
+        db_locality, old_source = self._build_old_locality()
         mock_mongo_connection = self._build_mock_connection(db_locality)
-        return mock_mongo_connection, db_locality.sources[0]
+        return mock_mongo_connection, old_source

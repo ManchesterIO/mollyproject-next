@@ -5,11 +5,11 @@ class LocalityService(BaseService):
     def __init__(self, connection):
         self._connection = connection
 
-    def locality_by_url(self, locality):
-        return self._connection.select_by_url(locality.url)
+    def locality_by_url(self, locality_url):
+        return self._connection.select_by_url(locality_url)
 
     def insert_and_merge(self, locality):
-        existing_locality = self.locality_by_url(locality)
+        existing_locality = self.locality_by_url(locality.url)
 
         if existing_locality is None:
             self._connection.insert(locality)
@@ -20,5 +20,5 @@ class LocalityService(BaseService):
         self._merge_attribute('parent_url', existing_locality, locality)
         self._merge_attribute('geography', existing_locality, locality)
         existing_locality.identifiers.update(locality.identifiers)
-        existing_locality.sources += locality.sources
+        existing_locality.sources.update(locality.sources)
         return existing_locality

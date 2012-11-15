@@ -52,12 +52,12 @@ class NptgParserTest(unittest.TestCase):
         self.assertIn(expected_identifier, locality.identifiers)
 
     def test_region_name_is_identifier_on_region(self):
-        expected_identifier = Identifier(namespace="human", value="East Anglia", lang="en")
+        expected_identifier = Identifier(namespace="nptg:Name", value="East Anglia", lang="en")
         locality = self._get_imported_region()
         self.assertIn(expected_identifier, locality.identifiers)
 
     def test_multiple_region_names_are_set(self):
-        expected_identifier = Identifier(namespace="human", value="Something in German", lang="de")
+        expected_identifier = Identifier(namespace="nptg:Name", value="Something in German", lang="de")
         locality = self._get_imported_region()
         self.assertIn(expected_identifier, locality.identifiers)
 
@@ -70,7 +70,7 @@ class NptgParserTest(unittest.TestCase):
         self.assertIn(expected_identifier, locality.identifiers)
 
     def test_name_is_set_on_district(self):
-        expected_identifier = Identifier(namespace='human', value='Cambridge', lang='en')
+        expected_identifier = Identifier(namespace='nptg:Name', value='Cambridge', lang='en')
         locality = self._get_imported_district()
         self.assertIn(expected_identifier, locality.identifiers)
 
@@ -92,7 +92,7 @@ class NptgParserTest(unittest.TestCase):
         self.assertIn(expected_identifier, locality.identifiers)
 
     def test_locality_name_is_set_on_locality(self):
-        expected_identifier = Identifier(namespace='human', value='Amesbury', lang='en')
+        expected_identifier = Identifier(namespace='nptg:Name', value='Amesbury', lang='en')
         locality = self._get_imported_locality()
         self.assertIn(expected_identifier, locality.identifiers)
 

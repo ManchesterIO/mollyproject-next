@@ -1,8 +1,9 @@
 from collections import defaultdict
 from xml.etree.cElementTree import iterparse
+from tch.identifier import Identifier
 
 from tch.source import Source
-from tch.stop import Stop, CallingPoint
+from tch.stop import Stop, CallingPoint, ATCO_NAMESPACE, CRS_NAMESPACE, TIPLOC_NAMESPACE
 
 class NaptanParser(object):
 
@@ -12,6 +13,12 @@ class NaptanParser(object):
     _STOP_TYPE_XPATH = './{http://www.naptan.org.uk/}StopClassification/{http://www.naptan.org.uk/}StopType'
     _ATCO_CODE_XPATH = './{http://www.naptan.org.uk/}AtcoCode'
     _STOP_AREA_REF_XPATH = './{http://www.naptan.org.uk/}StopAreas/{http://www.naptan.org.uk/}StopAreaRef'
+    _CRS_CODE_XPATH = './{http://www.naptan.org.uk/}StopClassification/{http://www.naptan.org.uk/}OffStreet/' \
+                      '{http://www.naptan.org.uk/}Rail/{http://www.naptan.org.uk/}AnnotatedRailRef/' \
+                      '{http://www.naptan.org.uk/}CrsRef'
+    _TIPLOC_CODE_XPATH = './{http://www.naptan.org.uk/}StopClassification/{http://www.naptan.org.uk/}OffStreet/' \
+                         '{http://www.naptan.org.uk/}Rail/{http://www.naptan.org.uk/}AnnotatedRailRef/' \
+                         '{http://www.naptan.org.uk/}TiplocRef'
 
     _LICENCE = "Open Government Licence"
     _LICENCE_URL = "http://www.nationalarchives.gov.uk/doc/open-government-licence/"
@@ -90,7 +97,6 @@ class NaptanParser(object):
         return stop, calling_point
 
     def _build_airport(self, elem):
-
         atco_code = self._get_atco_code(elem)
         # This assumes that the main airport element is the same code except with
         # 0 at the end (this is true in the current NaPTAN dump)
@@ -155,8 +161,19 @@ class NaptanParser(object):
             licence_url=self._LICENCE_URL,
             attribution=self._ATTRIBUTION
         )]
-        point.url = '/gb/' + self._get_atco_code(elem)
+        atco_code = self._get_atco_code(elem)
+        point.url = '/gb/' + atco_code
+        point.identifiers.add(Identifier(namespace=ATCO_NAMESPACE, value=atco_code))
+
+        self._add_identifier(point, elem, CRS_NAMESPACE, self._CRS_CODE_XPATH)
+        self._add_identifier(point, elem, TIPLOC_NAMESPACE, self._TIPLOC_CODE_XPATH)
+
         return point
 
     def _get_atco_code(self, elem):
         return elem.find(self._ATCO_CODE_XPATH).text
+
+    def _add_identifier(self, point, elem, namespace, xpath):
+        code_elem = elem.find(xpath)
+        if code_elem is not None:
+            point.identifiers.add(Identifier(namespace=namespace, value=code_elem.text))

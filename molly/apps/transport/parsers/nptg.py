@@ -122,4 +122,4 @@ class NptgParser(object):
         if lang is not None:
             lang = lang.lower()
 
-        return Identifier(namespace="human", value=elem.text, lang=lang)
+        return Identifier(namespace="nptg:Name", value=elem.text, lang=lang)
