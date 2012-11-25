@@ -1,3 +1,4 @@
+from datetime import time
 import mock
 import os
 import unittest2 as unittest
@@ -5,6 +6,7 @@ import unittest2 as unittest
 from tch.identifier import Identifier
 from tch.parsers.cif import CifParser
 from tch.stop import CallingPoint, TIPLOC_NAMESPACE, STANOX_NAMESPACE, CRS_NAMESPACE, CIF_DESCRIPTION_NAMESPACE
+from tch.timetable import Call, CallTime
 
 class CifParserTest(unittest.TestCase):
 
@@ -69,7 +71,7 @@ class CifParserTest(unittest.TestCase):
         )
 
     def test_route_name_is_correctly_defined(self):
-        self.assertEquals('Crewe to Derby', self._parser.routes[0].headline)
+        self.assertEquals('Crewe to Derby', self._parser.services[0].name)
 
     def test_route_url_is_set(self):
         self.assertEquals('/gb/rail/CREWE-DRBY', self._parser.routes[0].url)
@@ -83,3 +85,173 @@ class CifParserTest(unittest.TestCase):
 
     def test_routes_have_service_url(self):
         self.assertEquals('/gb/rail/CREWE-DRBY', self._parser.routes[0].service_url)
+
+    def test_route_variations_are_correctly_identified(self):
+        self.assertEquals(4, len(self._parser.routes))
+
+    def test_scheduled_trips_use_uid_as_url(self):
+        self.assertEquals('/gb/rail/C03360', self._parser.scheduled_trips[0].url)
+
+    def test_routes_contain_correctly_ordered_urls(self):
+        self.assertEquals([
+            '/gb/9400CREWE/calling_point',
+            '/gb/9400CREWSJN/calling_point',
+            '/gb/9400BTHLYJN/calling_point',
+            '/gb/9400ALSAGER/calling_point',
+            '/gb/9400KIDSGRV/calling_point',
+            '/gb/9400LNGP/calling_point',
+            '/gb/9400STOKEOT/calling_point',
+            '/gb/9400STOKOTJ/calling_point',
+            '/gb/9400LNTN/calling_point',
+            '/gb/9400CAVRSWL/calling_point',
+            '/gb/9400BLYBDGE/calling_point',
+            '/gb/9400UTOXSB/calling_point',
+            '/gb/9400UTOXETR/calling_point',
+            '/gb/9400TUTBURY/calling_point',
+            '/gb/9400NSJDRBY/calling_point',
+            '/gb/9400STSNJN/calling_point',
+            '/gb/9400DRBY/calling_point'
+        ], self._parser.routes[0].calling_points)
+
+    def test_route_headline_is_destination(self):
+        self.assertEquals('Derby', self._parser.routes[0].headline)
+
+    def test_trips_have_correct_route(self):
+        self.assertEquals('/gb/rail/CREWE-DRBY', self._parser.scheduled_trips[0].route_url)
+
+    def test_platforms_get_own_calling_points(self):
+        self.assertEquals('/gb/9400CREWE/platform4', self._parser.tiplocs[68].url)
+
+    def test_platforms_have_parent_station(self):
+        self.assertEquals('/gb/9400CREWE', self._parser.tiplocs[68].parent_url)
+
+    def test_scheduled_journeys_correctly_populated(self):
+        self.assertEquals(
+            [
+                Call(
+                    point_url='/gb/9400CREWE/platform4',
+                    scheduled_departure_time=CallTime(15, 5),
+                    public_departure_time=CallTime(15, 5),
+                    activity=Call.START
+                ),
+                Call(
+                    point_url='/gb/9400CREWSJN/platformUDP',
+                    scheduled_arrival_time=CallTime(15, 8),
+                    scheduled_departure_time=CallTime(15, 8),
+                    activity=Call.PASS_THROUGH
+                ),
+                Call(
+                    point_url='/gb/9400BTHLYJN/calling_point',
+                    scheduled_arrival_time=CallTime(15, 11),
+                    scheduled_departure_time=CallTime(15, 11),
+                    activity=Call.PASS_THROUGH
+                ),
+                Call(
+                    point_url='/gb/9400ALSAGER/calling_point',
+                    scheduled_arrival_time=CallTime(15, 14),
+                    public_arrival_time=CallTime(15, 14),
+                    scheduled_departure_time=CallTime(15, 14, 30),
+                    public_departure_time=CallTime(15, 14),
+                    activity=Call.NORMAL
+                ),
+                Call(
+                    point_url='/gb/9400KIDSGRV/calling_point',
+                    scheduled_arrival_time=CallTime(15, 21),
+                    public_arrival_time=CallTime(15, 21),
+                    scheduled_departure_time=CallTime(15, 21, 30),
+                    public_departure_time=CallTime(15, 21),
+                    activity=Call.NORMAL
+                ),
+                Call(
+                    point_url='/gb/9400LNGP/calling_point',
+                    scheduled_arrival_time=CallTime(15, 26),
+                    public_arrival_time=CallTime(15, 26),
+                    scheduled_departure_time=CallTime(15, 26, 30),
+                    public_departure_time=CallTime(15, 26),
+                    activity=Call.NORMAL
+                ),
+                Call(
+                    point_url='/gb/9400STOKEOT/platform1',
+                    scheduled_arrival_time=CallTime(15, 31),
+                    public_arrival_time=CallTime(15, 30),
+                    scheduled_departure_time=CallTime(15, 32),
+                    public_departure_time=CallTime(15, 32),
+                    activity=Call.NORMAL
+                ),
+                Call(
+                    point_url='/gb/9400STOKOTJ/calling_point',
+                    scheduled_arrival_time=CallTime(15, 33, 30),
+                    scheduled_departure_time=CallTime(15, 33, 30),
+                    activity=Call.PASS_THROUGH
+                ),
+                Call(
+                    point_url='/gb/9400LNTN/calling_point',
+                    scheduled_arrival_time=CallTime(15, 37, 30),
+                    public_arrival_time=CallTime(15, 38),
+                    scheduled_departure_time=CallTime(15, 38),
+                    public_departure_time=CallTime(15, 38),
+                    activity=Call.NORMAL
+                ),
+                Call(
+                    point_url='/gb/9400CAVRSWL/calling_point',
+                    scheduled_arrival_time=CallTime(15, 42),
+                    scheduled_departure_time=CallTime(15, 42),
+                    activity=Call.PASS_THROUGH
+                ),
+                Call(
+                    point_url='/gb/9400BLYBDGE/calling_point',
+                    scheduled_arrival_time=CallTime(15, 43, 30),
+                    public_arrival_time=CallTime(15, 43),
+                    scheduled_departure_time=CallTime(15, 44, 30),
+                    public_departure_time=CallTime(15, 44),
+                    activity=Call.NORMAL
+                ),
+                Call(
+                    point_url='/gb/9400UTOXSB/calling_point',
+                    scheduled_arrival_time=CallTime(15, 54, 30),
+                    scheduled_departure_time=CallTime(15, 54, 30),
+                    activity=Call.PASS_THROUGH
+                ),
+                Call(
+                    point_url='/gb/9400UTOXETR/calling_point',
+                    scheduled_arrival_time=CallTime(15, 56),
+                    public_arrival_time=CallTime(15, 56),
+                    scheduled_departure_time=CallTime(15, 56, 30),
+                    public_departure_time=CallTime(15, 56),
+                    activity=Call.NORMAL
+                ),
+                Call(
+                    point_url='/gb/9400TUTBURY/calling_point',
+                    scheduled_arrival_time=CallTime(16, 05),
+                    public_arrival_time=CallTime(16, 05),
+                    scheduled_departure_time=CallTime(16, 06),
+                    public_departure_time=CallTime(16, 06),
+                    activity=Call.NORMAL
+                ),
+                Call(
+                    point_url='/gb/9400NSJDRBY/calling_point',
+                    scheduled_arrival_time=CallTime(16, 13, 30),
+                    scheduled_departure_time=CallTime(16, 13, 30),
+                    activity=Call.PASS_THROUGH
+                ),
+                Call(
+                    point_url='/gb/9400STSNJN/calling_point',
+                    scheduled_arrival_time=CallTime(16, 14, 30),
+                    scheduled_departure_time=CallTime(16, 14, 30),
+                    activity=Call.PASS_THROUGH
+                ),
+                Call(
+                    point_url='/gb/9400DRBY/platform1',
+                    scheduled_arrival_time=CallTime(16, 22),
+                    public_arrival_time=CallTime(16, 25),
+                    activity=Call.FINISH
+                ),
+            ],
+            self._parser.scheduled_trips[0].calling_points
+        )
+
+    # TODO: Detecting and populating of vias
+    # TODO: Operating period setting
+    # TODO: Journeys across midnight
+    # TODO: Associations
+    # TODO: TIPLOC URL and mapping to parents

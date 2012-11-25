@@ -7,9 +7,11 @@ class Service(object):
     """
 
     def __init__(self):
+        self.name = None
         self.url = None
         self.mode = None
         self.routes = set()
+        self.sources = set()
 
 
 class Route(object):
@@ -24,6 +26,7 @@ class Route(object):
         self.service_url = None
         self.headline = None
         self.via = None
+        self.sources = set()
 
 
 class ScheduledTrip(object):
@@ -35,6 +38,8 @@ class ScheduledTrip(object):
         self.url = None
         self.route_url = None
         self.calling_points = []
+        self.operating_periods = set()
+        self.sources = set()
 
 
 class Call(object):
@@ -48,13 +53,42 @@ class Call(object):
     START = 'start' # journey starts here
     FINISH = 'finish' # journey completes here
 
-    def __init__(self):
-        self.point_url = None
-        self.scheduled_arrival_time = None
-        self.timetabled_arrival_time = None
-        self.scheduled_departure_time = None
-        self.timetabled_departure_time = None
-        self.activity = None
+    def __init__(
+            self, point_url=None, scheduled_arrival_time=None, public_arrival_time=None,
+            scheduled_departure_time=None, public_departure_time=None, activity=None
+    ):
+        self.point_url = point_url
+        self.scheduled_arrival_time = scheduled_arrival_time
+        self.public_arrival_time = public_arrival_time
+        self.scheduled_departure_time = scheduled_departure_time
+        self.public_departure_time = public_departure_time
+        self.activity = activity
+
+    def __eq__(self, other):
+        return all(
+            map(
+                lambda key: getattr(self, key) == getattr(other, key),
+                (
+                    'point_url', 'scheduled_arrival_time', 'public_arrival_time',
+                    'scheduled_departure_time', 'public_departure_time', 'activity'
+                )
+            )
+        )
+
+    def __unicode__(self):
+        return 'Call(point_url={point_url}, scheduled_arrival_time={scheduled_arrival_time}, ' \
+               'public_arrival_time={public_arrival_time}, scheduled_departure_time={scheduled_departure_time}, ' \
+               'public_departure_time={public_departure_time}, activity={activity})'.format(
+            point_url=self.point_url,
+            scheduled_arrival_time=self.scheduled_arrival_time,
+            public_arrival_time=self.public_arrival_time,
+            scheduled_departure_time=self.scheduled_departure_time,
+            public_departure_time=self.public_departure_time,
+            activity=self.activity
+        )
+
+    def __str__(self):
+        return str(unicode(self))
 
 
 class CallTime(datetime.time):
