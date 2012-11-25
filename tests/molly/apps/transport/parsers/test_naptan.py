@@ -20,24 +20,24 @@ class NaptanParserTest(unittest.TestCase):
         self.assertIsInstance(stops.next(), CallingPoint)
 
     def test_bus_stop_source_url_is_set_correctly(self):
-        self.assertEquals(self._TEST_URL + "/NaPTAN.xml", self._get_bus_stop().sources[0].url)
+        self.assertEquals(self._TEST_URL + "/NaPTAN.xml", self._get_bus_stop().sources.pop().url)
 
     def test_bus_stop_source_version_is_set_correctly(self):
-        self.assertEquals('2', self._get_bus_stop().sources[0].version)
+        self.assertEquals('2', self._get_bus_stop().sources.pop().version)
 
     def test_licence_is_correctly_set_on_bus_stop(self):
-        self.assertEqual("Open Government Licence", self._get_bus_stop().sources[0].licence)
+        self.assertEqual("Open Government Licence", self._get_bus_stop().sources.pop().licence)
 
     def test_licence_url_is_correctly_set_on_bus_stop(self):
         self.assertEqual("http://www.nationalarchives.gov.uk/doc/open-government-licence/",
-            self._get_bus_stop().sources[0].licence_url)
+            self._get_bus_stop().sources.pop().licence_url)
 
     def test_attribution_is_correctly_set_on_bus_stop(self):
         self.assertEqual("Contains public sector information licensed under the Open Government Licence v1.0",
-            self._get_bus_stop().sources[0].attribution)
+            self._get_bus_stop().sources.pop().attribution)
 
     def test_bus_calling_point_source_url_is_set_correctly(self):
-        self.assertEquals(self._TEST_URL + "/NaPTAN.xml", self._get_bus_calling_point().sources[0].url)
+        self.assertEquals(self._TEST_URL + "/NaPTAN.xml", self._get_bus_calling_point().sources.pop().url)
 
     def test_bus_stop_has_correct_url(self):
         self.assertEquals('/gb/639000011', self._get_bus_stop().url)
@@ -115,7 +115,7 @@ class NaptanParserTest(unittest.TestCase):
     def test_things_without_revision_numbers_default_to_0(self):
         stops_dict = self._get_stops_by_url()
         stop = stops_dict['/gb/6490IM1778']
-        self.assertEquals('0', stop.sources[0].version)
+        self.assertEquals('0', stop.sources.pop().version)
 
     def test_ferry_terminals_without_stop_area_imply_group(self):
         stops_dict = self._get_stops_by_url()

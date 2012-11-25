@@ -10,7 +10,7 @@ class StopService(BaseService):
         """
         When the passed in Stop has an URL, it is merged with anything already existing that has that URL
         If the passed in stop does not have a URL (for example, some railway data sets refer to things
-        only by STANOX, etc) then it is
+        only by STANOX, etc) then it is merged with things that share its identifiers
         """
         if stop.url is not None:
             self._do_insert_and_merge(self._connection.select_by_url(stop.url, filter_by_type=type(stop)), stop)

@@ -154,13 +154,13 @@ class NaptanParser(object):
 
     def _build_base(self, elem, point_type=Stop):
         point = point_type()
-        point.sources = [Source(
+        point.sources.add(Source(
             url=self._source_url + '/' + self._source_file,
             version=elem.attrib.get('RevisionNumber', '0'),
             licence=self._LICENCE,
             licence_url=self._LICENCE_URL,
             attribution=self._ATTRIBUTION
-        )]
+        ))
         atco_code = self._get_atco_code(elem)
         point.url = '/gb/' + atco_code
         point.identifiers.add(Identifier(namespace=ATCO_NAMESPACE, value=atco_code))

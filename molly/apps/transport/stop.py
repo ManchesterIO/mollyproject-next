@@ -2,7 +2,9 @@ from tch.identifier import Identifiers, Identifier
 from tch.source import Source
 
 ATCO_NAMESPACE = 'naptan:atco'
+CIF_DESCRIPTION_NAMESPACE = 'cif:description'
 CRS_NAMESPACE = 'rail:crs'
+STANOX_NAMESPACE = 'rail:stanox'
 TIPLOC_NAMESPACE = 'rail:tiploc'
 
 class Stop(object):
