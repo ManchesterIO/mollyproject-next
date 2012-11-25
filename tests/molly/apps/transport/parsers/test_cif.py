@@ -25,9 +25,6 @@ class CifParserTest(unittest.TestCase):
         for fd in self._files_to_close:
             fd.close()
 
-    def test_parser_yields_tiplocs(self):
-        self.assertEquals(9, len(self._parser.tiplocs))
-
     def test_tiplocs_are_calling_points(self):
         for tiploc in self._parser.tiplocs:
             self.assertIsInstance(tiploc, CallingPoint)
@@ -57,17 +54,32 @@ class CifParserTest(unittest.TestCase):
         self.assertEquals('TEST', self._parser.tiplocs[0].sources.pop().version)
 
     def test_licence_is_correctly_set_on_tiploc(self):
-        self.assertEqual("Creative Commons Attribution-ShareAlike", self._parser.tiplocs[0].sources.pop().licence)
+        self.assertEquals("Creative Commons Attribution-ShareAlike", self._parser.tiplocs[0].sources.pop().licence)
 
     def test_licence_url_is_correctly_set_on_tiploc(self):
-        self.assertEqual(
+        self.assertEquals(
             "http://creativecommons.org/licenses/by-sa/1.0/legalcode",
             self._parser.tiplocs[0].sources.pop().licence_url
         )
 
     def test_attribution_is_correctly_set_on_tiploc(self):
-        self.assertEqual(
+        self.assertEquals(
             '<a href="http://www.atoc.org/">Source: RSP</a>',
             self._parser.tiplocs[0].sources.pop().attribution
         )
 
+    def test_route_name_is_correctly_defined(self):
+        self.assertEquals('Crewe to Derby', self._parser.routes[0].headline)
+
+    def test_route_url_is_set(self):
+        self.assertEquals('/gb/rail/CREWE-DRBY', self._parser.routes[0].url)
+
+    def test_return_journey_is_correctly_grouped_into_one_service(self):
+        self.assertEquals(self._parser.services[0].routes, {'/gb/rail/CREWE-DRBY', '/gb/rail/DRBY-CREWE'})
+        self.assertEquals(self._parser.routes[0].service_url, self._parser.routes[1].service_url)
+
+    def test_service_has_correct_url(self):
+        self.assertEquals('/gb/rail/CREWE-DRBY', self._parser.services[0].url)
+
+    def test_routes_have_service_url(self):
+        self.assertEquals('/gb/rail/CREWE-DRBY', self._parser.routes[0].service_url)
