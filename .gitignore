@@ -3,3 +3,4 @@
 conf/local.conf
 docs/_build
 *.iml
+dist/

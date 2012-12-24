@@ -1,11 +1,11 @@
 from flask import Flask
 from flask.ext.babel import Babel
 from jinja2 import PackageLoader
+
 from molly.ui.html5.components.factory import ComponentFactory
 from molly.ui.html5.page_decorators.page_decorator_factory import PageDecoratorFactory
-
-from .router import Router
-from .request_factory import HttpRequestFactory
+from molly.ui.html5.request_factory import HttpRequestFactory
+from molly.ui.html5.router import Router
 
 flask_app = Flask(__name__)
 Babel(flask_app)

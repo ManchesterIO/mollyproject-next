@@ -3,3 +3,5 @@ gunicorn
 unittest2
 mock
 Flask-Babel
+python-dateutil
+Flask-Script

@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask
-from flaskext.babel import Babel
+from flask.ext.babel import Babel
 
 from molly.config import ConfigLoader
 from molly.apps.homepage import App as Homepage

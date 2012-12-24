@@ -11,5 +11,11 @@ setup(
     author='The Molly Project',
     setup_requires=['setuptools'],
     tests_require=['unittest2', 'mock'],
-    test_suite='unittest2.collector'
+    test_suite='unittest2.collector',
+    entry_points={
+        'console_scripts': [
+            'mollyui = molly.ui.html5.command:main',
+            'mollyrest = molly.command:main'
+        ]
+    }
 )
