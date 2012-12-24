@@ -1,4 +1,7 @@
 from setuptools import setup, find_packages
+from sys import version_info
+
+assert version_info >= (2,7)
 
 setup(
     name='molly',
