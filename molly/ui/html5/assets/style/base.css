@@ -1,0 +1,19 @@
+@import url(http://fonts.googleapis.com/css?family=Scada:400,700);
+
+* {
+    color: #202627;
+    font-family: 'Scada', sans-serif;
+}
+
+header {
+    padding: 8px 0 8px 80px;
+    height: 60px;
+    background: url('../img/header-logo.png') no-repeat;
+    background-position: 10px 5px;
+    border-bottom: 3px #57658d solid;
+}
+
+header h1 {
+    color: #57658d;
+    margin-top: 11px;
+}

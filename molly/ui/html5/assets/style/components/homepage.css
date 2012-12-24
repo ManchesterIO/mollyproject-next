@@ -1,0 +1,12 @@
+.homepage-applications-list {
+    width: 100%;
+    max-width: 1280px;
+    list-style-type: none;
+    padding: 0 10px;
+    margin: 0 auto;
+}
+
+.homepage-applications-list li {
+    display: inline-block;
+    padding: 5px;
+}

@@ -1,0 +1,28 @@
+.weather-homepage-widget {
+    height: 157px;
+    min-width: 156px;
+    max-width: 240px;
+    border: 2px #41444c solid;
+    background-color: #11151b;
+}
+
+.weather-homepage-widget h1 {
+    background-color: #41444c;
+    font-size: 1.4em;
+    padding: 5px;
+    margin: 0;
+}
+
+.weather-homepage-widget h1 a {
+    color: #eff4ff;
+    text-decoration: none;
+}
+
+.weather-homepage-widget h1 a:hover,
+.weather-homepage-widget h1 a:focus {
+    text-decoration: underline;
+}
+
+.weather-homepage-widget .weather-detail {
+    display: none;
+}

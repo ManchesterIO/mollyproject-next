@@ -1,0 +1,21 @@
+<section class="weather-observation">
+    <div class="weather-summary weather-{{ weather_type_id }}">
+        <span>{{ weather_type }}</span>
+    </div>
+    <div class="weather-detail">
+        <dl>
+            <dt>{{ _('Temperature') }}</dt>
+            <dd>{{ temperature }}</dd>
+
+            <dt>{{ _('Wind') }}</dt>
+            <dd>{% trans speed=wind_speed, direction=wind_direction, wind_gust=gust_speed %}
+                {{ wind_speed }} {{ wind_direction }} (gusts {{ wind_gust }}){% endtrans %}</dd>
+
+            <dt>{{ _('Pressure') }}</dt>
+            <dd>{{ pressure }}</dd>
+        </dl>
+        <aside>{% trans location=observation_location, datetime=observation_time %}Observation made
+            at {{ location }} on {{ datetime }}{% endtrans %}</aside>
+        {{ attribution.render() }}
+    </div>
+</section>

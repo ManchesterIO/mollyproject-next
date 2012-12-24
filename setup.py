@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='molly-core',
+    name='molly',
     version='2.0dev',
     packages=find_packages(exclude=['tests']),
     url='http://mollyproject.org/',
