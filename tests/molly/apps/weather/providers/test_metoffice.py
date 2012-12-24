@@ -31,12 +31,13 @@ class MetOfficeTest(unittest.TestCase):
         observation = self._provider.latest_observations()
         self.assertEquals({
             'type': 'Partly cloudy',
+            'type_id': 'cloud',
             'temperature': u'16.3 °C',
             'wind_speed': '18 mph',
             'gust_speed': 'N/A',
-            'wind_direction': 'SW',
+            'wind_direction': u'SW',
             'pressure': '1016 mb',
-            'obs_location': 'Heathrow',
+            'obs_location': u'Heathrow',
             'obs_time': datetime(2012, 9, 30, 16, 0, tzinfo=utc).isoformat()
         }, observation)
 
