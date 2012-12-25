@@ -22,8 +22,8 @@ flask_app.add_url_rule('/<path:path>', 'main', view_func=router)
 
 flask_app.jinja_loader = PackageLoader('molly.ui.html5', 'templates')
 
-def start_debug():
+def start_debug(address=None):
     flask_app.debug = True
     flask_app.static_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), 'assets'))
     flask_app.static_url_path = 'static'
-    flask_app.run(debug=True, port=8002)
+    flask_app.run(debug=True, host=address, port=8002)

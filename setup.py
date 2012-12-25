@@ -15,7 +15,11 @@ setup(
     entry_points={
         'console_scripts': [
             'mollyui = molly.command:ui_main',
-            'mollyrest = molly.command:rest_main'
+            'mollyrest = molly.command:rest_main',
+            'mollyd = molly.command:mollyd',
+            'mollydebugd = molly.command:mollydebugd',
+            'mollyctl = molly.command:mollyctl',
+            'mollydebugctl = molly.command:mollydebugctl'
         ]
     }
 )

@@ -17,6 +17,6 @@ for app in apps:
     flask_app.register_blueprint(app.blueprint, url_prefix='/' + app.instance_name)
 flask_app.register_blueprint(Homepage(apps).blueprint)
 
-def start_debug():
+def start_debug(address=None):
     flask_app.debug = True
-    flask_app.run(debug=True, port=8000)
+    flask_app.run(debug=True, host=address, port=8000)
