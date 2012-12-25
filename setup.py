@@ -14,8 +14,8 @@ setup(
     test_suite='unittest2.collector',
     entry_points={
         'console_scripts': [
-            'mollyui = molly.ui.command:main',
-            'mollyrest = molly.command:main'
+            'mollyui = molly.command:ui_main',
+            'mollyrest = molly.command:rest_main'
         ]
     }
 )

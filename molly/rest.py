@@ -16,3 +16,7 @@ with open(os.environ.get('MOLLY_CONFIG', 'conf/default.conf')) as fd:
 for app in apps:
     flask_app.register_blueprint(app.blueprint, url_prefix='/' + app.instance_name)
 flask_app.register_blueprint(Homepage(apps).blueprint)
+
+def start_debug():
+    flask_app.debug = True
+    flask_app.run(debug=True, port=8000)
