@@ -1,9 +1,14 @@
-import os.path
+from importlib import import_module
+import os
 
 from flask.ext.script import Manager
 from gunicorn.app.base import Application
 
-from molly.ui.html5.server import flask_app
+def get_flask_app():
+    package, app_name = os.environ.get('MOLLY_UI_MODULE', 'molly.ui.html5.server:flask_app').split(':', 1)
+    return getattr(import_module(package), app_name)
+
+flask_app = get_flask_app()
 
 manager = Manager(flask_app, with_default_commands=False)
 

@@ -4,3 +4,5 @@ conf/local.conf
 docs/_build
 *.iml
 dist/
+.DS_Store
+*.egg-info
