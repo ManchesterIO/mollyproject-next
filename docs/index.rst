@@ -1,8 +1,3 @@
-.. Molly Project documentation master file, created by
-   sphinx-quickstart on Tue Oct 16 20:47:41 2012.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to Molly Project's documentation!
 =========================================
 
@@ -12,7 +7,7 @@ developed by the University of Oxford. It was originally developed for
 Higher Education institutions but is suitable in many other situations.
 
 Powering every Molly site is a RESTful API which allows Molly to be used
-as a basis to build other applications and
+as a basis to build other applications and frontends.
 
 Contents:
 
