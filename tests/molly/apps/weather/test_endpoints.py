@@ -3,7 +3,7 @@ from flask import Flask
 from mock import Mock
 import unittest2 as unittest
 
-from molly.apps.common.attribution import Attribution
+from molly.apps.common.components import Attribution
 
 from molly.apps.weather.endpoints import ObservationsEndpoint
 

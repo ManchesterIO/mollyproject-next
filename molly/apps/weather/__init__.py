@@ -1,5 +1,5 @@
 from flask import Blueprint, url_for
-from flaskext.babel import lazy_gettext as _
+from flask.ext.babel import lazy_gettext as _
 
 from molly.apps.weather.endpoints import ObservationsEndpoint
 

@@ -7,7 +7,7 @@ import time
 from urllib2 import urlopen
 
 from flaskext.babel import lazy_gettext as _
-from molly.apps.common.attribution import Attribution
+from molly.apps.common.components import Attribution
 
 class Provider(object):
 

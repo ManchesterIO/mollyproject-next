@@ -6,3 +6,5 @@ Flask-Babel
 python-dateutil
 Flask-Script
 supervisor
+imposm.parser
+Shapely
