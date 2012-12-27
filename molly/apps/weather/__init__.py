@@ -7,7 +7,7 @@ class App(object):
 
     module = 'http://mollyproject.org/apps/weather'
 
-    def __init__(self, instance_name, config, providers=[]):
+    def __init__(self, instance_name, config, providers, services):
         self.instance_name = instance_name
         self._provider = providers.pop()
 

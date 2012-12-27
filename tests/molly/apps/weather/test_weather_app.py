@@ -18,7 +18,7 @@ class WeatherAppTest(unittest.TestCase):
         self._observations_endpoint.get.methods = ('GET',)
         self._observations_endpoint.get.required_methods = ()
         weather.ObservationsEndpoint = Mock(return_value=self._observations_endpoint)
-        self._weather_app = weather.App('weather', {}, [self._provider])
+        self._weather_app = weather.App('weather', {}, [self._provider], {})
 
     def test_module_is_set_correctly(self):
         self.assertEquals('http://mollyproject.org/apps/weather', self._weather_app.module)

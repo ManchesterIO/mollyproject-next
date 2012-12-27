@@ -7,9 +7,43 @@ class ConfigLoader(object):
         apps = []
         parser = ConfigParser()
         parser.readfp(config)
+
+        if parser.has_section('services'):
+            services = self._initialise_services(parser.items('services'))
+        else:
+            services = {}
+
+        if parser.has_section('global'):
+            global_config = dict((key.upper(), eval(value)) for (key, value) in parser.items('global'))
+        else:
+            global_config = {}
+
         for section in parser.sections():
-            apps.append(self._initialise_app(section, dict(parser.items(section))))
-        return apps
+            if section not in ('services', 'global'):
+                apps.append(self._initialise_app(section, dict(parser.items(section)), services))
+
+        return global_config, apps, services
+
+    def _initialise_services(self, config):
+        services = {}
+        for service_name, service_package in config:
+            if ':' in service_package:
+                service_module, service_class = service_package.split(':')
+            else:
+                service_module, service_class = service_package, 'Service'
+            services[service_name] = getattr(import_module(service_module), service_class)()
+        return services
+
+    def _initialise_app(self, name, config, services):
+        providers = self._initialise_providers(config)
+        module_name = config.get('module')
+        if module_name is None:
+            raise ConfigError('Module name not defined for app ' + name)
+        try:
+            app_module = import_module(module_name)
+        except ImportError:
+            raise ConfigError("Unable to find module: " + config['module'])
+        return app_module.App(name, config, providers, services)
 
     def _initialise_providers(self, config):
         providers = []
@@ -32,17 +66,6 @@ class ConfigLoader(object):
                     raise ConfigError("Provider " + key_parts[1] + " module must be declared before configuring it")
                 configs[key_parts[1]][1][key_parts[2]] = value
         return configs.values()
-
-    def _initialise_app(self, name, config):
-        providers = self._initialise_providers(config)
-        module_name = config.get('module')
-        if module_name is None:
-            raise ConfigError('Module name not defined for app ' + name)
-        try:
-            app_module = import_module(module_name)
-        except ImportError:
-            raise ConfigError("Unable to find module: " + config['module'])
-        return app_module.App(name, config, providers)
 
 
 class ConfigError(Exception):
