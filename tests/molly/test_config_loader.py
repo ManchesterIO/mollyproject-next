@@ -1,3 +1,5 @@
+from flask.ext.script import Manager
+
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -13,7 +15,7 @@ from tests.test_services.service import Service as TestService
 class ConfigLoaderTestCase(unittest.TestCase):
 
     def setUp(self):
-        self._config_loader = ConfigLoader()
+        self._config_loader = ConfigLoader(None)
 
     def tearDown(self):
         SIMPLE_TEST_CONFIG.reset()
@@ -59,6 +61,10 @@ class ConfigLoaderTestCase(unittest.TestCase):
     def test_global_config_is_extracted(self):
         config, apps, services = self._config_loader.load_from_config(GLOBAL_CONFIG)
         self.assertEquals(True, config['DEBUG'])
+
+    def test_default_cli_service_is_created(self):
+        config, apps, services = self._config_loader.load_from_config(StringIO(""))
+        self.assertIsInstance(services['cli'], Manager)
 
 
 SIMPLE_TEST_CONFIG = StringIO("""

@@ -5,7 +5,7 @@ class Service(celery.Celery):
 
     def __init__(self):
         super(Service, self).__init__(__package__, loader='default')
-        self.periodic_tasks = []
+        self.periodic_tasks = {}
 
     def init_cli_commands(self, manager):
 

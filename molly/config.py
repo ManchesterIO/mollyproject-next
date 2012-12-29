@@ -1,7 +1,12 @@
 from ConfigParser import ConfigParser
+from collections import OrderedDict
 from importlib import import_module
+from flask.ext.script import Manager
 
 class ConfigLoader(object):
+
+    def __init__(self, flask_app):
+        self._flask_app = flask_app
 
     def load_from_config(self, config):
         apps = []
@@ -13,6 +18,9 @@ class ConfigLoader(object):
         else:
             services = {}
 
+        if services.get('cli', None) is None:
+            services['cli'] = Manager(self._flask_app, with_default_commands=False)
+
         if parser.has_section('global'):
             global_config = dict((key.upper(), eval(value)) for (key, value) in parser.items('global'))
         else:
@@ -20,7 +28,7 @@ class ConfigLoader(object):
 
         for section in parser.sections():
             if section not in ('services', 'global'):
-                apps.append(self._initialise_app(section, dict(parser.items(section)), services))
+                apps.append(self._initialise_app(section, OrderedDict(parser.items(section)), services))
 
         return global_config, apps, services
 

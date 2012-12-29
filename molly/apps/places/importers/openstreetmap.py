@@ -1,8 +1,12 @@
+from datetime import timedelta
 from tempfile import NamedTemporaryFile
 from urllib2 import urlopen
 
+from celery.schedules import schedule
 from imposm.parser import OSMParser
 from shapely.geometry import Polygon, LineString, Point
+
+from molly.config import ConfigError
 from molly.apps.places.models import PointOfInterest
 
 OSM_TAGS_TO_TYPES = {
@@ -58,8 +62,10 @@ OSM_TAGS_TO_AMENITIES = {
 }
 
 class OpenStreetMapImporter(object):
+    IMPORTER_NAME = 'openstreetmap'
+    IMPORT_SCHEDULE = schedule(run_every=timedelta(weeks=1))
 
-    def __init__(self):
+    def __init__(self, config):
         self._parser = OSMParser(
             coords_callback=self.handle_coords,
             nodes_callback=self.handle_nodes,
@@ -72,12 +78,17 @@ class OpenStreetMapImporter(object):
         self.pois = []
         self._coords = {}
 
-    def load(self, url):
+        try:
+            self._url = config['url']
+        except KeyError:
+            raise ConfigError('OpenStreetMap importer must have url config element set')
+
+    def load(self):
         self.pois = []
         self._coords = {}
         with NamedTemporaryFile() as protobuf_file:
-            protobuf_file.write(urlopen(url).read())
-            self._parser.parse(protobuf_file.name)
+            protobuf_file.write(urlopen(self._url).read())
+            self._parser.parse_pbf_file(protobuf_file.name)
 
     def handle_coords(self, coords):
         for id, lat, lon in coords:
@@ -110,3 +121,5 @@ class OpenStreetMapImporter(object):
 
     def _add_poi(self, id, geography):
         self.pois.append(PointOfInterest(uri='/osm:{}'.format(id), geography=geography))
+
+Provider = OpenStreetMapImporter

@@ -10,13 +10,8 @@ def configure_flask_app():
     flask_app = Flask(__name__)
 
     with open(os.environ.get('MOLLY_CONFIG', 'conf/default.conf')) as fd:
-        config_loader = ConfigLoader()
+        config_loader = ConfigLoader(flask_app)
         config, apps, services = config_loader.load_from_config(fd)
-
-    if services.get('cli', None) is not None:
-        manager = services['cli']
-    else:
-        services['cli'] = manager = Manager(flask_app, with_default_commands=False)
 
     flask_app.config.update(config)
 
@@ -24,13 +19,13 @@ def configure_flask_app():
         if hasattr(service, 'init_app'):
             service.init_app(flask_app)
         if hasattr(service, 'init_cli_commands'):
-            service.init_cli_commands(manager)
+            service.init_cli_commands(services['cli'])
 
     for app in apps:
         flask_app.register_blueprint(app.blueprint, url_prefix='/' + app.instance_name)
     flask_app.register_blueprint(Homepage(apps).blueprint)
 
-    return flask_app, manager
+    return flask_app, services['cli']
 
 def start_debug(address=None):
     flask_app.debug = True

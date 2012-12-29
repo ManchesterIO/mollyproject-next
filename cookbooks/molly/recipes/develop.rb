@@ -16,7 +16,7 @@ python_virtualenv '/opt/molly' do
   action :create
 end
 
-%w(protobuf-compiler rabbitmq-server).each do | pkg |
+%w(build-essential libgeos-c1 libprotobuf-dev protobuf-compiler rabbitmq-server).each do | pkg |
   package pkg do
     action :install
   end

@@ -1,4 +1,5 @@
 from mock import Mock, MagicMock
+from molly.config import ConfigError
 from shapely.geometry import Polygon, LineString, Point
 import unittest2
 
@@ -12,7 +13,7 @@ class TestOpenStreetMapImporter(unittest2.TestCase):
         openstreetmap.NamedTemporaryFile = Mock()
         openstreetmap.NamedTemporaryFile.return_value = MagicMock()
         openstreetmap.urlopen = Mock()
-        self._osm_importer = openstreetmap.OpenStreetMapImporter()
+        self._osm_importer = openstreetmap.OpenStreetMapImporter({'url': 'http://www.example.com/file.pbf'})
 
     def test_imposm_configured_with_correct_attributes(self):
         openstreetmap.OSMParser.assert_called_once_with(
@@ -27,15 +28,14 @@ class TestOpenStreetMapImporter(unittest2.TestCase):
         temporary_file = openstreetmap.NamedTemporaryFile.return_value.__enter__.return_value
         temporary_file.name = '/tmp/foo'
 
-        self._osm_importer.load('http://www.example.com')
+        self._osm_importer.load()
 
-        openstreetmap.OSMParser.return_value.parse.assert_called_once_with(temporary_file.name)
+        openstreetmap.OSMParser.return_value.parse_pbf_file.assert_called_once_with(temporary_file.name)
 
     def test_file_is_loaded_from_web(self):
-        url = 'http://www.example.com'
-        self._osm_importer.load(url)
+        self._osm_importer.load()
 
-        openstreetmap.urlopen.assert_called_once_with(url)
+        openstreetmap.urlopen.assert_called_once_with('http://www.example.com/file.pbf')
 
     def test_tag_filter_removes_uninteresting_tags(self):
         tags = {'foo': 'bar'}
@@ -75,6 +75,9 @@ class TestOpenStreetMapImporter(unittest2.TestCase):
     def test_way_has_correct_uri(self):
         poi = self._get_way_poi()
         self.assertEquals('/osm:W12345', poi.uri)
+
+    def test_exception_thrown_if_url_not_in_config(self):
+        self.assertRaises(ConfigError, openstreetmap.OpenStreetMapImporter, {})
 
     def _get_node_poi(self):
         self._osm_importer.handle_nodes([(12345, {'atm': 'yes'}, (2, 3))])
