@@ -10,4 +10,6 @@ script:
   - python setup.py test
 notifications:
   irc:
-    - "irc.freenode.org#molly"
+    channels:
+      - "irc.freenode.org#molly"
+    on_success: change
