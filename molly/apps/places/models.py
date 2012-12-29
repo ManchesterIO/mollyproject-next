@@ -1,4 +1,7 @@
 from collections import namedtuple
+from shapely import wkt
+
+from molly.apps.common.components import LocalisedName
 
 AccessPoint = namedtuple('AccessPoint', ['names', 'location', 'accessible'])
 Identifier = namedtuple('Identifier', ['namespace', 'value'])
@@ -40,3 +43,54 @@ class PointOfInterest(object):
     @location.setter
     def location(self, location):
         self._location = location
+
+    def as_dict(self):
+        return {
+            'uri': self.uri,
+            'names': [name._asdict() for name in self.names],
+            'descriptions': [description._asdict() for description in self.descriptions],
+            'identifiers': [identifier._asdict() for identifier in self.identifiers],
+            'address': self.address,
+            'locality': self.locality,
+            'telephone_number': self.telephone_number,
+            'opening_hours': [opening_hour_range._asdict() for opening_hour_range in self.opening_hours],
+            'types': self.types,
+            'amenities': self.amenities,
+            'geography': wkt.dumps(self.geography) if self.geography else None,
+            'location': wkt.dumps(self._location) if self._location else None,
+            'sources': [source._asdict() for source in self.sources]
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        poi = cls()
+        poi.uri = data.uri
+        poi.names = [LocalisedName(**name) for name in data['names']]
+        poi.descriptions = [LocalisedName(**name) for name in data['names']]
+        poi.identifiers = [Identifier(**name) for name in data['names']]
+        poi.address = data['address']
+        poi.locality = data['locality']
+        poi.telephone_number = data['telephone_number']
+        poi.opening_hours = [OpeningHourRange(**hours) for hours in data['opening_hours']]
+        poi.types = data['types']
+        poi.amenities = data['amenities']
+        poi.geography = wkt.loads(data['geography']) if data['geography'] else None
+        poi.location = wkt.loads(data['location']) if data['location'] else None
+        poi.sources = [Source(**source) for source in data['sources']]
+        return poi
+
+
+class PointsOfInterest(object):
+
+    def __init__(self, collection):
+        self._collection = collection.pois
+
+    def add_or_update(self, poi):
+        existing_poi = self._collection.find_one({'uri': poi.uri})
+        if existing_poi:
+            poi_dict = poi.as_dict()
+            poi_dict['_id'] = existing_poi['_id']
+            if poi_dict['sources'] != existing_poi['sources']:
+                self._collection.update(poi_dict)
+        else:
+            self._collection.insert(poi.as_dict())

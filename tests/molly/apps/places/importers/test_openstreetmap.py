@@ -1,9 +1,11 @@
+# coding=utf-8
 from mock import Mock, MagicMock
-from molly.config import ConfigError
 from shapely.geometry import Polygon, LineString, Point
 import unittest2
 
+from molly.apps.places.models import Identifier, Source
 from molly.apps.places.importers import openstreetmap
+from molly.config import ConfigError
 
 class TestOpenStreetMapImporter(unittest2.TestCase):
 
@@ -14,6 +16,7 @@ class TestOpenStreetMapImporter(unittest2.TestCase):
         openstreetmap.NamedTemporaryFile.return_value = MagicMock()
         openstreetmap.urlopen = Mock()
         self._osm_importer = openstreetmap.OpenStreetMapImporter({'url': 'http://www.example.com/file.pbf'})
+        self._pois = self._osm_importer.poi_service = Mock()
 
     def test_imposm_configured_with_correct_attributes(self):
         openstreetmap.OSMParser.assert_called_once_with(
@@ -79,11 +82,29 @@ class TestOpenStreetMapImporter(unittest2.TestCase):
     def test_exception_thrown_if_url_not_in_config(self):
         self.assertRaises(ConfigError, openstreetmap.OpenStreetMapImporter, {})
 
+    def test_pois_not_set_results_in_exception(self):
+        self._osm_importer.poi_service = None
+        self.assertRaises(RuntimeError, self._osm_importer.load)
+
+    def test_pois_created_with_correct_identifier(self):
+        self.assertEquals([Identifier('osm', 'N12345')], self._get_node_poi().identifiers)
+
+    def test_pois_created_with_correct_source(self):
+        poi = self._get_node_poi()
+        self.assertEquals(
+            [Source(url='http://www.example.com/file.pbf',
+                version=self._osm_importer._source.version,
+                attribution=u'© OpenStreetMap contributors')],
+            poi.sources
+        )
+
     def _get_node_poi(self):
+        self._osm_importer.load()
         self._osm_importer.handle_nodes([(12345, {'atm': 'yes'}, (2, 3))])
         return self._osm_importer.pois[0]
 
     def _get_way_poi(self, coord_ids=(1, 2, 3, 1)):
+        self._osm_importer.load()
         self._osm_importer.handle_coords([(1, 2, 3), (2, 3, 3), (3, 3, 2)])
         self._osm_importer.handle_ways([(12345, {'atm': 'yes'}, coord_ids)])
         return self._osm_importer.pois[0]

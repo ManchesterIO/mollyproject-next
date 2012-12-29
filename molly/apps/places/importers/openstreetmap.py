@@ -1,5 +1,7 @@
+# coding=utf-8
 from datetime import timedelta
 from tempfile import NamedTemporaryFile
+import time
 from urllib2 import urlopen
 
 from celery.schedules import schedule
@@ -8,7 +10,7 @@ from shapely.geometry import Polygon, LineString, Point
 
 from molly.apps.common.components import Attribution
 from molly.config import ConfigError
-from molly.apps.places.models import PointOfInterest
+from molly.apps.places.models import PointOfInterest, Identifier, Source
 
 ATTRIBUTION = Attribution(
     licence_name='Open Database Licence',
@@ -72,6 +74,8 @@ class OpenStreetMapImporter(object):
     IMPORTER_NAME = 'openstreetmap'
     IMPORT_SCHEDULE = schedule(run_every=timedelta(weeks=1))
 
+    _ATTRIBUTION = u'© OpenStreetMap contributors'
+
     def __init__(self, config):
         self._parser = OSMParser(
             coords_callback=self.handle_coords,
@@ -80,6 +84,8 @@ class OpenStreetMapImporter(object):
             nodes_tag_filter=self.filter_tags,
             ways_tag_filter=self.filter_tags,
         )
+
+        self.poi_service = None
 
         self._interesting_tags = set(OSM_TAGS_TO_AMENITIES.keys() + OSM_TAGS_TO_TYPES.keys())
         self.pois = []
@@ -91,11 +97,20 @@ class OpenStreetMapImporter(object):
             raise ConfigError('OpenStreetMap importer must have url config element set')
 
     def load(self):
+        if not self.poi_service:
+            raise RuntimeError("POI Service must be configured before load")
         self.pois = []
         self._coords = {}
+        self._source = Source(
+            url=self._url,
+            version=int(time.time()),
+            attribution=self._ATTRIBUTION
+        )
         with NamedTemporaryFile() as protobuf_file:
             protobuf_file.write(urlopen(self._url).read())
             self._parser.parse_pbf_file(protobuf_file.name)
+        for poi in self.pois:
+            self.poi_service.add_or_update(poi)
 
     def handle_coords(self, coords):
         for id, lat, lon in coords:
@@ -127,6 +142,13 @@ class OpenStreetMapImporter(object):
                 del tags[k]
 
     def _add_poi(self, id, geography):
-        self.pois.append(PointOfInterest(uri='/osm:{}'.format(id), geography=geography))
+        self.pois.append(
+            PointOfInterest(
+                uri='/osm:{}'.format(id),
+                geography=geography,
+                identifiers=[Identifier(namespace='osm', value=id)],
+                sources=[self._source]
+            )
+        )
 
 Provider = OpenStreetMapImporter
