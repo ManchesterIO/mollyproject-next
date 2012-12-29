@@ -6,8 +6,16 @@ from celery.schedules import schedule
 from imposm.parser import OSMParser
 from shapely.geometry import Polygon, LineString, Point
 
+from molly.apps.common.components import Attribution
 from molly.config import ConfigError
 from molly.apps.places.models import PointOfInterest
+
+ATTRIBUTION = Attribution(
+    licence_name='Open Database Licence',
+    licence_url='http://www.opendatacommons.org/licenses/odbl',
+    attribution_text='OpenStreetMap contributors',
+    attribution_url='http://www.openstreetmap.org'
+)
 
 OSM_TAGS_TO_TYPES = {
     ('amenity', 'arts_centre'): 'http://mollyproject.org/poi/types/leisure/arts-centre',
@@ -22,7 +30,6 @@ OSM_TAGS_TO_TYPES = {
     ('amenity', 'fast_food'): 'http://mollyproject.org/poi/types/food/fast-food',
     ('amenity', 'fuel'): 'http://mollyproject.org/poi/types/transport/fuel',
     ('amenity', 'hospital'): 'http://mollyproject.org/poi/types/health/hospital',
-    ('amenity', 'ice_cream'): 'http://mollyproject.org/poi/types/food/ice-cream-cafe',
     ('amenity', 'library'): 'http://mollyproject.org/poi/types/leisure/library',
     ('amenity', 'marketplace'): 'http://mollyproject.org/poi/types/retail/marketplace',
     ('amenity', 'museum'): 'http://mollyproject.org/poi/types/leisure/museum',
