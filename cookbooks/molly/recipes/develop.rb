@@ -16,6 +16,12 @@ python_virtualenv '/opt/molly' do
   action :create
 end
 
+%w(protobuf-compiler rabbitmq-server).each do | pkg |
+  package pkg do
+    action :install
+  end
+end
+
 bash "Setup Molly" do
   cwd '/tmp'
   user molly_user
@@ -24,6 +30,11 @@ bash "Setup Molly" do
     /opt/molly/bin/pip install -r /vagrant/requirements.txt
     /opt/molly/bin/python /vagrant/setup.py develop
   EOH
+end
+
+service "rabbitmq" do
+  service_name "rabbitmq-server"
+  action :start
 end
 
 bash "Run Molly" do

@@ -1,24 +1,23 @@
 import celery
-import celery.apps.beat
 import celery.beat
 
 class Service(celery.Celery):
 
     def __init__(self):
-        super(Service, self).__init__()
+        super(Service, self).__init__(__package__, loader='default')
         self.periodic_tasks = []
 
     def init_cli_commands(self, manager):
 
         @manager.command
         def taskbeat():
-            beat = celery.apps.beat.Beat(app=self)
+            beat = self.Beat()
             beat.scheduler_cls=Scheduler
             beat.run()
 
         @manager.command
         def taskworker():
-            self.Worker().run_worker()
+            self.Worker().run()
 
     def periodic_task(self, *args, **kwargs):
         crontab = kwargs.pop('crontab')
@@ -31,5 +30,4 @@ class Scheduler(celery.beat.PersistentScheduler):
 
     def setup_schedule(self):
         super(Scheduler, self).setup_schedule()
-        print self._store
         self.merge_inplace(self.app.periodic_tasks)

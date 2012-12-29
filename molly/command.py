@@ -39,15 +39,15 @@ def ui_main():
 def run_supervisord(config):
     from supervisor.supervisord import main
     main([
-             '-c', os.path.abspath(os.path.join(os.path.dirname(__file__), config)),
-             '-i', 'mollyd'
-         ] + argv[1:])
+         '-c', os.path.abspath(os.path.join(os.path.dirname(__file__), config)),
+         '-i', 'mollyd'
+     ] + argv[1:])
 
 def run_supervisorctl(config):
     from supervisor.supervisorctl import main
     main([
-             '-c', os.path.abspath(os.path.join(os.path.dirname(__file__), config)),
-         ] + argv[1:])
+         '-c', os.path.abspath(os.path.join(os.path.dirname(__file__), config)),
+     ] + argv[1:])
 
 def mollyd():
     run_supervisord('supervisor.cfg')
