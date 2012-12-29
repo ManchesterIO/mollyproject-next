@@ -5,8 +5,7 @@ import os
 from flask.ext.script import Manager
 from gunicorn.app.base import Application
 
-def configure_manager(flask_app, debug, default_port=8000):
-    manager = Manager(flask_app, with_default_commands=False)
+def configure_manager(manager, flask_app, debug, default_port=8000):
 
     @manager.command
     def start(port=default_port):
@@ -26,13 +25,16 @@ def configure_manager(flask_app, debug, default_port=8000):
     return manager
 
 def rest_main():
-    from molly.rest import flask_app, start_debug
-    configure_manager(flask_app, start_debug).run()
+    from molly.rest import flask_app, cli_manager, start_debug
+    configure_manager(cli_manager, flask_app, start_debug).run()
 
 def ui_main():
     package, app_name = os.environ.get('MOLLY_UI_MODULE', 'molly.ui.html5.server:flask_app').split(':', 1)
     module = import_module(package)
-    configure_manager(getattr(module, app_name), getattr(module, 'start_debug'), 8002).run()
+    flask_app = getattr(module, app_name)
+    configure_manager(
+        Manager(flask_app, with_default_commands=False), flask_app, getattr(module, 'start_debug'), 8002
+    ).run()
 
 def run_supervisord(config):
     from supervisor.supervisord import main
