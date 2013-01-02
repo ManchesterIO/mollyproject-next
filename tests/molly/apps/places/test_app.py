@@ -16,7 +16,7 @@ class TestPlacesApp(unittest2.TestCase):
         self._mock_importer.IMPORT_SCHEDULE = sentinel.schedule
         self._app = places.App(
             'places', {}, [self._mock_importer],
-            {'cli': self._mock_cli_service, 'tasks': self._mock_tasks_service}
+            {'cli': self._mock_cli_service, 'tasks': self._mock_tasks_service, 'kv': Mock(), 'search': Mock()}
         )
 
     def test_module_uri_is_correct(self):

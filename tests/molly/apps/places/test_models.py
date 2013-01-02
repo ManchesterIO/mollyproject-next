@@ -1,7 +1,6 @@
 from mock import Mock
 from shapely.geometry import Point
 import unittest2
-from apps.places.models import Identifier
 
 from molly.apps.common.components import LocalisedName
 from molly.apps.places import models
@@ -25,7 +24,7 @@ class TestPointsOfInterest(unittest2.TestCase):
         poi.names = [LocalisedName(name='Test', lang='en')]
         poi.descriptions = [LocalisedName(name='Descriptions', lang='en')]
         poi.geography = Point(-1.6, 54.0)
-        poi.identifiers = [Identifier(namespace='foo', value='bar')]
+        poi.identifiers = [models.Identifier(namespace='foo', value='bar')]
 
         self._pois.add_or_update(poi)
         self._mock_solr.add.assert_called_once_with({
