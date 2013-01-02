@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.script import Command
+from apps.places.models import PointsOfInterest
 
 class App(object):
 
@@ -9,8 +10,10 @@ class App(object):
 
     def __init__(self, instance_name, config, providers, services):
         self.instance_name = instance_name
+        poi_service = PointsOfInterest(instance_name, services['kv'], services['search'])
 
         for provider in providers:
+            provider.poi_service = poi_service
             services['tasks'].periodic_task(provider.load, crontab=provider.IMPORT_SCHEDULE)
             command = Command()
             command.run = provider.load

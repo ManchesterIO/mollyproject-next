@@ -12,6 +12,7 @@ Vagrant::Config.run do |config|
 
   config.vm.provision :chef_solo do | chef |
     chef.add_recipe "python"
+    chef.add_recipe "molly::solr"
     chef.add_recipe "molly::develop"
   end
 

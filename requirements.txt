@@ -9,3 +9,5 @@ supervisor
 imposm.parser
 Shapely
 celery
+git+https://github.com/willowtreeapps/flask-solr.git#egg=flask-solr
+Flask-PyMongo

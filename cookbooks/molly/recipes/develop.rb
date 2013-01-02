@@ -2,7 +2,11 @@ molly_user = 'molly'
 
 user molly_user
 
-%w(/opt/molly /var/lib/molly /var/log/molly).each do | path |
+DIRECTORIES = %w(/opt/molly /var/lib/molly /var/log/molly)
+APT_PACKAGES = %w(build-essential libgeos-c1 libprotobuf-dev protobuf-compiler rabbitmq-server mongodb)
+SYSTEM_SERVICES = %w(rabbitmq-server mongodb)
+
+DIRECTORIES.each do | path |
   directory path do
     action :create
     owner molly_user
@@ -16,7 +20,7 @@ python_virtualenv '/opt/molly' do
   action :create
 end
 
-%w(build-essential libgeos-c1 libprotobuf-dev protobuf-compiler rabbitmq-server).each do | pkg |
+APT_PACKAGES.each do | pkg |
   package pkg do
     action :install
   end
@@ -30,11 +34,6 @@ bash "Setup Molly" do
     /opt/molly/bin/pip install -r /vagrant/requirements.txt
     /opt/molly/bin/python /vagrant/setup.py develop
   EOH
-end
-
-service "rabbitmq" do
-  service_name "rabbitmq-server"
-  action :start
 end
 
 bash "Run Molly" do
