@@ -1,19 +1,41 @@
 from mock import Mock
+from shapely.geometry import Point
 import unittest2
+from apps.places.models import Identifier
 
+from molly.apps.common.components import LocalisedName
 from molly.apps.places import models
 
 class TestPointsOfInterest(unittest2.TestCase):
 
     def setUp(self):
         self._mock_mongo = Mock()
-        self._pois = models.PointsOfInterest(self._mock_mongo)
+        self._mock_solr = Mock()
+        self._pois = models.PointsOfInterest('test', self._mock_mongo, self._mock_solr)
+        self._mock_mongo.pois.find_one.return_value = None
 
     def test_add_adds_to_database(self):
-        self._mock_mongo.pois.find_one.return_value = None
         poi = models.PointOfInterest()
         self._pois.add_or_update(poi)
         self._mock_mongo.pois.insert.assert_called_once_with(poi.as_dict())
+
+    def test_add_indexes(self):
+        poi = models.PointOfInterest()
+        poi.uri = '/osm:N12345'
+        poi.names = [LocalisedName(name='Test', lang='en')]
+        poi.descriptions = [LocalisedName(name='Descriptions', lang='en')]
+        poi.geography = Point(-1.6, 54.0)
+        poi.identifiers = [Identifier(namespace='foo', value='bar')]
+
+        self._pois.add_or_update(poi)
+        self._mock_solr.add.assert_called_once_with({
+            'id': '/test/osm:N12345',
+            'self': 'http://mollyproject.org/apps/places/point-of-interest',
+            'names': ['Test'],
+            'descriptions': ['Descriptions'],
+            'identifiers': ['bar'],
+            'location': '54.0,-1.6'
+        })
 
     def test_add_or_update_checks_for_uri_clashes_before_adding(self):
         self._mock_mongo.pois.find_one.return_value = {
@@ -39,3 +61,4 @@ class TestPointsOfInterest(unittest2.TestCase):
 
         self.assertFalse(self._mock_mongo.pois.insert.called)
         self.assertFalse(self._mock_mongo.pois.update.called)
+        self.assertFalse(self._mock_solr.add.called)
