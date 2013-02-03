@@ -1,2 +1,4 @@
 class Service(object):
-    pass
+
+    def __init__(self, flask_app):
+        pass
