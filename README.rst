@@ -1,8 +1,8 @@
 Molly 2.0
 =========
 
-.. image:: https://secure.travis-ci.org/mollyproject/mollyproject.png?branch=molly2
-    :target: http://travis-ci.org/mollyproject/mollyproject
+.. image:: https://secure.travis-ci.org/cnorthwood/mollyproject-next.png
+    :target: http://travis-ci.org/cnorthwood/mollyproject-next
     :alt: Build Status
 
 This is early code for a proposed Molly 2.0 architecture.
