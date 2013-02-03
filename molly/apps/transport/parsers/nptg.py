@@ -2,7 +2,7 @@ from xml.etree.cElementTree import iterparse
 
 from shapely.geometry.point import Point
 from molly.apps.common.components import Source, Identifier, Identifiers, Attribution, LocalisedName
-from molly.apps.transport.locality import Locality, NPTG_REGION_CODE_NAMESPACE, NPTG_DISTRICT_CODE_NAMESPACE, NPTG_LOCALITY_CODE_NAMESPACE
+from molly.apps.transport.models import Locality, NPTG_REGION_CODE_NAMESPACE, NPTG_DISTRICT_CODE_NAMESPACE, NPTG_LOCALITY_CODE_NAMESPACE
 
 class NptgParser(object):
 

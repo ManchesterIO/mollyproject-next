@@ -2,7 +2,7 @@ from mock import Mock
 import unittest2 as unittest
 
 from molly.apps.transport.data.mongo.localities import LocalityMongoDb
-from molly.apps.transport.locality import Locality
+from molly.apps.transport.models import Locality
 
 class LocalityMongoDbTest(unittest.TestCase):
 
@@ -23,7 +23,7 @@ class LocalityMongoDbTest(unittest.TestCase):
 
         locality_mongo_db.insert(locality)
 
-        mock_connection.save.assert_called_once_with(locality.as_dict())
+        mock_connection.save.assert_called_once_with(locality._asdict())
 
     def test_inserting_inserts_into_collection_with_same_id(self):
         expected_id = 12345

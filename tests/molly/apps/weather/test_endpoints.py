@@ -24,7 +24,7 @@ class ObservationsEndpointTest(unittest.TestCase):
 
     def test_attribution_included_in_response(self):
         response = self._get_response_json()
-        self.assertEquals(self._ATTRIBUTION.as_dict(), response['attribution'])
+        self.assertEquals(self._ATTRIBUTION._asdict(), response['attribution'])
 
     def test_self_included_in_response(self):
         response = self._get_response_json()

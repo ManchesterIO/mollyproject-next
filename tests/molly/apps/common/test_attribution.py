@@ -14,7 +14,7 @@ class EndpointTestCase(unittest.TestCase):
             attribution_text=attribution_text,
             attribution_url=attribution_url
         )
-        self.assertEquals(attribution.as_dict(), {
+        self.assertEquals(attribution._asdict(), {
             'self': 'http://mollyproject.org/common/attribution',
             'licence_name': licence_name,
             'licence_url': licence_url,

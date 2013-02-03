@@ -2,7 +2,7 @@ import os
 from shapely.geometry.point import Point
 import unittest2 as unittest
 from molly.apps.common.components import Identifier, LocalisedName
-from molly.apps.transport.locality import NPTG_REGION_CODE_NAMESPACE, NPTG_DISTRICT_CODE_NAMESPACE, NPTG_LOCALITY_CODE_NAMESPACE
+from molly.apps.transport.models import NPTG_REGION_CODE_NAMESPACE, NPTG_DISTRICT_CODE_NAMESPACE, NPTG_LOCALITY_CODE_NAMESPACE
 from molly.apps.transport.parsers.nptg import NptgParser
 
 class NptgParserTest(unittest.TestCase):

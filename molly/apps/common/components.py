@@ -8,7 +8,7 @@ class Attribution(object):
         self.attribution_text = attribution_text
         self.attribution_url = attribution_url
 
-    def as_dict(self):
+    def _asdict(self):
         return {
             'self': 'http://mollyproject.org/common/attribution',
             'licence_name': self.licence_name,

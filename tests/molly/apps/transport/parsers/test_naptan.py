@@ -2,7 +2,7 @@ import os
 import unittest2 as unittest
 from molly.apps.common.components import Identifier
 from molly.apps.transport.parsers.naptan import NaptanParser
-from molly.apps.transport.stop import Stop, CallingPoint, ATCO_NAMESPACE, CRS_NAMESPACE, TIPLOC_NAMESPACE
+from molly.apps.transport.models import Stop, CallingPoint, ATCO_NAMESPACE, CRS_NAMESPACE, TIPLOC_NAMESPACE
 
 class NaptanParserTest(unittest.TestCase):
 

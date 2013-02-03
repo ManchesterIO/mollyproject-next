@@ -1,4 +1,4 @@
-from molly.apps.transport.locality import Locality
+from molly.apps.transport.models import Locality
 
 class LocalityMongoDb(object):
 
@@ -17,7 +17,7 @@ class LocalityMongoDb(object):
             return Locality.from_dict(locality_dict)
 
     def insert(self, locality):
-        locality_dict = locality.as_dict()
+        locality_dict = locality._asdict()
         existing_locality_dict = self._query_by_url(locality.url)
         if existing_locality_dict is not None:
             locality_dict['_id'] = existing_locality_dict['_id']

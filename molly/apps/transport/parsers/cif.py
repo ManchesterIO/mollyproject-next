@@ -1,6 +1,5 @@
 from molly.apps.common.components import Source, Identifier, Attribution
-from molly.apps.transport.stop import STANOX_NAMESPACE, CRS_NAMESPACE, CallingPoint, TIPLOC_NAMESPACE, CIF_DESCRIPTION_NAMESPACE
-from molly.apps.transport.timetable import ScheduledTrip, Call, CallTime, Route, Service
+from molly.apps.transport.models import STANOX_NAMESPACE, CRS_NAMESPACE, CallingPoint, TIPLOC_NAMESPACE, CIF_DESCRIPTION_NAMESPACE, ScheduledTrip, Call, CallTime, Route, Service
 
 class CifParser(object):
 

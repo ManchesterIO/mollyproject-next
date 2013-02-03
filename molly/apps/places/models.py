@@ -42,7 +42,7 @@ class PointOfInterest(object):
     def location(self, location):
         self._location = location
 
-    def as_dict(self):
+    def _asdict(self):
         return {
             'uri': self.uri,
             'names': [name._asdict() for name in self.names],
@@ -76,33 +76,3 @@ class PointOfInterest(object):
         poi.location = wkt.loads(data['location']) if data['location'] else None
         poi.sources = [Source(**source) for source in data['sources']]
         return poi
-
-
-class PointsOfInterest(object):
-
-    def __init__(self, instance_name, collection, search_index):
-        self._instance_name = instance_name
-        self._collection = collection.pois
-        self._search_index = search_index
-
-    def add_or_update(self, poi):
-        existing_poi = self._collection.find_one({'uri': poi.uri})
-        if existing_poi:
-            poi_dict = poi.as_dict()
-            poi_dict['_id'] = existing_poi['_id']
-            if poi_dict['sources'] != existing_poi['sources']:
-                self._collection.update(poi_dict)
-                self._add_to_index(poi)
-        else:
-            self._collection.insert(poi.as_dict())
-            self._add_to_index(poi)
-
-    def _add_to_index(self, poi):
-        self._search_index.add({
-            'self': 'http://mollyproject.org/apps/places/point-of-interest',
-            'id': '/{instance_name}{uri}'.format(instance_name=self._instance_name, uri=poi.uri),
-            'names': [name.name for name in poi.names],
-            'descriptions': [description.name for description in poi.descriptions],
-            'identifiers': [identifier.value for identifier in poi.identifiers],
-            'location': '{lat},{lon}'.format(lat=poi.location.y, lon=poi.location.x) if poi.location else None
-        })

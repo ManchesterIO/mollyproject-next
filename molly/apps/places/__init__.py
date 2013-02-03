@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.script import Command
 
-from molly.apps.places.models import PointsOfInterest
+from molly.apps.places.services import PointsOfInterest
 
 class App(object):
 

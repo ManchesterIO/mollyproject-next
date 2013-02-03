@@ -18,14 +18,14 @@ class StopMongoDb(object):
 
     def select_by_identifier(self, *identifiers, **kwargs):
         filter_by_type = kwargs.get('filter_by_type')
-        query = [{'identifiers': [identifier.as_dict()]} for identifier in identifiers]
+        query = [{'identifiers': [identifier._asdict()]} for identifier in identifiers]
         if filter_by_type:
             for query_part in query:
                 query_part['_type'] = self._get_type(filter_by_type)
         return map(lambda found: self._parse_response(found), self._connection.find({'$or': query}))
 
     def insert(self, stop):
-        stop_dict = stop.as_dict()
+        stop_dict = stop._asdict()
         existing_stop_dict = self._query_by_url(stop.url)
         if existing_stop_dict is not None:
             stop_dict['_id'] = existing_stop_dict['_id']

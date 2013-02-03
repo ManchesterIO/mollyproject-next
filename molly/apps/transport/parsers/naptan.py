@@ -1,7 +1,7 @@
 from collections import defaultdict
 from xml.etree.cElementTree import iterparse
 from molly.apps.common.components import Source, Identifier, Attribution
-from molly.apps.transport.stop import CallingPoint, Stop, ATCO_NAMESPACE, CRS_NAMESPACE, TIPLOC_NAMESPACE
+from molly.apps.transport.models import CallingPoint, Stop, ATCO_NAMESPACE, CRS_NAMESPACE, TIPLOC_NAMESPACE
 
 class NaptanParser(object):
 

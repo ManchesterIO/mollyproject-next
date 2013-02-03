@@ -2,7 +2,7 @@ from mock import Mock
 import unittest2 as unittest
 from molly.apps.common.components import Source
 from molly.apps.transport.data.stop_service import StopService
-from molly.apps.transport.stop import Stop
+from molly.apps.transport.models import Stop
 
 class StopServiceTest(unittest.TestCase):
 

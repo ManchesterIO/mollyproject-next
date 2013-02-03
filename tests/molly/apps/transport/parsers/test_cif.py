@@ -3,8 +3,7 @@ import os
 import unittest2 as unittest
 from molly.apps.common.components import Identifier
 from molly.apps.transport.parsers.cif import CifParser
-from molly.apps.transport.stop import CallingPoint, TIPLOC_NAMESPACE, STANOX_NAMESPACE, CRS_NAMESPACE, CIF_DESCRIPTION_NAMESPACE
-from molly.apps.transport.timetable import Call, CallTime
+from molly.apps.transport.models import CallingPoint, TIPLOC_NAMESPACE, STANOX_NAMESPACE, CRS_NAMESPACE, CIF_DESCRIPTION_NAMESPACE, Call, CallTime
 
 class CifParserTest(unittest.TestCase):
 

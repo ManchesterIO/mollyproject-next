@@ -12,7 +12,7 @@ class ObservationsEndpoint(Endpoint):
             'self': 'http://mollyproject.org/apps/weather/observation',
             'href': self._href(),
             'observation': self._provider.latest_observations(),
-            'attribution': self._provider.attribution.as_dict()
+            'attribution': self._provider.attribution._asdict()
         }
 
     def get(self):

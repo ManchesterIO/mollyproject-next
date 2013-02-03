@@ -4,7 +4,7 @@ from shapely.geometry.point import Point
 
 from molly.apps.common.components import Identifier, Source
 from molly.apps.transport.data.locality_service import LocalityService
-from molly.apps.transport.locality import Locality
+from molly.apps.transport.models import Locality
 
 
 class LocalityServiceTest(unittest.TestCase):
