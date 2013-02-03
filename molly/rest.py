@@ -1,23 +1,21 @@
 import os
 
 from flask import Flask
-from flask.ext.script import Manager
 
 from molly.config import ConfigLoader
 from molly.apps.homepage import App as Homepage
 
 def configure_flask_app():
-    flask_app = Flask(__name__)
+    flask_app = Flask('molly')
 
     with open(os.environ.get('MOLLY_CONFIG', 'conf/default.conf')) as fd:
         config_loader = ConfigLoader(flask_app)
-        config, apps, services = config_loader.load_from_config(fd)
+        with flask_app.app_context():
+            config, apps, services = config_loader.load_from_config(fd)
 
     flask_app.config.update(config)
 
     for service in services.values():
-        if hasattr(service, 'init_app'):
-            service.init_app(flask_app)
         if hasattr(service, 'init_cli_commands'):
             service.init_cli_commands(services['cli'])
 

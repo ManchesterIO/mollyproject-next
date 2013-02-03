@@ -1,9 +1,9 @@
 
 class PointsOfInterest(object):
 
-    def __init__(self, instance_name, collection, search_index):
+    def __init__(self, instance_name, connection, search_index):
         self._instance_name = instance_name
-        self._collection = collection.pois
+        self._collection = connection.db.pois
         self._search_index = search_index
 
     def add_or_update(self, poi):

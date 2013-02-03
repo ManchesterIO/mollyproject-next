@@ -3,7 +3,7 @@ molly_user = 'molly'
 user molly_user
 
 DIRECTORIES = %w(/opt/molly /var/lib/molly /var/log/molly)
-APT_PACKAGES = %w(build-essential libgeos-c1 libprotobuf-dev protobuf-compiler rabbitmq-server mongodb)
+APT_PACKAGES = %w(build-essential libgeos-c1 libprotobuf-dev protobuf-compiler rabbitmq-server mongodb git-core)
 SYSTEM_SERVICES = %w(rabbitmq-server mongodb)
 
 DIRECTORIES.each do | path |
@@ -31,8 +31,7 @@ bash "Setup Molly" do
   user molly_user
   group molly_user
   code <<-EOH
-    /opt/molly/bin/pip install -r /vagrant/requirements.txt
-    /opt/molly/bin/python /vagrant/setup.py develop
+    /opt/molly/bin/pip install --use-mirrors -r /vagrant/requirements.txt && /opt/molly/bin/python /vagrant/setup.py develop
   EOH
 end
 

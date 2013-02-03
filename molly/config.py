@@ -39,7 +39,7 @@ class ConfigLoader(object):
                 service_module, service_class = service_package.split(':')
             else:
                 service_module, service_class = service_package, 'Service'
-            services[service_name] = getattr(import_module(service_module), service_class)()
+            services[service_name] = getattr(import_module(service_module), service_class)(self._flask_app)
         return services
 
     def _initialise_app(self, name, config, services):

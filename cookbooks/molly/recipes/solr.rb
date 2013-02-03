@@ -16,22 +16,22 @@ DIRECTORIES.each do | path |
   end
 end
 
-remote_file "/opt/solr4/apache-solr-4.0.0.tgz" do
+remote_file "/opt/solr4/solr-4.1.0.tgz" do
   action :create_if_missing
-  source "http://mirror.ox.ac.uk/sites/rsync.apache.org/lucene/solr/4.0.0/apache-solr-4.0.0.tgz"
+  source "http://mirror.ox.ac.uk/sites/rsync.apache.org/lucene/solr/4.1.0/solr-4.1.0.tgz"
   mode 0644
 end
 
 execute "expand Solr" do
   cwd '/tmp'
-  command 'tar zxf /opt/solr4/apache-solr-4.0.0.tgz && cp -rf apache-solr-4.0.0/example/solr/* /opt/solr4'
+  command 'tar zxf /opt/solr4/solr-4.1.0.tgz && cp -rf solr-4.1.0/example/solr/* /opt/solr4'
   user 'tomcat6'
   group 'tomcat6'
 end
 
 execute "add Solr webapp" do
   cwd '/tmp'
-  command 'cp apache-solr-4.0.0/example/webapps/solr.war /usr/share/tomcat6-solr/solr.war'
+  command 'cp solr-4.1.0/example/webapps/solr.war /usr/share/tomcat6-solr/solr.war'
 end
 
 cookbook_file "/etc/tomcat6/Catalina/localhost/solr.xml" do

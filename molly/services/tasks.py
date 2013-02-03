@@ -3,7 +3,7 @@ import celery.beat
 
 class Service(celery.Celery):
 
-    def __init__(self):
+    def __init__(self, flask_app):
         super(Service, self).__init__(__package__, loader='default')
         self.periodic_tasks = {}
 
