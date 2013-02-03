@@ -19,7 +19,7 @@ class BaseService(object):
 class LocalityService(BaseService):
 
     def __init__(self, connection):
-        self._connection = connection
+        self._connection = connection.localities
         self._connection.ensure_index('url')
 
     def locality_by_url(self, locality_url):
@@ -61,7 +61,7 @@ class LocalityService(BaseService):
 class StopService(BaseService):
 
     def __init__(self, connection):
-        self._connection = connection
+        self._connection = connection.stops
         self._connection.ensure_index('url')
         self._connection.ensure_index('identifiers')
 

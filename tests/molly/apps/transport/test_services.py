@@ -16,12 +16,12 @@ class LocalityServiceTest(unittest.TestCase):
     def test_insert_and_merge_posts_inserts_when_new_post(self):
         mock_connection = self._build_mock_connection()
         locality = self._insert_and_merge_locality(mock_connection)
-        mock_connection.save.assert_called_once_with(locality._asdict())
+        mock_connection.localities.save.assert_called_once_with(locality._asdict())
 
     def test_insert_and_merge_looks_up_by_url(self):
         mock_connection = self._build_mock_connection()
         self._insert_and_merge_locality(mock_connection)
-        mock_connection.find_one.assert_called_once_with({'url': self.URL})
+        mock_connection.localities.find_one.assert_called_once_with({'url': self.URL})
 
     def test_insert_and_merge_posts_does_not_insert_when_post_exists_and_source_not_changed(self):
         locality = self._build_locality()
@@ -29,7 +29,7 @@ class LocalityServiceTest(unittest.TestCase):
         locality_service = LocalityService(mock_connection)
         locality_service.insert_and_merge(locality)
 
-        self.assertEqual(0, mock_connection.save.call_count)
+        self.assertEqual(0, mock_connection.localities.save.call_count)
 
     def test_insert_and_merge_posts_does_insert_when_post_exists_and_source_not_in_sources(self):
         db_locality = self._build_locality()
@@ -38,7 +38,7 @@ class LocalityServiceTest(unittest.TestCase):
 
         self._insert_and_merge_locality(mock_connection)
 
-        self.assertEqual(1, mock_connection.save.call_count)
+        self.assertEqual(1, mock_connection.localities.save.call_count)
 
     def test_insert_and_merge_posts_maintains_other_sources_when_merging(self):
         db_locality = self._build_locality()
@@ -48,7 +48,7 @@ class LocalityServiceTest(unittest.TestCase):
 
         self._insert_and_merge_locality(mock_connection)
 
-        self.assertIn(other_source._asdict(), mock_connection.save.call_args[0][0]['sources'])
+        self.assertIn(other_source._asdict(), mock_connection.localities.save.call_args[0][0]['sources'])
 
     def test_insert_and_merge_posts_removes_old_versions_of_source_when_merging(self):
         mock_connection, old_source = self._build_mock_connection_with_old_source()
@@ -122,7 +122,7 @@ class LocalityServiceTest(unittest.TestCase):
     def test_url_is_indexed(self):
         mock_connection = self._build_mock_connection()
         LocalityService(mock_connection)
-        mock_connection.ensure_index.assert_called_once_with('url')
+        mock_connection.localities.ensure_index.assert_called_once_with('url')
 
 
     def test_inserting_inserts_into_collection_with_same_id(self):
@@ -131,7 +131,7 @@ class LocalityServiceTest(unittest.TestCase):
 
         mock_connection = self._insert_and_merge_with(new_locality, old_locality)
 
-        self.assertEqual('12345', mock_connection.save.call_args[0][0]['_id'])
+        self.assertEqual('12345', mock_connection.localities.save.call_args[0][0]['_id'])
 
     def _insert_and_merge_with(self, new_locality, old_locality):
         mock_connection = self._build_mock_connection(old_locality)
@@ -146,7 +146,7 @@ class LocalityServiceTest(unittest.TestCase):
         return locality
 
     def _get_inserted_locality(self, mock_connection):
-        return mock_connection.save.call_args[0][0]
+        return mock_connection.localities.save.call_args[0][0]
 
     def _build_locality(self):
         locality = Locality()
@@ -176,7 +176,7 @@ class LocalityServiceTest(unittest.TestCase):
             return_locality_dict['_id'] = '12345'
         else:
             return_locality_dict = None
-        mock_connection.find_one = Mock(return_value=return_locality_dict)
+        mock_connection.localities.find_one = Mock(return_value=return_locality_dict)
         return mock_connection
 
     def _build_mock_connection_with_old_source(self):
@@ -191,8 +191,7 @@ class StopServiceTest(unittest.TestCase):
 
     def setUp(self):
         self._mock_connection = Mock()
-        self._mock_connection.save = Mock()
-        self._mock_connection.find_one = Mock(return_value=None)
+        self._mock_connection.stops.find_one = Mock(return_value=None)
         self._stop_service = StopService(self._mock_connection)
 
     def test_insert_and_merge_inserts_when_new(self):
@@ -200,7 +199,7 @@ class StopServiceTest(unittest.TestCase):
         self._stop_service.insert_and_merge(stop)
         stop_dict = stop._asdict()
         stop_dict['_type'] = 'stop'
-        self._mock_connection.save.assert_called_once_with(stop_dict)
+        self._mock_connection.stops.save.assert_called_once_with(stop_dict)
 
     def test_insert_and_merge_does_not_insert_when_stop_exists_and_source_not_changed(self):
         stop = self._build_stop()
@@ -209,7 +208,7 @@ class StopServiceTest(unittest.TestCase):
         self._stop_service.insert_and_merge(stop)
 
         self.assertEqual(0, self._mock_connection.save.call_count)
-        self._mock_connection.find_one.assert_called_once_with({'url': stop.url, '_type': 'stop'})
+        self._mock_connection.stops.find_one.assert_called_once_with({'url': stop.url, '_type': 'stop'})
 
     def test_insert_and_merge_does_insert_when_stop_exists_and_source_changed(self):
         old_stop = self._build_stop()
@@ -220,7 +219,7 @@ class StopServiceTest(unittest.TestCase):
 
         self._stop_service.insert_and_merge(new_stop)
 
-        inserted_stop = self._mock_connection.save.call_args[0][0]
+        inserted_stop = self._mock_connection.stops.save.call_args[0][0]
         self.assertIn(new_source._asdict(), inserted_stop['sources'])
 
     def _build_stop(self):
@@ -233,5 +232,5 @@ class StopServiceTest(unittest.TestCase):
         stop_dict = stop._asdict()
         stop_dict['_id'] = '12345'
         stop_dict['_type'] = 'stop'
-        self._mock_connection.find_one.return_value = stop_dict
-        self._mock_connection.find.return_value = [stop_dict]
+        self._mock_connection.stops.find_one.return_value = stop_dict
+        self._mock_connection.stops.find.return_value = [stop_dict]

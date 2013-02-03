@@ -14,12 +14,12 @@ class TestPointsOfInterest(unittest.TestCase):
         self._mock_mongo.db.pois = Mock()
         self._mock_solr = Mock()
         self._pois = PointsOfInterest('test', self._mock_mongo, self._mock_solr)
-        self._mock_mongo.db.pois.find_one.return_value = None
+        self._mock_mongo.pois.find_one.return_value = None
 
     def test_add_adds_to_database(self):
         poi = PointOfInterest()
         self._pois.add_or_update(poi)
-        self._mock_mongo.db.pois.insert.assert_called_once_with(poi._asdict())
+        self._mock_mongo.pois.insert.assert_called_once_with(poi._asdict())
 
     def test_add_indexes(self):
         poi = PointOfInterest()
@@ -40,7 +40,7 @@ class TestPointsOfInterest(unittest.TestCase):
         })
 
     def test_add_or_update_checks_for_uri_clashes_before_adding(self):
-        self._mock_mongo.db.pois.find_one.return_value = {
+        self._mock_mongo.pois.find_one.return_value = {
             '_id': 'abcdef', 'sources': [Source(url='http://www.example.com', version=1, attribution='OSM')]
         }
         poi = PointOfInterest(uri='/test:test')
@@ -48,10 +48,10 @@ class TestPointsOfInterest(unittest.TestCase):
         poi_dict = poi._asdict()
         poi_dict.update({'_id': 'abcdef'})
         self.assertFalse(self._mock_mongo.db.pois.insert.called)
-        self._mock_mongo.db.pois.update.assert_called_once_with(poi_dict)
+        self._mock_mongo.pois.update.assert_called_once_with(poi_dict)
 
     def test_add_or_update_does_not_update_if_source_has_not_changed(self):
-        self._mock_mongo.db.pois.find_one.return_value = {
+        self._mock_mongo.pois.find_one.return_value = {
             '_id': 'abcdef',
             'sources': [{'url': 'http://www.example.com', 'version': 1, 'attribution': 'OSM'}]
         }
@@ -61,6 +61,6 @@ class TestPointsOfInterest(unittest.TestCase):
         )
         self._pois.add_or_update(poi)
 
-        self.assertFalse(self._mock_mongo.db.pois.insert.called)
-        self.assertFalse(self._mock_mongo.db.pois.update.called)
+        self.assertFalse(self._mock_mongo.pois.insert.called)
+        self.assertFalse(self._mock_mongo.pois.update.called)
         self.assertFalse(self._mock_solr.add.called)
