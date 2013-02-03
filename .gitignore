@@ -1,9 +1,11 @@
-.idea
-*.pyc
-conf/local.conf
-docs/_build
-*.iml
-dist/
 .DS_Store
 *.egg-info
+.idea
+*.iml
+*.log
+*.pot
+*.pyc
 .vagrant
+conf/local.conf
+docs/_build
+dist/

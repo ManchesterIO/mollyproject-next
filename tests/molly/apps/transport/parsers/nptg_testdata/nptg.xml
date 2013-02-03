@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NationalPublicTransportGazetteer xmlns="http://www.naptan.org.uk/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" CreationDateTime="2012-05-03T06:21:23" ModificationDateTime="2012-05-03T06:21:23" Modification="revise" RevisionNumber="676" FileName="NPTG.xml" SchemaVersion="2.1" xsi:schemaLocation="http://www.naptan.org.uk/ http://www.naptan.org.uk/schema/2.1/NPTG.xsd" xml:lang="en" LocationSystem="Grid">
+    <Regions>
+        <Region CreationDateTime="2006-01-25T07:54:31" ModificationDateTime="2006-01-25T07:54:31" RevisionNumber="42">
+            <RegionCode>EA</RegionCode>
+            <Name xml:lang="en">East Anglia</Name>
+            <Name xml:lang="de">Something in German</Name>
+            <Country>England</Country>
+            <AdministrativeAreas>
+                <AdministrativeArea CreationDateTime="2006-01-25T07:54:33" ModificationDateTime="2006-01-25T07:54:33" RevisionNumber="0">
+                    <AdministrativeAreaCode>071</AdministrativeAreaCode>
+                    <AtcoAreaCode>050</AtcoAreaCode>
+                    <Name>Cambridgeshire</Name>
+                    <ShortName>Cambs</ShortName>
+                    <NptgDistricts>
+                        <NptgDistrict CreationDateTime="2006-01-25T07:54:36" ModificationDateTime="2006-01-25T07:54:36" RevisionNumber="2">
+                            <NptgDistrictCode>29</NptgDistrictCode>
+                            <Name xml:lang="en">Cambridge</Name>
+                        </NptgDistrict>
+                        <NptgDistrict CreationDateTime="2006-01-25T07:54:36" ModificationDateTime="2006-01-25T07:54:36" RevisionNumber="0">
+                            <NptgDistrictCode>64</NptgDistrictCode>
+                            <Name xml:lang="en">East Cambridgeshire</Name>
+                        </NptgDistrict>
+                        <NptgDistrict CreationDateTime="2006-01-25T07:54:36" ModificationDateTime="2006-01-25T07:54:36" RevisionNumber="0">
+                            <NptgDistrictCode>82</NptgDistrictCode>
+                            <Name xml:lang="en">Fenland</Name>
+                        </NptgDistrict>
+                        <NptgDistrict CreationDateTime="2006-01-25T07:54:36" ModificationDateTime="2006-01-25T07:54:36" RevisionNumber="0">
+                            <NptgDistrictCode>103</NptgDistrictCode>
+                            <Name xml:lang="en">Huntingdonshire</Name>
+                        </NptgDistrict>
+                        <NptgDistrict CreationDateTime="2006-01-25T07:54:36" ModificationDateTime="2006-01-25T07:54:36" RevisionNumber="0">
+                            <NptgDistrictCode>174</NptgDistrictCode>
+                            <Name xml:lang="en">South Cambridgeshire</Name>
+                        </NptgDistrict>
+                    </NptgDistricts>
+                    <National>false</National>
+                    <NaptanPrefixes>
+                        <AlphaPrefix>cmb</AlphaPrefix>
+                        <AlphaPrefix>fnl</AlphaPrefix>
+                        <AlphaPrefix>hun</AlphaPrefix>
+                    </NaptanPrefixes>
+                </AdministrativeArea>
+            </AdministrativeAreas>
+        </Region>
+    </Regions>
+    <NptgLocalities>
+        <NptgLocality CreationDateTime="2005-10-05T11:18:07" ModificationDateTime="2005-10-05T11:18:07" RevisionNumber="0">
+            <NptgLocalityCode>E0034964</NptgLocalityCode>
+            <Descriptor>
+                <LocalityName xml:lang="EN">Amesbury</LocalityName>
+                <Qualify>
+                    <QualifierName xml:lang="en">NE Somerset</QualifierName>
+                </Qualify>
+            </Descriptor>
+            <AdministrativeAreaRef>001</AdministrativeAreaRef>
+            <NptgDistrictRef>310</NptgDistrictRef>
+            <SourceLocalityType>Lo</SourceLocalityType>
+            <Location>
+                <Translation>
+                    <Easting>365491</Easting>
+                    <Northing>158651</Northing>
+                    <Longitude>-2.4966503699</Longitude>
+                    <Latitude>51.3259016941</Latitude>
+                </Translation>
+            </Location>
+        </NptgLocality>
+        <NptgLocality CreationDateTime="2005-10-05T11:18:23" ModificationDateTime="2005-10-05T11:18:23" RevisionNumber="0">
+            <NptgLocalityCode>E0034965</NptgLocalityCode>
+            <Descriptor>
+                <LocalityName xml:lang="EN">Ashgrove</LocalityName>
+                <Qualify>
+                    <QualifierName xml:lang="en">Peasedown St John</QualifierName>
+                </Qualify>
+            </Descriptor>
+            <ParentNptgLocalityRef CreationDateTime="2005-01-11T10:51:15" ModificationDateTime="2005-01-11T10:51:15" RevisionNumber="0">E0052932</ParentNptgLocalityRef>
+            <AdministrativeAreaRef>001</AdministrativeAreaRef>
+            <NptgDistrictRef>310</NptgDistrictRef>
+            <SourceLocalityType>Lo</SourceLocalityType>
+            <Location>
+                <Translation>
+                    <Easting>370798</Easting>
+                    <Northing>157864</Northing>
+                    <Longitude>-2.4204220959</Longitude>
+                    <Latitude>51.3191233645</Latitude>
+                </Translation>
+            </Location>
+        </NptgLocality>
+    </NptgLocalities>
+</NationalPublicTransportGazetteer>
