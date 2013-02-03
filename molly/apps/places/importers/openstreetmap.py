@@ -8,9 +8,9 @@ from celery.schedules import schedule
 from imposm.parser import OSMParser
 from shapely.geometry import Polygon, LineString, Point
 
-from molly.apps.common.components import Attribution
+from molly.apps.common.components import Attribution, Identifiers, Identifier, Source
 from molly.config import ConfigError
-from molly.apps.places.models import PointOfInterest, Identifier, Source
+from molly.apps.places.models import PointOfInterest
 
 ATTRIBUTION = Attribution(
     licence_name='Open Database Licence',
@@ -146,7 +146,7 @@ class OpenStreetMapImporter(object):
             PointOfInterest(
                 uri='/osm:{}'.format(id),
                 geography=geography,
-                identifiers=[Identifier(namespace='osm', value=id)],
+                identifiers=Identifiers({Identifier(namespace='osm', value=id)}),
                 sources=[self._source]
             )
         )

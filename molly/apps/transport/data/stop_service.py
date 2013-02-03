@@ -1,5 +1,5 @@
-from tch.data.base import BaseService
-from tch.stop import Stop, CallingPoint
+from molly.apps.transport.data.base import BaseService
+from molly.apps.transport.stop import Stop, CallingPoint
 
 class StopService(BaseService):
 

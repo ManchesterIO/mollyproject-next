@@ -1,8 +1,8 @@
 import os
 import unittest2 as unittest
-from tch.identifier import Identifier
-from tch.parsers.naptan import NaptanParser
-from tch.stop import CallingPoint, Stop, ATCO_NAMESPACE, CRS_NAMESPACE, TIPLOC_NAMESPACE
+from molly.apps.common.components import Identifier
+from molly.apps.transport.parsers.naptan import NaptanParser
+from molly.apps.transport.stop import Stop, CallingPoint, ATCO_NAMESPACE, CRS_NAMESPACE, TIPLOC_NAMESPACE
 
 class NaptanParserTest(unittest.TestCase):
 
@@ -26,15 +26,15 @@ class NaptanParserTest(unittest.TestCase):
         self.assertEquals('2', self._get_bus_stop().sources.pop().version)
 
     def test_licence_is_correctly_set_on_bus_stop(self):
-        self.assertEqual("Open Government Licence", self._get_bus_stop().sources.pop().licence)
+        self.assertEqual("Open Government Licence", self._get_bus_stop().sources.pop().attribution.licence_name)
 
     def test_licence_url_is_correctly_set_on_bus_stop(self):
         self.assertEqual("http://www.nationalarchives.gov.uk/doc/open-government-licence/",
-            self._get_bus_stop().sources.pop().licence_url)
+            self._get_bus_stop().sources.pop().attribution.licence_url)
 
     def test_attribution_is_correctly_set_on_bus_stop(self):
         self.assertEqual("Contains public sector information licensed under the Open Government Licence v1.0",
-            self._get_bus_stop().sources.pop().attribution)
+            self._get_bus_stop().sources.pop().attribution.attribution_text)
 
     def test_bus_calling_point_source_url_is_set_correctly(self):
         self.assertEquals(self._TEST_URL + "/NaPTAN.xml", self._get_bus_calling_point().sources.pop().url)
@@ -182,6 +182,3 @@ class NaptanParserTest(unittest.TestCase):
     def _get_stops_by_url(self):
         stops = list(self._import_from_test_data())
         return dict(zip(map(lambda s: s.url, stops), stops))
-
-if __name__ == '__main__':
-    unittest.main()

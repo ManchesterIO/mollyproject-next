@@ -1,4 +1,4 @@
-from tch.data.base import BaseService
+from molly.apps.transport.data.base import BaseService
 
 class LocalityService(BaseService):
 

@@ -1,4 +1,4 @@
-from tch.locality import Locality
+from molly.apps.transport.locality import Locality
 
 class LocalityMongoDb(object):
 

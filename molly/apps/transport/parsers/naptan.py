@@ -1,9 +1,7 @@
 from collections import defaultdict
 from xml.etree.cElementTree import iterparse
-from tch.identifier import Identifier
-
-from tch.source import Source
-from tch.stop import Stop, CallingPoint, ATCO_NAMESPACE, CRS_NAMESPACE, TIPLOC_NAMESPACE
+from molly.apps.common.components import Source, Identifier, Attribution
+from molly.apps.transport.stop import CallingPoint, Stop, ATCO_NAMESPACE, CRS_NAMESPACE, TIPLOC_NAMESPACE
 
 class NaptanParser(object):
 
@@ -20,9 +18,11 @@ class NaptanParser(object):
                          '{http://www.naptan.org.uk/}Rail/{http://www.naptan.org.uk/}AnnotatedRailRef/' \
                          '{http://www.naptan.org.uk/}TiplocRef'
 
-    _LICENCE = "Open Government Licence"
-    _LICENCE_URL = "http://www.nationalarchives.gov.uk/doc/open-government-licence/"
-    _ATTRIBUTION = "Contains public sector information licensed under the Open Government Licence v1.0"
+    _ATTRIBUTION = Attribution(
+        attribution_text="Contains public sector information licensed under the Open Government Licence v1.0",
+        licence_name='Open Government Licence',
+        licence_url='http://www.nationalarchives.gov.uk/doc/open-government-licence/'
+    )
 
     def import_from_file(self, file, source_url):
         self._airports = dict()
@@ -157,8 +157,6 @@ class NaptanParser(object):
         point.sources.add(Source(
             url=self._source_url + '/' + self._source_file,
             version=elem.attrib.get('RevisionNumber', '0'),
-            licence=self._LICENCE,
-            licence_url=self._LICENCE_URL,
             attribution=self._ATTRIBUTION
         ))
         atco_code = self._get_atco_code(elem)

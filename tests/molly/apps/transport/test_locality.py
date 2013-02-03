@@ -3,7 +3,7 @@ from mock import Mock
 from shapely.geometry import Point, Polygon
 import unittest2 as unittest
 
-from tch.locality import Locality
+from molly.apps.transport.locality import Locality
 
 class LocalityTest(unittest.TestCase):
 
@@ -84,7 +84,3 @@ class LocalityTest(unittest.TestCase):
         source.as_dict = Mock()
         source.as_dict.return_value = self._DUMMY_DICT
         return source
-
-
-if __name__ == '__main__':
-    unittest.main()

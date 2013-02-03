@@ -1,16 +1,14 @@
 from collections import namedtuple
 from shapely import wkt
 
-from molly.apps.common.components import LocalisedName
+from molly.apps.common.components import LocalisedName, Identifier, Source, Identifiers
 
 AccessPoint = namedtuple('AccessPoint', ['names', 'location', 'accessible'])
-Identifier = namedtuple('Identifier', ['namespace', 'value'])
 OpeningHourRange = namedtuple('OpeningHourRange', [
     'start_date', 'end_date', 'monday_opens', 'monday_closes', 'tuesday_opens', 'tuesday_closes',
     'wednesday_opens', 'wednesday_closes', 'thursday_opens', 'thursday_closes', 'friday_opens', 'friday_closes',
     'saturday_opens', 'saturday_closes', 'sunday_opens', 'sunday_closes'
 ])
-Source = namedtuple('Source', ['url', 'version', 'attribution'])
 
 class PointOfInterest(object):
 
@@ -67,7 +65,7 @@ class PointOfInterest(object):
         poi.uri = data.uri
         poi.names = [LocalisedName(**name) for name in data['names']]
         poi.descriptions = [LocalisedName(**name) for name in data['descriptions']]
-        poi.identifiers = [Identifier(**name) for name in data['identifiers']]
+        poi.identifiers = Identifiers(Identifier(**name) for name in data['identifiers'])
         poi.address = data['address']
         poi.locality = data['locality']
         poi.telephone_number = data['telephone_number']

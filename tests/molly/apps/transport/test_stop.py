@@ -1,12 +1,12 @@
 import unittest2 as unittest
-from tch.source import Source
-from tch.stop import Stop, CallingPoint
+from molly.apps.common.components import Source
+from molly.apps.transport.stop import Stop, CallingPoint
 
 class StopTest(unittest.TestCase):
 
     def test_stop_as_dict_includes_appropriate_things(self):
         url = '/test'
-        source = Source()
+        source = Source(url='http://www.example.com', version=1, attribution=None)
         calling_point_url = '/foo'
 
         stop = Stop()
@@ -16,7 +16,7 @@ class StopTest(unittest.TestCase):
 
         self.assertEquals({
             'url': url,
-            'sources': [source.as_dict()],
+            'sources': [source._asdict()],
             'calling_points': [calling_point_url],
             'identifiers': []
         }, stop.as_dict())
@@ -26,7 +26,7 @@ class CallingPointTest(unittest.TestCase):
 
     def test_stop_as_dict_includes_appropriate_things(self):
         url = '/test'
-        source = Source()
+        source = Source(url='http://www.example.com', version=1, attribution=None)
         parent_url = '/foo'
 
         calling_point = CallingPoint()
@@ -36,14 +36,14 @@ class CallingPointTest(unittest.TestCase):
 
         self.assertEquals({
             'url': url,
-            'sources': [source.as_dict()],
+            'sources': [source._asdict()],
             'parent_url': parent_url,
             'identifiers': []
         }, calling_point.as_dict())
 
     def test_stop_as_dict_includes_appropriate_things_when_no_parent(self):
         url = '/test'
-        source = Source()
+        source = Source(url='http://www.example.com', version=1, attribution=None)
 
         calling_point = CallingPoint()
         calling_point.url = '/test'
@@ -51,7 +51,7 @@ class CallingPointTest(unittest.TestCase):
 
         self.assertEquals({
             'url': url,
-            'sources': [source.as_dict()],
+            'sources': [source._asdict()],
             'parent_url': None,
             'identifiers': []
         }, calling_point.as_dict())

@@ -1,12 +1,10 @@
-from datetime import time
 import mock
 import os
 import unittest2 as unittest
-
-from tch.identifier import Identifier
-from tch.parsers.cif import CifParser
-from tch.stop import CallingPoint, TIPLOC_NAMESPACE, STANOX_NAMESPACE, CRS_NAMESPACE, CIF_DESCRIPTION_NAMESPACE
-from tch.timetable import Call, CallTime
+from molly.apps.common.components import Identifier
+from molly.apps.transport.parsers.cif import CifParser
+from molly.apps.transport.stop import CallingPoint, TIPLOC_NAMESPACE, STANOX_NAMESPACE, CRS_NAMESPACE, CIF_DESCRIPTION_NAMESPACE
+from molly.apps.transport.timetable import Call, CallTime
 
 class CifParserTest(unittest.TestCase):
 
@@ -56,19 +54,21 @@ class CifParserTest(unittest.TestCase):
         self.assertEquals('TEST', self._parser.tiplocs[0].sources.pop().version)
 
     def test_licence_is_correctly_set_on_tiploc(self):
-        self.assertEquals("Creative Commons Attribution-ShareAlike", self._parser.tiplocs[0].sources.pop().licence)
+        self.assertEquals(
+            "Creative Commons Attribution-ShareAlike",
+            self._parser.tiplocs[0].sources.pop().attribution.licence_name
+        )
 
     def test_licence_url_is_correctly_set_on_tiploc(self):
         self.assertEquals(
             "http://creativecommons.org/licenses/by-sa/1.0/legalcode",
-            self._parser.tiplocs[0].sources.pop().licence_url
+            self._parser.tiplocs[0].sources.pop().attribution.licence_url
         )
 
     def test_attribution_is_correctly_set_on_tiploc(self):
-        self.assertEquals(
-            '<a href="http://www.atoc.org/">Source: RSP</a>',
-            self._parser.tiplocs[0].sources.pop().attribution
-        )
+        source = self._parser.tiplocs[0].sources.pop()
+        self.assertEquals('Source: RSP', source.attribution.attribution_text)
+        self.assertEquals('http://www.atoc.org/', source.attribution.attribution_url)
 
     def test_route_name_is_correctly_defined(self):
         self.assertEquals('Crewe to Derby', self._parser.services[0].name)

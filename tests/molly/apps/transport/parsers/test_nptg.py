@@ -1,11 +1,9 @@
 import os
 from shapely.geometry.point import Point
 import unittest2 as unittest
-from tch.identifier import Identifier
-
-from tch.parsers.nptg import NptgParser
-from tch.locality import NPTG_REGION_CODE_NAMESPACE, \
-    NPTG_DISTRICT_CODE_NAMESPACE, NPTG_LOCALITY_CODE_NAMESPACE
+from molly.apps.common.components import Identifier, LocalisedName
+from molly.apps.transport.locality import NPTG_REGION_CODE_NAMESPACE, NPTG_DISTRICT_CODE_NAMESPACE, NPTG_LOCALITY_CODE_NAMESPACE
+from molly.apps.transport.parsers.nptg import NptgParser
 
 class NptgParserTest(unittest.TestCase):
 
@@ -23,17 +21,17 @@ class NptgParserTest(unittest.TestCase):
 
     def test_licence_is_correctly_set_on_localities(self):
         locality = self._import_from_test_data().next()
-        self.assertEqual("Open Government Licence", locality.sources[0].licence)
+        self.assertEqual("Open Government Licence", locality.sources[0].attribution.licence_name)
 
     def test_licence_url_is_correctly_set_on_localities(self):
         locality = self._import_from_test_data().next()
         self.assertEqual("http://www.nationalarchives.gov.uk/doc/open-government-licence/",
-            locality.sources[0].licence_url)
+            locality.sources[0].attribution.licence_url)
 
     def test_attribution_is_correctly_set_on_localities(self):
         locality = self._import_from_test_data().next()
         self.assertEqual("Contains public sector information licensed under the Open Government Licence v1.0",
-            locality.sources[0].attribution)
+            locality.sources[0].attribution.attribution_text)
 
     def test_parse_returns_correct_number_of_items(self):
         self.assertEqual(8, len(list(self._import_from_test_data())))
@@ -52,14 +50,14 @@ class NptgParserTest(unittest.TestCase):
         self.assertIn(expected_identifier, locality.identifiers)
 
     def test_region_name_is_identifier_on_region(self):
-        expected_identifier = Identifier(namespace="nptg:Name", value="East Anglia", lang="en")
+        expected_identifier = LocalisedName(name="East Anglia", lang="en")
         locality = self._get_imported_region()
-        self.assertIn(expected_identifier, locality.identifiers)
+        self.assertIn(expected_identifier, locality.names)
 
     def test_multiple_region_names_are_set(self):
-        expected_identifier = Identifier(namespace="nptg:Name", value="Something in German", lang="de")
+        expected_identifier = LocalisedName(name="Something in German", lang="de")
         locality = self._get_imported_region()
-        self.assertIn(expected_identifier, locality.identifiers)
+        self.assertIn(expected_identifier, locality.names)
 
     def test_version_is_set_on_district(self):
         self.assertEqual("2", self._get_imported_district().sources[0].version)
@@ -70,9 +68,9 @@ class NptgParserTest(unittest.TestCase):
         self.assertIn(expected_identifier, locality.identifiers)
 
     def test_name_is_set_on_district(self):
-        expected_identifier = Identifier(namespace='nptg:Name', value='Cambridge', lang='en')
+        expected_identifier = LocalisedName(name='Cambridge', lang='en')
         locality = self._get_imported_district()
-        self.assertIn(expected_identifier, locality.identifiers)
+        self.assertIn(expected_identifier, locality.names)
 
     def test_district_has_correct_parent(self):
         locality = self._get_imported_district()
@@ -92,9 +90,9 @@ class NptgParserTest(unittest.TestCase):
         self.assertIn(expected_identifier, locality.identifiers)
 
     def test_locality_name_is_set_on_locality(self):
-        expected_identifier = Identifier(namespace='nptg:Name', value='Amesbury', lang='en')
+        expected_identifier = LocalisedName(name='Amesbury', lang='en')
         locality = self._get_imported_locality()
-        self.assertIn(expected_identifier, locality.identifiers)
+        self.assertIn(expected_identifier, locality.names)
 
     def test_locality_location_is_set(self):
         expected_location = Point(-2.4966503699, 51.3259016941)

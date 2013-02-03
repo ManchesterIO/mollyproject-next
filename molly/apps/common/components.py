@@ -17,4 +17,22 @@ class Attribution(object):
             'attribution_url': self.attribution_url
         }
 
+
+Identifier = namedtuple('Identifier', ['namespace', 'value'])
+
+
+class Identifiers(set):
+
+    def by_namespace(self, namespace):
+        """
+        the subset of all identifiers in this set which have the given namespace.
+        """
+        results = set()
+        for identifier in self:
+            if identifier.namespace == namespace:
+                results.add(identifier)
+        return results
+
+
 LocalisedName = namedtuple('LocalisedName', ['name', 'lang'])
+Source = namedtuple('Source', ['url', 'version', 'attribution'])

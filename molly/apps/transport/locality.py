@@ -1,13 +1,14 @@
 import geojson
-from tch.identifier import Identifiers
+from molly.apps.common.components import Identifiers
 
-NPTG_REGION_CODE_NAMESPACE = "nptg:RegionCode"
-NPTG_DISTRICT_CODE_NAMESPACE = "nptg:DistrictCode"
-NPTG_LOCALITY_CODE_NAMESPACE = "nptg:LocalityCode"
+NPTG_REGION_CODE_NAMESPACE = "http://www.naptan.org.uk/RegionCode"
+NPTG_DISTRICT_CODE_NAMESPACE = "http://www.naptan.org.uk/NptgDistrictCode"
+NPTG_LOCALITY_CODE_NAMESPACE = "http://www.naptan.org.uk/NptgLocalityCode"
 
 class Locality(object):
 
     def __init__(self):
+        self.names = set()
         self._identifiers = Identifiers()
         self.url = None
         self.parent_url = None

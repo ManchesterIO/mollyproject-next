@@ -1,10 +1,10 @@
 import unittest2 as unittest
 from mock import Mock
 from shapely.geometry.point import Point
-from tch.data.locality_service import LocalityService
-from tch.identifier import Identifier
-from tch.locality import Locality
-from tch.source import Source
+
+from molly.apps.common.components import Identifier, Source
+from molly.apps.transport.data.locality_service import LocalityService
+from molly.apps.transport.locality import Locality
 
 
 class LocalityServiceTest(unittest.TestCase):
@@ -42,7 +42,7 @@ class LocalityServiceTest(unittest.TestCase):
 
     def test_insert_and_merge_posts_maintains_other_sources_when_merging(self):
         db_locality = self._build_locality()
-        other_source = Source(url='http://www.othersource.com', version=2)
+        other_source = Source(url='http://www.othersource.com', version=2, attribution=None)
         db_locality.sources = {other_source}
         mock_connection = self._build_mock_connection(db_locality)
 
@@ -135,14 +135,14 @@ class LocalityServiceTest(unittest.TestCase):
         locality = Locality()
         locality.url = self.URL
         locality.parent_url = self.PARENT_URL
-        locality.sources = {Source(url='http://www.example.com', version=2)}
+        locality.sources = {Source(url='http://www.example.com', version=2, attribution=None)}
         locality.geography = Point(0, 0)
         locality.identifiers = [self.IDENTIFIER]
         return locality
 
     def _build_old_locality(self):
         old_locality = self._build_locality()
-        source = Source(url='http://www.example.com', version=0)
+        source = Source(url='http://www.example.com', version=0, attribution=None)
         old_locality.sources = {source}
         return old_locality, source
 

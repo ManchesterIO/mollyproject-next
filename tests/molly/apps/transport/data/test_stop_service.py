@@ -1,9 +1,8 @@
 from mock import Mock
 import unittest2 as unittest
-
-from tch.data.stop_service import StopService
-from tch.source import Source
-from tch.stop import Stop
+from molly.apps.common.components import Source
+from molly.apps.transport.data.stop_service import StopService
+from molly.apps.transport.stop import Stop
 
 class StopServiceTest(unittest.TestCase):
 
@@ -33,7 +32,7 @@ class StopServiceTest(unittest.TestCase):
         old_stop = self._build_stop()
         self._mock_connection.select_by_url.return_value = old_stop
         new_stop = self._build_stop()
-        new_source = Source(url='http://www.example.com', version=2)
+        new_source = Source(url='http://www.example.com', version=2, attribution=None)
         new_stop.sources = {new_source}
 
         self._stop_service.insert_and_merge(new_stop)
@@ -44,5 +43,5 @@ class StopServiceTest(unittest.TestCase):
     def _build_stop(self):
         stop = Stop()
         stop.url = self._URL
-        stop.sources = {Source(url='http://www.example.com', version=1)}
+        stop.sources = {Source(url='http://www.example.com', version=1, attribution=None)}
         return stop

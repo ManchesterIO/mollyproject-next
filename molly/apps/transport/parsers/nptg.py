@@ -1,11 +1,8 @@
 from xml.etree.cElementTree import iterparse
 
 from shapely.geometry.point import Point
-
-from tch.identifier import Identifier
-from tch.locality import Locality, NPTG_REGION_CODE_NAMESPACE, NPTG_DISTRICT_CODE_NAMESPACE, \
-    NPTG_LOCALITY_CODE_NAMESPACE
-from tch.source import Source
+from molly.apps.common.components import Source, Identifier, Identifiers, Attribution, LocalisedName
+from molly.apps.transport.locality import Locality, NPTG_REGION_CODE_NAMESPACE, NPTG_DISTRICT_CODE_NAMESPACE, NPTG_LOCALITY_CODE_NAMESPACE
 
 class NptgParser(object):
 
@@ -26,9 +23,11 @@ class NptgParser(object):
     _LOCALITY_DISTRICT_REF_XPATH = './{http://www.naptan.org.uk/}NptgDistrictRef'
     _LOCALITY_PARENT_REF_XPATH = './{http://www.naptan.org.uk/}ParentNptgLocalityRef'
 
-    _LICENCE = "Open Government Licence"
-    _LICENCE_URL = "http://www.nationalarchives.gov.uk/doc/open-government-licence/"
-    _ATTRIBUTION = "Contains public sector information licensed under the Open Government Licence v1.0"
+    _ATTRIBUTION = Attribution(
+        attribution_text="Contains public sector information licensed under the Open Government Licence v1.0",
+        licence_name='Open Government Licence',
+        licence_url='http://www.nationalarchives.gov.uk/doc/open-government-licence/'
+    )
 
     def import_from_file(self, file, source_url):
         self._source_url = source_url
@@ -50,8 +49,6 @@ class NptgParser(object):
             Source(
                 url=self._source_url + "/" + self._source_file,
                 version=elem.attrib['RevisionNumber'],
-                licence=self._LICENCE,
-                licence_url=self._LICENCE_URL,
                 attribution=self._ATTRIBUTION
             )
         ]
@@ -62,9 +59,9 @@ class NptgParser(object):
         region_code = elem.find(self._REGION_CODE_XPATH).text
 
         locality.url = "/gb/" + region_code
-        locality.identifiers = [
+        locality.identifiers = Identifiers([
             Identifier(namespace=NPTG_REGION_CODE_NAMESPACE, value=region_code)
-        ]
+        ])
 
         self._add_names_from_elem(locality, elem)
 
@@ -89,7 +86,7 @@ class NptgParser(object):
 
     def _add_names_from_elem(self, locality, elem):
         for name_elem in elem.findall(self._REGION_DISTRICT_NAME_XPATH):
-            locality.identifiers.add(self._build_name_identifier_from_elem(name_elem))
+            locality.names.add(self._build_name_from_elem(name_elem))
 
     def _build_locality(self, elem):
         locality = self._build_base_locality(elem)
@@ -108,18 +105,18 @@ class NptgParser(object):
 
         locality.url = "/gb/" + locality_code
 
-        locality.identifiers = [
-            Identifier(namespace=NPTG_LOCALITY_CODE_NAMESPACE, value=locality_code),
-            self._build_name_identifier_from_elem(name_elem)
-        ]
+        locality.identifiers = Identifiers([
+            Identifier(namespace=NPTG_LOCALITY_CODE_NAMESPACE, value=locality_code)
+        ])
+        locality.names.add(self._build_name_from_elem(name_elem))
 
         locality.geography = Point(float(lon), float(lat))
 
         return locality
 
-    def _build_name_identifier_from_elem(self, elem):
+    def _build_name_from_elem(self, elem):
         lang = elem.attrib.get(self._LANGUAGE_ATTRIB)
         if lang is not None:
             lang = lang.lower()
 
-        return Identifier(namespace="nptg:Name", value=elem.text, lang=lang)
+        return LocalisedName(name=elem.text, lang=lang)

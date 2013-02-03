@@ -3,7 +3,7 @@ from mock import Mock, MagicMock
 from shapely.geometry import Polygon, LineString, Point
 import unittest2
 
-from molly.apps.places.models import Identifier, Source
+from molly.apps.common.components import Identifier, Source, Identifiers
 from molly.apps.places.importers import openstreetmap
 from molly.config import ConfigError
 
@@ -87,7 +87,7 @@ class TestOpenStreetMapImporter(unittest2.TestCase):
         self.assertRaises(RuntimeError, self._osm_importer.load)
 
     def test_pois_created_with_correct_identifier(self):
-        self.assertEquals([Identifier('osm', 'N12345')], self._get_node_poi().identifiers)
+        self.assertEquals(Identifiers([Identifier('osm', 'N12345')]), self._get_node_poi().identifiers)
 
     def test_pois_created_with_correct_source(self):
         poi = self._get_node_poi()

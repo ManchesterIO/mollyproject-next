@@ -1,15 +1,16 @@
-from datetime import time
-from tch.identifier import Identifier
-from tch.source import Source
-from tch.stop import CallingPoint, TIPLOC_NAMESPACE, STANOX_NAMESPACE, CRS_NAMESPACE, CIF_DESCRIPTION_NAMESPACE
-from tch.timetable import Route, Service, ScheduledTrip, Call, CallTime
+from molly.apps.common.components import Source, Identifier, Attribution
+from molly.apps.transport.stop import STANOX_NAMESPACE, CRS_NAMESPACE, CallingPoint, TIPLOC_NAMESPACE, CIF_DESCRIPTION_NAMESPACE
+from molly.apps.transport.timetable import ScheduledTrip, Call, CallTime, Route, Service
 
 class CifParser(object):
 
     _SOURCE_URL = 'cif:'
-    _LICENCE = 'Creative Commons Attribution-ShareAlike'
-    _LICENCE_URL = 'http://creativecommons.org/licenses/by-sa/1.0/legalcode'
-    _ATTRIBUTION = '<a href="http://www.atoc.org/">Source: RSP</a>'
+    _ATTRIBUTION = Attribution(
+        attribution_text='Source: RSP',
+        attribution_url='http://www.atoc.org/',
+        licence_name='Creative Commons Attribution-ShareAlike',
+        licence_url='http://creativecommons.org/licenses/by-sa/1.0/legalcode'
+    )
 
     def import_from_file(self, archive):
         self._reset_state()
@@ -38,8 +39,6 @@ class CifParser(object):
         self._source = Source(
             url=self._SOURCE_URL,
             version=archive.namelist[0].split('.')[0],
-            licence=self._LICENCE,
-            licence_url=self._LICENCE_URL,
             attribution=self._ATTRIBUTION
         )
 

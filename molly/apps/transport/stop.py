@@ -1,11 +1,10 @@
-from tch.identifier import Identifiers, Identifier
-from tch.source import Source
+from molly.apps.common.components import Identifiers, Source, Identifier
 
-ATCO_NAMESPACE = 'naptan:atco'
+ATCO_NAMESPACE = 'http://www.naptan.org.uk/AtcoCode'
 CIF_DESCRIPTION_NAMESPACE = 'cif:description'
-CRS_NAMESPACE = 'rail:crs'
-STANOX_NAMESPACE = 'rail:stanox'
-TIPLOC_NAMESPACE = 'rail:tiploc'
+CRS_NAMESPACE = 'http://www.naptan.org.uk/CrsRef'
+STANOX_NAMESPACE = 'http://datafeeds.networkrail.co.uk/stanox'
+TIPLOC_NAMESPACE = 'http://www.naptan.org.uk/TiplocRef'
 
 class Stop(object):
 
@@ -25,13 +24,15 @@ class Stop(object):
                 setattr(stop, key, value)
             elif key == 'calling_points':
                 stop.calling_points.update(value)
+            elif key == 'identifiers':
+                stop.identifiers.update(map(lambda identifier: Identifier(**identifier), value))
 
     def as_dict(self):
         return {
             'url': self.url,
             'calling_points': list(self.calling_points),
-            'sources': map(lambda source: source.as_dict(), self.sources),
-            'identifiers': map(lambda identifier: identifier.as_dict(), self.identifiers)
+            'sources': map(lambda source: source._asdict(), self.sources),
+            'identifiers': map(lambda identifier: identifier._asdict(), self.identifiers)
         }
 
 
@@ -57,8 +58,8 @@ class CallingPoint(object):
     def as_dict(self):
         calling_point_dict = {
             'url': self.url,
-            'sources': map(lambda source: source.as_dict(), self.sources),
-            'identifiers': map(lambda identifier: identifier.as_dict(), self.identifiers)
+            'sources': map(lambda source: source._asdict(), self.sources),
+            'identifiers': map(lambda identifier: identifier._asdict(), self.identifiers)
         }
 
         if hasattr(self, 'parent_url'):

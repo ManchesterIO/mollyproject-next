@@ -1,7 +1,8 @@
 from mock import Mock
 import unittest2 as unittest
-from tch.data.mongo.localities import LocalityMongoDb
-from tch.locality import Locality
+
+from molly.apps.transport.data.mongo.localities import LocalityMongoDb
+from molly.apps.transport.locality import Locality
 
 class LocalityMongoDbTest(unittest.TestCase):
 
