@@ -1,5 +1,6 @@
 import datetime
 import geojson
+from shapely.geometry import asShape
 
 from molly.apps.common.components import Identifiers, Source, Identifier
 
@@ -28,6 +29,13 @@ class Locality(object):
     def from_dict(locality_dict):
         locality = Locality()
         if 'url' in locality_dict: locality.url = locality_dict['url']
+        if 'parent_url' in locality_dict: locality.parent_url = locality_dict['parent_url']
+        if 'sources' in locality_dict: locality.sources = set(Source(**source) for source in locality_dict['sources'])
+        if 'identifiers' in locality_dict:
+            locality.identifiers = Identifiers(
+                Identifier(**identifier) for identifier in locality_dict['identifiers']
+            )
+        if 'geography' in locality_dict: locality.geography = asShape(locality_dict['geography'])
         return locality
 
     @property
@@ -74,13 +82,14 @@ class Stop(object):
                 stop.calling_points.update(value)
             elif key == 'identifiers':
                 stop.identifiers.update(map(lambda identifier: Identifier(**identifier), value))
+        return stop
 
     def _asdict(self):
         return {
             'url': self.url,
             'calling_points': list(self.calling_points),
-            'sources': map(lambda source: source._asdict(), self.sources),
-            'identifiers': map(lambda identifier: identifier._asdict(), self.identifiers)
+            'sources': map(lambda source: dict(source._asdict()), self.sources),
+            'identifiers': map(lambda identifier: dict(identifier._asdict()), self.identifiers)
         }
 
 
@@ -106,8 +115,8 @@ class CallingPoint(object):
     def _asdict(self):
         calling_point_dict = {
             'url': self.url,
-            'sources': map(lambda source: source._asdict(), self.sources),
-            'identifiers': map(lambda identifier: identifier._asdict(), self.identifiers)
+            'sources': map(lambda source: dict(source._asdict()), self.sources),
+            'identifiers': map(lambda identifier: dict(identifier._asdict()), self.identifiers)
         }
 
         if hasattr(self, 'parent_url'):
