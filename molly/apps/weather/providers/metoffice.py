@@ -15,6 +15,7 @@ class Provider(object):
     def __init__(self, config):
         self._config = config
         self.cache = None
+        self.statsd = None
 
     attribution = Attribution(
         licence_name='Open Government Licence',
@@ -29,10 +30,13 @@ class Provider(object):
             response = None
 
         if not response:
-            response = urlopen(
-                'http://datapoint.metoffice.gov.uk/public/data/val/wxobs/all' +
-                '/json/{location_id}?res=hourly&key={api_key}'.format(**self._config)
-            )
+            if self.statsd: self.statsd.incr(__name__ + '.cache_miss')
+
+            if self.statsd:
+                with self.statsd.timer(__name__ + '.request_time'):
+                    response = self._make_request()
+            else:
+                response = self._make_request()
 
             max_age = parse_cache_control_header(response.info().getparam('Cache-Control')).max_age
 
@@ -43,6 +47,8 @@ class Provider(object):
                     response,
                     max_age
                 )
+        elif self.statsd:
+            self.statsd.incr(__name__ + '.cache_hit')
 
         source_observation = response['SiteRep']['DV']['Location']['Period'][-1]['Rep'][-1]
         minutes_since_midnight = timedelta(minutes=int(source_observation['$']))
@@ -65,6 +71,12 @@ class Provider(object):
             'obs_location': capwords(response['SiteRep']['DV']['Location']['name']),
             'obs_time': obs_time.isoformat()
         }
+
+    def _make_request(self):
+        return urlopen(
+            'http://datapoint.metoffice.gov.uk/public/data/val/wxobs/all' +
+            '/json/{location_id}?res=hourly&key={api_key}'.format(**self._config)
+        )
 
     _CACHE_KEY = 'weather/metoffice/{}'
 

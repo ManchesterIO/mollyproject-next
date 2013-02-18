@@ -5,19 +5,42 @@ from flask import Flask
 from flask.ext.assets import Environment as Assets
 from flask.ext.babel import Babel
 from flask.ext.cache import Cache
+from flask.ext.statsd import StatsD
 from jinja2 import PackageLoader, ChoiceLoader, PrefixLoader, FileSystemLoader, MemcachedBytecodeCache
+from raven.contrib.flask import Sentry
 
 from molly.ui.html5.components.factory import ComponentFactory
 from molly.ui.html5.page_decorators.page_decorator_factory import PageDecoratorFactory
 from molly.ui.html5.request_factory import HttpRequestFactory
 from molly.ui.html5.router import Router
 
+class DummyStats(object):
+
+    def timer(self, *args, **kwargs):
+        pass
+
+    def timing(self, *args, **kwargs):
+        pass
+
+    def incr(self, *args, **kwargs):
+        pass
+
+    def decr(self, *args, **kwargs):
+        pass
+
+    def gauge(self, *args, **kwargs):
+        pass
+
+
 def init_flask():
     flask_app = Flask(__name__)
     flask_app.config.from_envvar('MOLLY_UI_SETTINGS')
     Babel(flask_app)
-    return flask_app
-flask_app = init_flask()
+    if 'SENTRY_DSN' in flask_app.config:
+        Sentry(flask_app)
+    statsd = StatsD(flask_app) if 'STATSD_HOST' in flask_app.config else DummyStats()
+    return flask_app, statsd
+flask_app, statsd = init_flask()
 
 
 def init_molly(flask_app, api_hostname, api_port):
@@ -28,7 +51,7 @@ def init_molly(flask_app, api_hostname, api_port):
         assets.debug = True
     page_decorator_factory = PageDecoratorFactory(assets)
 
-    router = Router(request_factory, component_factory, page_decorator_factory)
+    router = Router(request_factory, component_factory, page_decorator_factory, statsd)
 
     flask_app.add_url_rule('/', 'homepage', view_func=router)
     flask_app.add_url_rule('/<path:path>', 'main', view_func=router)

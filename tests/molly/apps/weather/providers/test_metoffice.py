@@ -1,6 +1,6 @@
 # coding=utf-8
 from datetime import datetime
-from mock import Mock, ANY
+from mock import Mock, ANY, MagicMock
 from pytz import utc
 from StringIO import StringIO
 import unittest2 as unittest
@@ -22,6 +22,9 @@ class MetOfficeTest(unittest.TestCase):
         })
         self._provider.cache = Mock()
         self._provider.cache.get.return_value = None
+
+        self._provider.statsd = Mock()
+        self._provider.statsd.timer = MagicMock()
 
 
     def test_met_office_hits_correct_endpoint(self):
@@ -68,18 +71,33 @@ class MetOfficeTest(unittest.TestCase):
         self._provider.cache.set.assert_called_once_with('weather/metoffice/100', ANY, 123)
 
     def test_when_cache_exists_urlopen_is_not_hit(self):
+        self._configure_cache_hit()
+        self._provider.latest_observations()
+        self._provider.cache.get.assert_called_once_with('weather/metoffice/100')
+        self.assertFalse(provider.urlopen.called)
+
+    def test_when_cache_hit_counter_incremented(self):
+        self._configure_cache_hit()
+        self._provider.latest_observations()
+        self._provider.statsd.incr.assert_called_once_with('molly.apps.weather.providers.metoffice.cache_hit')
+
+    def test_when_cache_miss_counter_incremented(self):
+        self._provider.latest_observations()
+        self._provider.statsd.incr.assert_called_once_with('molly.apps.weather.providers.metoffice.cache_miss')
+
+    def _configure_cache_hit(self):
         self._provider.cache.get.return_value = {
             'SiteRep': {
                 'DV': {
                     'Location': {
                         'Period': [{
                                        'Rep': [{u'$': u'0',
-                                                 u'D': u'W',
-                                                 u'P': u'1022',
-                                                 u'S': u'5',
-                                                 u'T': u'7.8',
-                                                 u'V': u'18000',
-                                                 u'W': u'0'
+                                                u'D': u'W',
+                                                u'P': u'1022',
+                                                u'S': u'5',
+                                                u'T': u'7.8',
+                                                u'V': u'18000',
+                                                u'W': u'0'
                                                }],
                                        'value': '2012-09-29Z'}],
                         'name': 'Foo'
@@ -87,9 +105,6 @@ class MetOfficeTest(unittest.TestCase):
                 }
             }
         }
-        self._provider.latest_observations()
-        self._provider.cache.get.assert_called_once_with('weather/metoffice/100')
-        self.assertFalse(provider.urlopen.called)
 
 
 OBSERVATION_FEED = """

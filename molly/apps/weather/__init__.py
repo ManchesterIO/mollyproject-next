@@ -12,6 +12,7 @@ class App(object):
         self.instance_name = instance_name
         self._provider = providers.pop()
         self._provider.cache = services.get('cache')
+        self._provider.statsd = services.get('statsd')
 
         self._observations_endpoint = ObservationsEndpoint(self.instance_name, self._provider)
 

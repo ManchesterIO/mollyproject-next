@@ -6,6 +6,7 @@ Flask-Babel
 Flask-Cache
 Flask-PyMongo
 Flask-Script
+Flask-StatsD
 git+https://github.com/willowtreeapps/flask-solr.git#egg=flask-solr
 geojson
 gunicorn
@@ -13,6 +14,7 @@ imposm.parser
 mock
 python-dateutil
 python-memcached
+raven
 Shapely
 supervisor
 unittest2

@@ -12,3 +12,9 @@ MOLLY_API_PORT = 8000
 
 # This is the place where assets should be served from
 ASSET_DIR = '/opt/molly/static'
+
+# If you would like to add Sentry support to the UI, please specify your DSN below
+#SENTRY_DSN = ''
+
+# If you would like statsd support, please specify the hostname of the statsd server belo
+#STATSD_HOST = "localhost"
