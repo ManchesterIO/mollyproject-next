@@ -12,11 +12,16 @@ class MetOfficeTest(unittest.TestCase):
     def setUp(self):
         provider.urlopen = Mock(return_value=StringIO(OBSERVATION_FEED))
         provider.urlopen.return_value.info = Mock()
+        provider.urlopen.return_value.info.return_value.getparam = Mock(
+            return_value='public, no-transform, must-revalidate, max-age=123'
+        )
+
         self._provider = provider.Provider({
             'api_key': '12345',
             'location_id': '100'
         })
         self._provider.cache = Mock()
+        self._provider.cache.get.return_value = None
 
 
     def test_met_office_hits_correct_endpoint(self):
