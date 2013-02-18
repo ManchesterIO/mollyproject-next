@@ -2,8 +2,8 @@ language: python
 python:
   - "2.7"
 before_install:
-  - sudo apt-get update
-  - sudo apt-get install build-essential libgeos-c1 libprotobuf-dev protobuf-compiler
+  - sudo apt-get -qq update
+  - sudo apt-get -qq install build-essential libgeos-c1 libprotobuf-dev protobuf-compiler
 install:
   - pip install -q -r requirements.txt --use-mirrors
 script:
