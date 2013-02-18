@@ -1,6 +1,8 @@
 from flask import render_template
 from molly.ui.html5.components.component import Component
+from molly.ui.html5.components.factory import ComponentFactory
 
+@ComponentFactory.register_component('http://mollyproject.org/apps/homepage')
 class Homepage(Component):
 
     _CSS = frozenset(['components/homepage.css'])

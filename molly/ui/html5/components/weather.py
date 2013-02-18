@@ -3,7 +3,9 @@ from flask import render_template
 from flaskext.babel import gettext as _
 
 from molly.ui.html5.components.component import Component
+from molly.ui.html5.components.factory import ComponentFactory
 
+@ComponentFactory.register_component('http://mollyproject.org/apps/weather')
 class WeatherHomepage(Component):
 
     _CSS = frozenset(['components/weather/homepage.css'])
@@ -16,6 +18,7 @@ class WeatherHomepage(Component):
         return render_template('apps/weather/homepage.html', components=self._components)
 
 
+@ComponentFactory.register_component('http://mollyproject.org/apps/weather/observation')
 class WeatherObservation(Component):
 
     _CSS = frozenset(['components/weather/observation.css'])
