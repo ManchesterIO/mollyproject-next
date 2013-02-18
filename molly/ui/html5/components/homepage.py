@@ -5,7 +5,7 @@ from molly.ui.html5.components.factory import ComponentFactory
 @ComponentFactory.register_component('http://mollyproject.org/apps/homepage')
 class Homepage(Component):
 
-    _CSS = frozenset(['components/homepage.css'])
+    _CSS = frozenset(['style/components/homepage.css'])
 
     def __init__(self, *args, **kwargs):
         super(Homepage, self).__init__(*args, **kwargs)

@@ -2,6 +2,7 @@ from shutil import copyfile
 import os
 
 from flask import Flask
+from flask.ext.assets import Environment as Assets
 from flask.ext.babel import Babel
 from flask.ext.cache import Cache
 from jinja2 import PackageLoader, ChoiceLoader, PrefixLoader, FileSystemLoader, MemcachedBytecodeCache
@@ -22,7 +23,10 @@ flask_app = init_flask()
 def init_molly(flask_app, api_hostname, api_port):
     request_factory = HttpRequestFactory(hostname=api_hostname, port=api_port)
     component_factory = ComponentFactory()
-    page_decorator_factory = PageDecoratorFactory()
+    assets = Assets(flask_app)
+    if flask_app.debug:
+        assets.debug = True
+    page_decorator_factory = PageDecoratorFactory(assets)
 
     router = Router(request_factory, component_factory, page_decorator_factory)
 
@@ -67,6 +71,7 @@ def collect_static(override_location, output_location, debug):
 
 
 def start_debug(address=None):
+    flask_app.debug = True
     cache = Cache(flask_app)
     init_molly(
         flask_app,
@@ -75,7 +80,6 @@ def start_debug(address=None):
     )
     configure_template_loader(flask_app, flask_app.config.get('TEMPLATE_DIR'), cache)
 
-    flask_app.debug = True
     flask_app.static_folder = flask_app.config.get('ASSET_DIR')
     flask_app.static_url_path = 'static'
 

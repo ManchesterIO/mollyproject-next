@@ -1,4 +1,5 @@
 celery
+cssmin
 Flask
 Flask-Assets
 Flask-Babel
