@@ -11,9 +11,7 @@ def configure_flask_app():
     with open(os.environ.get('MOLLY_CONFIG', 'conf/default.conf')) as fd:
         config_loader = ConfigLoader(flask_app)
         with flask_app.app_context():
-            config, apps, services = config_loader.load_from_config(fd)
-
-    flask_app.config.update(config)
+            apps, services = config_loader.load_from_config(fd)
 
     for service in services.values():
         if hasattr(service, 'init_cli_commands'):

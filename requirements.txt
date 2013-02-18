@@ -12,6 +12,7 @@ gunicorn
 imposm.parser
 mock
 python-dateutil
+python-memcached
 Shapely
 supervisor
 unittest2

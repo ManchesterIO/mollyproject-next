@@ -7,12 +7,14 @@ import time
 from urllib2 import urlopen
 
 from flaskext.babel import lazy_gettext as _
+from werkzeug.http import parse_cache_control_header
 from molly.apps.common.components import Attribution
 
 class Provider(object):
 
     def __init__(self, config):
         self._config = config
+        self.cache = None
 
     attribution = Attribution(
         licence_name='Open Government Licence',
@@ -21,10 +23,26 @@ class Provider(object):
     )
 
     def latest_observations(self):
-        response = json.load(
-            urlopen('http://datapoint.metoffice.gov.uk/public/data/val/wxobs/all' +
-                '/json/{location_id}?res=hourly&key={api_key}'.format(**self._config))
-        )
+        if self.cache:
+            response = self.cache.get(self._CACHE_KEY.format(self._config['location_id']))
+        else:
+            response = None
+
+        if not response:
+            response = urlopen(
+                'http://datapoint.metoffice.gov.uk/public/data/val/wxobs/all' +
+                '/json/{location_id}?res=hourly&key={api_key}'.format(**self._config)
+            )
+
+            max_age = parse_cache_control_header(response.info().getparam('Cache-Control')).max_age
+
+            response = json.load(response)
+            if self.cache:
+                self.cache.set(
+                    self._CACHE_KEY.format(self._config['location_id']),
+                    response,
+                    max_age
+                )
 
         source_observation = response['SiteRep']['DV']['Location']['Period'][-1]['Rep'][-1]
         minutes_since_midnight = timedelta(minutes=int(source_observation['$']))
@@ -47,6 +65,8 @@ class Provider(object):
             'obs_location': capwords(response['SiteRep']['DV']['Location']['name']),
             'obs_time': obs_time.isoformat()
         }
+
+    _CACHE_KEY = 'weather/metoffice/{}'
 
     WEATHER_TYPES = {
         'NA': (_('Not available'), ''),

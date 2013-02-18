@@ -1,11 +1,8 @@
 # coding=utf-8
 from datetime import datetime
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
-from mock import Mock
+from mock import Mock, ANY
 from pytz import utc
+from StringIO import StringIO
 import unittest2 as unittest
 
 import molly.apps.weather.providers.metoffice as provider
@@ -14,10 +11,12 @@ class MetOfficeTest(unittest.TestCase):
 
     def setUp(self):
         provider.urlopen = Mock(return_value=StringIO(OBSERVATION_FEED))
+        provider.urlopen.return_value.info = Mock()
         self._provider = provider.Provider({
             'api_key': '12345',
             'location_id': '100'
         })
+        self._provider.cache = Mock()
 
 
     def test_met_office_hits_correct_endpoint(self):
@@ -54,6 +53,39 @@ class MetOfficeTest(unittest.TestCase):
             'Contains public sector information provided by the Met Office',
             self._provider.attribution.attribution_text
         )
+
+    def test_max_age_is_used_to_populate_cache(self):
+        provider.urlopen.return_value.info.return_value.getparam = Mock(
+            return_value='public, no-transform, must-revalidate, max-age=123'
+        )
+
+        self._provider.latest_observations()
+        self._provider.cache.set.assert_called_once_with('weather/metoffice/100', ANY, 123)
+
+    def test_when_cache_exists_urlopen_is_not_hit(self):
+        self._provider.cache.get.return_value = {
+            'SiteRep': {
+                'DV': {
+                    'Location': {
+                        'Period': [{
+                                       'Rep': [{u'$': u'0',
+                                                 u'D': u'W',
+                                                 u'P': u'1022',
+                                                 u'S': u'5',
+                                                 u'T': u'7.8',
+                                                 u'V': u'18000',
+                                                 u'W': u'0'
+                                               }],
+                                       'value': '2012-09-29Z'}],
+                        'name': 'Foo'
+                    }
+                }
+            }
+        }
+        self._provider.latest_observations()
+        self._provider.cache.get.assert_called_once_with('weather/metoffice/100')
+        self.assertFalse(provider.urlopen.called)
+
 
 OBSERVATION_FEED = """
 {"SiteRep":{"Wx":{"Param":[{"name":"F","units":"","$":"Feels Like Temperature"},

@@ -8,6 +8,8 @@ APT_PACKAGES.each do | pkg |
   end
 end
 
+execute "apt-get update"
+
 DIRECTORIES.each do | path |
   directory path do
     action :create

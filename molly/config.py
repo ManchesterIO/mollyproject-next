@@ -13,6 +13,9 @@ class ConfigLoader(object):
         parser = ConfigParser()
         parser.readfp(config)
 
+        if parser.has_section('global'):
+            self._flask_app.config.update(dict((key.upper(), eval(value)) for (key, value) in parser.items('global')))
+
         if parser.has_section('services'):
             services = self._initialise_services(parser.items('services'))
         else:
@@ -21,16 +24,11 @@ class ConfigLoader(object):
         if services.get('cli', None) is None:
             services['cli'] = Manager(self._flask_app, with_default_commands=False)
 
-        if parser.has_section('global'):
-            global_config = dict((key.upper(), eval(value)) for (key, value) in parser.items('global'))
-        else:
-            global_config = {}
-
         for section in parser.sections():
             if section not in ('services', 'global'):
                 apps.append(self._initialise_app(section, OrderedDict(parser.items(section)), services))
 
-        return global_config, apps, services
+        return apps, services
 
     def _initialise_services(self, config):
         services = {}

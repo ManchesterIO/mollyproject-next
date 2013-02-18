@@ -11,6 +11,7 @@ class App(object):
     def __init__(self, instance_name, config, providers, services):
         self.instance_name = instance_name
         self._provider = providers.pop()
+        self._provider.cache = services.get('cache')
 
         self._observations_endpoint = ObservationsEndpoint(self.instance_name, self._provider)
 
