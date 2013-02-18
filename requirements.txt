@@ -1,6 +1,8 @@
 celery
 Flask
+Flask-Assets
 Flask-Babel
+Flask-Cache
 Flask-PyMongo
 Flask-Script
 git+https://github.com/willowtreeapps/flask-solr.git#egg=flask-solr
