@@ -11,5 +11,15 @@
         <h1>Molly Demo</h1>
     </header>
     {% block body %}{{ body.render()|safe }}{% endblock %}
+    <script src="{{ url_for('static', filename='js/vendors/require.js') }}"></script>
+    <script>
+        require.config({
+            paths: {
+                molly: '{{ url_for('static', filename='js/modules') }}',
+                vendors: '{{ url_for('static', filename='js/vendors') }}'
+            }
+        });
+        require(['molly/loader'], function(loader) { loader.init() });
+    </script>
 </body>
 </html>

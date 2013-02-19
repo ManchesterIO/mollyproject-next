@@ -16,8 +16,16 @@ from molly.ui.html5.router import Router
 
 class DummyStats(object):
 
+    class DummyTimer(object):
+
+        def __enter__(self):
+            pass
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+
     def timer(self, *args, **kwargs):
-        pass
+        return self.DummyTimer()
 
     def timing(self, *args, **kwargs):
         pass

@@ -1,0 +1,10 @@
+load:
+  - molly/ui/html5/assets/js/vendors/require.js
+  - tests/molly/ui/html5/js/vendors/*.js
+
+test:
+  - tests/molly/ui/html5/js/test*.js
+
+serve:
+  - molly/ui/html5/assets/js/modules/*.js
+  - molly/ui/html5/assets/js/vendors/*.js
