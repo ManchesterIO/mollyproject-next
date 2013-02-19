@@ -1,12 +1,27 @@
 .homepage-applications-list {
-    width: 100%;
-    max-width: 1280px;
     list-style-type: none;
-    padding: 0 10px;
     margin: 0 auto;
+    max-width: 1280px;
+    padding: 0 12px;
+    width: 90%;
 }
 
-.homepage-applications-list li {
-    display: inline-block;
-    padding: 5px;
+.homepage-applications-list > li > section > h1 {
+    border-bottom: 1px solid #3c3c3c;
+}
+
+@media (min-width: 640px) {
+
+    .homepage-applications-list > li {
+        margin: 1em 0;
+    }
+
+    .homepage-applications-list > li > section > h1 {
+        border-bottom: 0;
+        border-right: 1px solid #3c3c3c;
+        float: left;
+        padding-right: 12px;
+        text-align: right;
+        width: 180px;
+    }
 }

@@ -26,6 +26,7 @@ class WeatherObservation(Component):
     def __init__(self, *args, **kwargs):
         super(WeatherObservation, self).__init__(*args, **kwargs)
         self._context = {
+            'href': self.href,
             'weather_type': self._data['observation'].get('type'),
             'weather_type_id': self._data['observation'].get('type_id'),
             'temperature': self._data['observation'].get('temperature'),
@@ -41,5 +42,6 @@ class WeatherObservation(Component):
     def title(self):
         return _('Weather at {location}').format(location=self._data['observation'].get('obs_location'))
 
-    def render(self):
+    def render(self, summary_only=False):
+        self._context['summary_only'] = summary_only
         return render_template('apps/weather/observation.html', **self._context)

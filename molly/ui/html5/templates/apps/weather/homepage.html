@@ -1,6 +1,7 @@
-{% for component in components %}
 <section class="weather-homepage-widget">
-    <h1><a href="{{ component.href }}">{% trans %}Weather{% endtrans %}</a></h1>
-    {{ component.render()|safe }}
+    <h1>{% trans %}Weather{% endtrans %}</h1>
+    {% for component in components %}
+        {{ component.render(summary_only=True)|safe }}
+    {% endfor %}
 </section>
-{% endfor %}
+

@@ -2,26 +2,31 @@
     <div class="weather-summary weather-{{ weather_type_id }}">
         <span>{{ weather_type }}</span>
     </div>
+
     <div class="weather-detail">
-        <dl>
-            <dt>{{ _('Temperature') }}</dt>
-            <dd>{{ temperature }}</dd>
+        {% if not summary_only %}
+            <dl>
+                <dt>{{ _('Temperature') }}</dt>
+                <dd>{{ temperature }}</dd>
 
-            <dt>{{ _('Wind') }}</dt>
-            <dd>
-                {% if gust_speed != 'N/A' %}
-                    {% trans speed=wind_speed, direction=wind_direction, wind_gust=gust_speed %}{{ wind_speed }} (gusts {{ wind_gust }}) {{ wind_direction }} {% endtrans %}
-                {% else %}
-                    {% trans speed=wind_speed, direction=wind_direction %}{{ wind_speed }} {{ wind_direction }} {% endtrans %}
-                {% endif %}
-            </dd>
+                <dt>{{ _('Wind') }}</dt>
+                <dd>
+                    {% if gust_speed != 'N/A' %}
+                        {% trans speed=wind_speed, direction=wind_direction, wind_gust=gust_speed %}{{ wind_speed }} (gusts {{ wind_gust }}) {{ wind_direction }} {% endtrans %}
+                    {% else %}
+                        {% trans speed=wind_speed, direction=wind_direction %}{{ wind_speed }} {{ wind_direction }} {% endtrans %}
+                    {% endif %}
+                </dd>
 
-            <dt>{{ _('Pressure') }}</dt>
-            <dd>{{ pressure }}</dd>
-        </dl>
-        <aside>
-            {% trans location=observation_location, datetime=observation_time %}Observation made at {{ location }} on {{ datetime }}{% endtrans %}
-        </aside>
-        {{ attribution.render() }}
+                <dt>{{ _('Pressure') }}</dt>
+                <dd>{{ pressure }}</dd>
+            </dl>
+            <aside>
+                {% trans location=observation_location, datetime=observation_time %}Observation made at {{ location }} on {{ datetime }}{% endtrans %}
+            </aside>
+            {{ attribution.render() }}
+        {% else %}
+            <a href="{{ href }}">See more details</a>
+        {% endif %}
     </div>
 </section>
