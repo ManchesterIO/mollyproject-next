@@ -39,6 +39,7 @@ class WeatherObservation(Component):
             'attribution': self._load_component(self._data.get('attribution'))
         }
 
+    @property
     def title(self):
         return _('Weather at {location}').format(location=self._data['observation'].get('obs_location'))
 

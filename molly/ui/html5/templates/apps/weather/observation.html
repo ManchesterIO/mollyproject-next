@@ -21,10 +21,10 @@
                 <dt>{{ _('Pressure') }}</dt>
                 <dd>{{ pressure }}</dd>
             </dl>
-            <aside>
+            <aside class="observation-details">
                 {% trans location=observation_location, datetime=observation_time %}Observation made at {{ location }} on {{ datetime }}{% endtrans %}
             </aside>
-            {{ attribution.render() }}
+            {{ attribution.render()|safe }}
         {% else %}
             <a href="{{ href }}">See more details</a>
         {% endif %}
