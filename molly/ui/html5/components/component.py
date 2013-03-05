@@ -21,6 +21,9 @@ class Component(object):
     def css(self):
         return list(self._css)
 
+    def render_header(self):
+        return ''
+
     def render(self):
         raise NotImplementedError()
 

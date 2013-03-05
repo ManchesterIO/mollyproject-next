@@ -18,7 +18,7 @@ Feature: Weather Observations
   Scenario: Homepage widget shows summary only
     Given I am on the homepage
     Then I should be able to see a one phrase summary of the current conditions
-    And I should not be able to see the current temperature
+    And I should be able to see the current temperature
     And I should not be able to see the current wind speed and direction
     And I should not be able to see the current pressure
     And I should not be able to see information about when and where this observation was made

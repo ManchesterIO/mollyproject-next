@@ -1,16 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ body.title }} - Molly Demo</title>
+    <title>{{ body.title }} - {% block site_title %}Molly Demo{% endblock %}</title>
     {% assets bundle %}
         <link href="{{ ASSET_URL }}" rel="stylesheet">
     {% endassets %}
 </head>
 <body>
     <header>
-        <h1>Molly Demo</h1>
+        <h1><a href="/">{% block site_h1 %}Molly Demo{% endblock %}</a></h1>
+        {% block header_extra %}{% endblock %}
     </header>
-    {% block body %}{{ body.render()|safe }}{% endblock %}
+    <article>
+        {% block body %}{{ body.render()|safe }}{% endblock %}
+    </article>
+    <footer>
+        <ul>
+            <li><a href="{{ url_for('about') }}">{% block about_link_text %}About Molly{% endblock %}</a></li>
+            <li><a href="{{ url_for('developers') }}">Information for Developers</a></li>
+            <li><a href="{{ url_for('privacy') }}">Privacy Policy</a></li>
+        </ul>
+    </footer>
     <script src="{{ url_for('static', filename='js/vendors/require.js') }}"></script>
     <script>
         require.config({

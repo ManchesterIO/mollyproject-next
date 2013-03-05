@@ -39,18 +39,21 @@
     background-image: url('../../../img/weather/thunder.svg');
 }
 
+.weather-homepage-widget .weather-observation .weather-detail dl,
 .weather-observation .weather-detail dl {
     border-top: 1px solid #c3c3c3;
     margin: 0 auto 10px auto;
     max-width: 600px;
 }
 
+.weather-homepage-widget .weather-observation .weather-detail dt,
 .weather-observation .weather-detail dt {
     float: left;
     margin: 0;
     padding: 6px;
 }
 
+.weather-homepage-widget .weather-observation .weather-detail dd,
 .weather-observation .weather-detail dd {
     border-bottom: 1px solid #c3c3c3;
     margin: 0;
@@ -59,6 +62,7 @@
 }
 
 .weather-observation aside {
+    clear: both;
     font-size: 0.8em;
     padding: 4px;
 }
@@ -90,13 +94,16 @@
     }
 
     .weather-observation .weather-detail dd {
-        background-color: #FFE184;
+        background-color: #f0e6b1;
         border: 0;
         font-size: 2em;
-        height: 120px;
-        text-align: center;
         margin: 6px;
+        text-align: center;
         width: 120px;
+    }
+
+    .weather-homepage-widget .weather-observation .weather-detail dd {
+        width: auto;
     }
 
     .weather-observation aside {

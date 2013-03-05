@@ -1,4 +1,5 @@
 import json
+from flask import render_template
 from werkzeug.exceptions import NotFound, ServiceUnavailable, BadGateway
 
 class Router(object):
@@ -47,3 +48,11 @@ class RoutingException(Exception):
 
     def __init__(self, response):
         self.response = response
+
+
+def StaticPageRouter(template_name):
+
+    def router():
+        return render_template(template_name)
+
+    return router

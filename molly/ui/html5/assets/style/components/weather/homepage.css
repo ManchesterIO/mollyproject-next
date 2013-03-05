@@ -1,6 +1,6 @@
 .weather-homepage-widget .weather-observation {
     margin: 0 auto;
-    width: 220px;
+    max-width: 220px;
 }
 
 .weather-homepage-widget .weather-observation .weather-summary {
@@ -13,11 +13,10 @@
 
 .weather-homepage-widget .weather-observation .weather-detail {
     float: right;
-    margin-top: 35px;
 }
 
 .weather-homepage-widget .weather-observation .weather-detail a {
-    background-color: #FFE184;
+    background-color: #f0e6b1;
     padding: 6px;
     text-decoration: none;
 }
@@ -31,7 +30,8 @@
 
     .weather-homepage-widget .weather-observation {
         margin: 0 auto;
-        width: 300px;
+        max-width: none;
+        width: 340px;
     }
 
     .weather-homepage-widget .weather-observation .weather-summary {
@@ -42,8 +42,13 @@
     }
 }
 
+@media (min-width: 600px) {
+    .weather-homepage-widget .weather-observation {
+        margin: 0;
+    }
+}
 
-@media (min-width: 640px) {
+@media (min-width: 800px) {
     .weather-homepage-widget .weather-observation {
         margin: 0 0 0 190px;
     }

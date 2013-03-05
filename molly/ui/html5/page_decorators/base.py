@@ -27,9 +27,13 @@ class BasePageDecorator(object):
             )
         return hash
 
-    def _render_template(self, template, component):
+    def _render_template(self, template, component, **kwargs):
         return render_template(
             template,
             body=component,
-            bundle=self._build_bundle(component.css)
+            bundle=self._build_bundle(component.css),
+            **kwargs
         )
+
+    def handles_url(self, url):
+        return False

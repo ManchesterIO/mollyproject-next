@@ -5,8 +5,13 @@ from flaskext.babel import gettext as _
 from molly.ui.html5.components.component import Component
 from molly.ui.html5.components.factory import ComponentFactory
 
+class WeatherComponent(Component):
+
+    def render_header(self):
+        return render_template('apps/weather/header.html')
+
 @ComponentFactory.register_component('http://mollyproject.org/apps/weather')
-class WeatherHomepage(Component):
+class WeatherHomepage(WeatherComponent):
 
     _CSS = frozenset(['style/components/weather/homepage.css'])
 
@@ -19,7 +24,7 @@ class WeatherHomepage(Component):
 
 
 @ComponentFactory.register_component('http://mollyproject.org/apps/weather/observation')
-class WeatherObservation(Component):
+class WeatherObservation(WeatherComponent):
 
     _CSS = frozenset(['style/components/weather/observation.css'])
 

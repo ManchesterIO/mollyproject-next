@@ -6,4 +6,4 @@ from molly.ui.html5.components.factory import ComponentFactory
 class Attribution(Component):
 
     def render(self):
-        return render_template('attribution.html')
+        return render_template('attribution.html', **self._data)

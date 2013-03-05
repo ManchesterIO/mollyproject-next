@@ -1,19 +1,124 @@
 @import url(http://fonts.googleapis.com/css?family=Scada:400,700);
 
+body {
+    background-image: url('../img/bg.png');
+}
+
 * {
     color: #202627;
     font-family: 'Scada', sans-serif;
 }
 
-header {
-    padding: 8px 0 8px 80px;
-    height: 60px;
-    background: url('../img/header-logo.png') no-repeat;
-    background-position: 10px 5px;
-    border-bottom: 3px #57658d solid;
+body > header {
+    background-image: url('../img/header-logo-small.png');
+    background-repeat: no-repeat;
+    background-color: #ffffff;
+    background-position: 12px 5px;
+    border-bottom: 3px #3d3536 solid;
+    height: 36px;
+    padding: 8px 0 8px 52px;
+    position: relative;
 }
 
-header h1 {
-    color: #57658d;
-    margin-top: 11px;
+body > header h1 {
+    font-size: 1.2rem;
+    margin-top: 6px;
+}
+
+body > header h1 a {
+    color: #3d3536;
+    text-decoration: none;
+}
+
+body > header h1 a:focus,
+body > header h1 a:hover {
+    text-decoration: underline;
+}
+
+body > header h2 {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    right: 8px;
+    top: 10px;
+}
+
+body > article {
+    margin-bottom: 15em;
+    min-height: 100%;
+}
+
+body > footer {
+    background-color: #3d3536;
+}
+
+
+body > footer a {
+    color: #fafafa;
+}
+
+body > footer ul {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+body > footer li {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+body > footer li:first-child a {
+    border-top: 0;
+}
+
+body > footer li a {
+    border-top: 1px solid #ccc;
+    display: block;
+    line-height: 3em;
+    width: 100%;
+}
+
+@media (min-width: 1000px) {
+
+    body {
+        padding: 0;
+        margin: 0;
+    }
+
+    body > header {
+        background-image: url('../img/header-logo.png');
+        background-position: 30px 5.6em;
+        background-size: 80%;
+        border-bottom: 0;
+        border-right: 3px #3d3536 solid;
+        height: 100%;
+        padding: 12px;
+        position: fixed;
+        top: 0;
+        width: 300px;
+    }
+
+    body > header h1 {
+        font-size: 2.6rem;
+    }
+
+    body > header h2 {
+        font-size: 2rem;
+        margin-top: 300px;
+        position: relative;
+        text-align: center;
+    }
+
+    article {
+        margin-left: 310px;
+    }
+
+    body > footer {
+        position: absolute;
+        bottom: 0;
+        width: 324px;
+    }
+
 }

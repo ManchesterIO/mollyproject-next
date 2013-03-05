@@ -1,16 +1,14 @@
 .homepage-applications-list {
     list-style-type: none;
-    margin: 0 auto;
     max-width: 1280px;
     padding: 0 12px;
-    width: 90%;
 }
 
 .homepage-applications-list > li > section > h1 {
     border-bottom: 1px solid #3c3c3c;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 800px) {
 
     .homepage-applications-list > li {
         margin: 1em 0;
@@ -20,7 +18,8 @@
         border-bottom: 0;
         border-right: 1px solid #3c3c3c;
         float: left;
-        padding-right: 12px;
+        margin: 0 32px 0 0;
+        padding: 32px 32px 32px 0;
         text-align: right;
         width: 180px;
     }
