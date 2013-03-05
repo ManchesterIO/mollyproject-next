@@ -50,10 +50,13 @@ class Provider(object):
         elif self.statsd:
             self.statsd.incr(__name__ + '.cache_hit')
 
-        source_observation = response['SiteRep']['DV']['Location']['Period'][-1]['Rep'][-1]
+        source_period = response['SiteRep']['DV']['Location']['Period']
+        if isinstance(source_period, list):
+            source_period = source_period[-1]
+        source_observation = source_period['Rep'][-1]
         minutes_since_midnight = timedelta(minutes=int(source_observation['$']))
         obs_time = datetime(
-            *time.strptime(response['SiteRep']['DV']['Location']['Period'][-1]['value'], "%Y-%m-%dZ")[:6],
+            *time.strptime(source_period['value'], "%Y-%m-%dZ")[:6],
             tzinfo=utc
         )
         obs_time += minutes_since_midnight

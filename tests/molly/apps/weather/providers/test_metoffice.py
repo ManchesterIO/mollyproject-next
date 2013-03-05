@@ -9,12 +9,15 @@ import molly.apps.weather.providers.metoffice as provider
 
 class MetOfficeTest(unittest.TestCase):
 
-    def setUp(self):
-        provider.urlopen = Mock(return_value=StringIO(OBSERVATION_FEED))
+    def setupMockUrlOpen(self, feed):
+        provider.urlopen = Mock(return_value=StringIO(feed))
         provider.urlopen.return_value.info = Mock()
         provider.urlopen.return_value.info.return_value.getparam = Mock(
             return_value='public, no-transform, must-revalidate, max-age=123'
         )
+
+    def setUp(self):
+        self.setupMockUrlOpen(OBSERVATION_FEED)
 
         self._provider = provider.Provider({
             'api_key': '12345',
@@ -85,6 +88,21 @@ class MetOfficeTest(unittest.TestCase):
         self._provider.latest_observations()
         self._provider.statsd.incr.assert_called_once_with('molly.apps.weather.providers.metoffice.cache_miss')
 
+    def test_midnight_form_of_results_are_handled_correctly(self):
+        self.setupMockUrlOpen(MIDNIGHT_OBSERVATION_FEED)
+        observation = self._provider.latest_observations()
+        self.assertEquals({
+            'type': 'Clear night',
+            'type_id': 'clear_night',
+            'temperature': u'1.8 °C',
+            'wind_speed': '18 mph',
+            'gust_speed': 'N/A',
+            'wind_direction': u'ESE',
+            'pressure': '1008 mb',
+            'obs_location': u'Leek',
+            'obs_time': datetime(2013, 3, 4, 23, 0, tzinfo=utc).isoformat()
+        }, observation)
+
     def _configure_cache_hit(self):
         self._provider.cache.get.return_value = {
             'SiteRep': {
@@ -134,4 +152,32 @@ OBSERVATION_FEED = """
 "T":"16.9","V":"25000","W":"7","$":"780"},{"D":"SW","P":"1017","S":"18","T":"17.3","V":"28000","W":"8","$":"840"},
 {"D":"SW","P":"1017","S":"16","T":"16.8","V":"24000","W":"8","$":"900"},{"D":"SW","P":"1016","S":"18","T":"16.3",
 "V":"22000","W":"3","$":"960"}]}]}}}}
+"""
+
+MIDNIGHT_OBSERVATION_FEED = """
+{"SiteRep": {"DV": {"dataDate": "2013-03-04T23:00:00Z", "type": "Obs", "Location": {"name": "LEEK", "i": "3330",
+"country": "ENGLAND", "lon": "-1.983", "Period": {"Rep": [{"D": "SE", "P": "1020", "S": "8", "T": "2.4", "W": "2",
+"V": "9000", "$": "0"}, {"D": "ESE", "P": "1019", "S": "8", "T": "1.6", "W": "0", "V": "5000", "$": "60"}, {"D": "SE",
+"P": "1019", "S": "9", "T": "1.4", "W": "5", "V": "6000", "$": "120"}, {"D": "SE", "P": "1018", "S": "10", "T": "1.1",
+"W": "5", "V": "2800", "$": "180"}, {"D": "SE", "P": "1018", "S": "11", "T": "0.5", "W": "5", "V": "4500", "$": "240"},
+{"D": "SSE", "P": "1017", "S": "8", "T": "0.4", "W": "8", "V": "9000", "$": "300"}, {"D": "SSE", "P": "1017",
+"S": "10", "T": "0.3", "W": "8", "V": "10000", "$": "360"}, {"D": "SE", "G": "22", "P": "1016", "S": "10", "T": "0.5",
+"W": "8", "V": "10000", "$": "420"}, {"D": "SE", "P": "1017", "S": "11", "T": "0.4", "W": "8", "V": "4700",
+"$": "480"}, {"D": "SE", "P": "1016", "S": "11", "T": "0.8", "W": "8", "V": "4700", "$": "540"}, {"D": "SE",
+"P": "1016", "S": "11", "T": "1.5", "W": "8", "V": "5000", "$": "600"}, {"D": "SE", "P": "1015", "S": "8",
+"T": "3.0", "W": "7", "V": "5000", "$": "660"}, {"D": "ESE", "P": "1014", "S": "15", "T": "3.3", "W": "1",
+"V": "4900", "$": "720"}, {"D": "ESE", "P": "1012", "S": "21", "T": "4.7", "W": "1", "V": "6000", "$": "780"},
+{"D": "ESE", "P": "1011", "S": "19", "T": "5.8", "W": "1", "V": "5000", "$": "840"}, {"D": "E", "P": "1010",
+"S": "21", "T": "6.1", "W": "1", "V": "6000", "$": "900"}, {"D": "E", "G": "31", "P": "1009", "S": "25", "T": "5.7",
+"W": "1", "V": "7000", "$": "960"}, {"D": "E", "G": "31", "P": "1009", "S": "17", "T": "4.2", "W": "1", "V": "5000",
+"$": "1020"}, {"D": "E", "G": "31", "P": "1009", "S": "25", "T": "3.1", "W": "1", "V": "4500", "$": "1080"},
+{"D": "E", "G": "29", "P": "1009", "S": "25", "T": "2.4", "W": "2", "V": "4200", "$": "1140"}, {"D": "E", "G": "31",
+"P": "1009", "S": "21", "T": "2.1", "W": "0", "V": "4000", "$": "1200"}, {"D": "E", "G": "29", "P": "1008",
+"S": "22", "T": "2.2", "W": "0", "V": "3600", "$": "1260"}, {"D": "E", "G": "29", "P": "1008", "S": "22",
+"T": "2.1", "W": "0", "V": "3800", "$": "1320"}, {"D": "ESE", "P": "1008", "S": "18", "T": "1.8", "W": "0",
+"V": "3800", "$": "1380"}], "type": "Day", "value": "2013-03-04Z"}, "lat": "53.133", "continent": "EUROPE"}},
+"Wx": {"Param": [{"units": "mph", "name": "G", "$": "Wind Gust"}, {"units": "C", "name": "T", "$": "Temperature"},
+{"units": "m", "name": "V", "$": "Visibility"}, {"units": "compass", "name": "D", "$": "Wind Direction"},
+{"units": "mph", "name": "S", "$": "Wind Speed"}, {"units": "", "name": "W", "$": "Weather Type"}, {"units": "hpa",
+"name": "P", "$": "Pressure"}]}}}
 """
