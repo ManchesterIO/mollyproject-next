@@ -24,29 +24,52 @@ Feature: Transport Homepage widgets
     Given I am on the homepage
     And my geolocation accuracy is over 250m
     And there are stops within 250m of me
-    Then when I select the find nearby button
+    When I select the find nearby button
     Then I should see all stops within the 250m radius
 
   Scenario: Find stop by longitude and latitude when accuracy is imprecise but no stops nearby
     Given I am on the homepage
     And my geolocation accuracy is over 250m
     And there are no stops within 250m of me
-    Then when I select the find nearby button
+    When I select the find nearby button
     Then I should see the closest 10 stops
 
   Scenario: Find stop by longitude and latitude when accuracy is precise and stops nearby
     Given I am on the homepage
     And my geolocation accuracy is under 100m
     And there are stops within 100m of me
-    Then when I select the find nearby button
+    When I select the find nearby button
     Then I should see all stops within the 100m radius
 
   Scenario: Find stop by longitude and latitude when accuracy is precise but no stops nearby
     Given I am on the homepage
     And my geolocation accuracy is under 100m
     And there are no stops within 100m of me
-    Then when I select the find nearby button
+    When I select the find nearby button
     Then I should see the closest 10 stops
+
+  Scenario: Find stop by longitude and latitude when no geolocation is available
+    Given I am on the homepage
+    And my geolocated position is unavailable
+    When I select the find nearby button
+    Then I should see a message telling me that this feature is unavailable without geolocation
+
+  Scenario: Find stop by latitude and longitude when geolocation is available but not yet determined
+    Given I am on the homepage
+    And my geolocated position is unavailable
+    When I select the find nearby button
+    Then I should see see an indicator that my position is being determined
+    When my position is determined
+    Then I should see the closest 10 stops
+
+  Scenario: Find stop by latitude and longitude when geolocation is available but not determinable
+    Given I am on the homepage
+    And my geolocated position is unavailable
+    When I select the find nearby button
+    Then I should see see an indicator that my position is being determined
+    When I wait 30 seconds
+    Then I should see a message indicating my position should not be determined
+
 
   Scenario: Find stop by geolocation
   Scenario: Find stop by stop name
