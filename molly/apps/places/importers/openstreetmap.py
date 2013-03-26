@@ -1,6 +1,7 @@
 # coding=utf-8
 from datetime import timedelta
 from tempfile import NamedTemporaryFile
+import logging
 import time
 from urllib2 import urlopen
 
@@ -11,6 +12,8 @@ from shapely.geometry import Polygon, LineString, Point
 from molly.apps.common.components import Attribution, Identifiers, Identifier, Source
 from molly.config import ConfigError
 from molly.apps.places.models import PointOfInterest
+
+LOGGER = logging.getLogger(__name__)
 
 ATTRIBUTION = Attribution(
     licence_name='Open Database Licence',
@@ -108,6 +111,7 @@ class OpenStreetMapImporter(object):
         )
         with NamedTemporaryFile() as protobuf_file:
             protobuf_file.write(urlopen(self._url).read())
+            protobuf_file.flush()
             self._parser.parse_pbf_file(protobuf_file.name)
         for poi in self.pois:
             self.poi_service.add_or_update(poi)
@@ -131,10 +135,18 @@ class OpenStreetMapImporter(object):
                 else:
                     geography_type = LineString
 
-                self._add_poi(
-                    id='W{}'.format(id),
-                    geography=geography_type([self._coords[node_id] for node_id in nodes])
-                )
+                for node_id in nodes:
+                    if node_id not in self._coords:
+                        LOGGER.warning(
+                            'Way %d from file %s has invalid co-ordinate reference',
+                            id, self._url
+                        )
+                        break
+                else:
+                    self._add_poi(
+                        id='W{}'.format(id),
+                        geography=geography_type([self._coords[node_id] for node_id in nodes])
+                    )
 
     def filter_tags(self, tags):
         if len(set(tags.items()) & self._interesting_tags) == 0:

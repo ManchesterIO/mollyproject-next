@@ -17,6 +17,7 @@ class TestOpenStreetMapImporter(unittest2.TestCase):
         openstreetmap.urlopen = Mock()
         self._osm_importer = openstreetmap.OpenStreetMapImporter({'url': 'http://www.example.com/file.pbf'})
         self._pois = self._osm_importer.poi_service = Mock()
+        self._mock_logger = openstreetmap.LOGGER = Mock()
 
     def test_imposm_configured_with_correct_attributes(self):
         openstreetmap.OSMParser.assert_called_once_with(
@@ -97,6 +98,15 @@ class TestOpenStreetMapImporter(unittest2.TestCase):
                 attribution=u'© OpenStreetMap contributors')],
             poi.sources
         )
+
+    def test_warning_is_logged_when_coords_missing(self):
+        self._osm_importer.load()
+        self._osm_importer.handle_ways([(12345, {'atm': 'yes'}, (1, 2, 3, 1))])
+        self._mock_logger.warning.assert_called_once_with(
+            'Way %d from file %s has invalid co-ordinate reference',
+            12345, 'http://www.example.com/file.pbf'
+        )
+
 
     def _get_node_poi(self):
         self._osm_importer.load()
