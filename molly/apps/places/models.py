@@ -4,11 +4,6 @@ from shapely import wkt
 from molly.apps.common.components import LocalisedName, Identifier, Source, Identifiers
 
 AccessPoint = namedtuple('AccessPoint', ['names', 'location', 'accessible'])
-OpeningHourRange = namedtuple('OpeningHourRange', [
-    'start_date', 'end_date', 'monday_opens', 'monday_closes', 'tuesday_opens', 'tuesday_closes',
-    'wednesday_opens', 'wednesday_closes', 'thursday_opens', 'thursday_closes', 'friday_opens', 'friday_closes',
-    'saturday_opens', 'saturday_closes', 'sunday_opens', 'sunday_closes'
-])
 
 class PointOfInterest(object):
 
@@ -51,7 +46,7 @@ class PointOfInterest(object):
             'address': self.address,
             'locality': self.locality,
             'telephone_number': self.telephone_number,
-            'opening_hours': [opening_hour_range._asdict() for opening_hour_range in self.opening_hours],
+            'opening_hours': self.opening_hours,
             'types': self.types,
             'amenities': self.amenities,
             'geography': wkt.dumps(self.geography) if self.geography else None,
@@ -69,10 +64,12 @@ class PointOfInterest(object):
         poi.address = data['address']
         poi.locality = data['locality']
         poi.telephone_number = data['telephone_number']
-        poi.opening_hours = [OpeningHourRange(**hours) for hours in data['opening_hours']]
+        poi.opening_hours = data['opening_hours']
         poi.types = data['types']
         poi.amenities = data['amenities']
         poi.geography = wkt.loads(data['geography']) if data['geography'] else None
         poi.location = wkt.loads(data['location']) if data['location'] else None
         poi.sources = [Source(**source) for source in data['sources']]
         return poi
+
+
