@@ -30,14 +30,14 @@ class TestPointsOfInterest(unittest.TestCase):
         poi.identifiers = [Identifier(namespace='foo', value='bar')]
 
         self._pois.add_or_update(poi)
-        self._mock_solr.add.assert_called_once_with({
+        self._mock_solr.add.assert_called_once_with([{
             'id': '/test/osm:N12345',
             'self': 'http://mollyproject.org/apps/places/point-of-interest',
             'names': ['Test'],
             'descriptions': ['Descriptions'],
             'identifiers': ['bar'],
             'location': '54.0,-1.6'
-        })
+        }])
 
     def test_add_or_update_checks_for_uri_clashes_before_adding(self):
         self._mock_mongo.pois.find_one.return_value = {
@@ -48,7 +48,7 @@ class TestPointsOfInterest(unittest.TestCase):
         poi_dict = poi._asdict()
         poi_dict.update({'_id': 'abcdef'})
         self.assertFalse(self._mock_mongo.db.pois.insert.called)
-        self._mock_mongo.pois.update.assert_called_once_with(poi_dict)
+        self._mock_mongo.pois.update.assert_called_once_with({'uri': '/test:test'}, poi_dict)
 
     def test_add_or_update_does_not_update_if_source_has_not_changed(self):
         self._mock_mongo.pois.find_one.return_value = {

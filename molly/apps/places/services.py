@@ -12,18 +12,18 @@ class PointsOfInterest(object):
             poi_dict = poi._asdict()
             poi_dict['_id'] = existing_poi['_id']
             if poi_dict['sources'] != existing_poi['sources']:
-                self._collection.update(poi_dict)
+                self._collection.update({'uri': poi.uri}, poi_dict)
                 self._add_to_index(poi)
         else:
             self._collection.insert(poi._asdict())
             self._add_to_index(poi)
 
     def _add_to_index(self, poi):
-        self._search_index.add({
+        self._search_index.add([{
             'self': 'http://mollyproject.org/apps/places/point-of-interest',
             'id': '/{instance_name}{uri}'.format(instance_name=self._instance_name, uri=poi.uri),
             'names': [name.name for name in poi.names],
             'descriptions': [description.name for description in poi.descriptions],
             'identifiers': [identifier.value for identifier in poi.identifiers],
             'location': '{lat},{lon}'.format(lat=poi.location.y, lon=poi.location.x) if poi.location else None
-        })
+        }])
