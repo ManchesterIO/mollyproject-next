@@ -16,7 +16,6 @@ Feature: Points of Interest homepage widgets
   Scenario: POI list
     Given I can see a list of POIs
     Then each POI shows a title and subheading
-    And each POI which has opening times shows a badge indicating whether or not it is open
     And each POI which is closer than the current level of geolocation accuracy indicates that it is nearby
     And each POI which is further away than the current level of geolocation accuracy indicates distance and direction
 
