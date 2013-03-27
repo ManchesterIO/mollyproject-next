@@ -156,7 +156,7 @@ class OpenStreetMapImporter(object):
     def _add_poi(self, id, geography):
         self.pois.append(
             PointOfInterest(
-                uri='/osm:{}'.format(id),
+                slug='osm:{}'.format(id),
                 geography=geography,
                 identifiers=Identifiers({Identifier(namespace='osm', value=id)}),
                 sources=[self._source]

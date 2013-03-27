@@ -20,16 +20,16 @@ class Locality(object):
     def __init__(self):
         self.names = set()
         self._identifiers = Identifiers()
-        self.url = None
-        self.parent_url = None
+        self.slug = None
+        self.parent_slug = None
         self.geography = None
         self.sources = set()
 
     @staticmethod
     def from_dict(locality_dict):
         locality = Locality()
-        if 'url' in locality_dict: locality.url = locality_dict['url']
-        if 'parent_url' in locality_dict: locality.parent_url = locality_dict['parent_url']
+        if 'slug' in locality_dict: locality.slug = locality_dict['slug']
+        if 'parent_slug' in locality_dict: locality.parent_slug = locality_dict['parent_slug']
         if 'sources' in locality_dict: locality.sources = set(Source(**source) for source in locality_dict['sources'])
         if 'identifiers' in locality_dict:
             locality.identifiers = Identifiers(
@@ -48,8 +48,8 @@ class Locality(object):
 
     def _asdict(self):
         serialised = {
-            'url': self.url,
-            'parent_url': self.parent_url,
+            'slug': self.slug,
+            'parent_slug': self.parent_slug,
             'sources': map(lambda source: source._asdict(), self.sources),
             'identifiers': map(lambda identifier: identifier._asdict(), self.identifiers)
         }
@@ -65,7 +65,7 @@ class Locality(object):
 class Stop(object):
 
     def __init__(self):
-        self.url = None
+        self.slug = None
         self.sources = set()
         self.calling_points = set()
         self.identifiers = Identifiers()
@@ -76,7 +76,7 @@ class Stop(object):
         for key, value in stop_dict.iteritems():
             if key == 'sources':
                 stop.sources = set(map(lambda source: Source(**source), value))
-            elif key == 'url':
+            elif key == 'slug':
                 setattr(stop, key, value)
             elif key == 'calling_points':
                 stop.calling_points.update(value)
@@ -86,7 +86,7 @@ class Stop(object):
 
     def _asdict(self):
         return {
-            'url': self.url,
+            'slug': self.slug,
             'calling_points': list(self.calling_points),
             'sources': map(lambda source: dict(source._asdict()), self.sources),
             'identifiers': map(lambda identifier: dict(identifier._asdict()), self.identifiers)
@@ -96,10 +96,10 @@ class Stop(object):
 class CallingPoint(object):
 
     def __init__(self):
-        self.url = None
+        self.slug = None
         self.sources = set()
         self.identifiers = Identifiers()
-        self.parent_url = None
+        self.parent_slug = None
 
     @staticmethod
     def from_dict(stop_dict):
@@ -109,18 +109,18 @@ class CallingPoint(object):
                 calling_point.sources = set(map(lambda source: Source(**source), value))
             elif key == 'identifiers':
                 calling_point.identifiers = Identifiers(map(lambda identifier: Identifier(**identifier), value))
-            elif key in ('parent_url', 'url'):
+            elif key in ('parent_slug', 'slug'):
                 setattr(calling_point, key, value)
 
     def _asdict(self):
         calling_point_dict = {
-            'url': self.url,
+            'slug': self.slug,
             'sources': map(lambda source: dict(source._asdict()), self.sources),
             'identifiers': map(lambda identifier: dict(identifier._asdict()), self.identifiers)
         }
 
-        if hasattr(self, 'parent_url'):
-            calling_point_dict['parent_url'] = self.parent_url
+        if hasattr(self, 'parent_slug'):
+            calling_point_dict['parent_slug'] = self.parent_slug
 
         return calling_point_dict
 
@@ -133,7 +133,7 @@ class Service(object):
 
     def __init__(self):
         self.name = None
-        self.url = None
+        self.slug = None
         self.mode = None
         self.routes = set()
         self.sources = set()
@@ -146,7 +146,7 @@ class Route(object):
     """
 
     def __init__(self):
-        self.url = None
+        self.slug = None
         self.calling_points = []
         self.service_url = None
         self.headline = None
@@ -160,7 +160,7 @@ class ScheduledTrip(object):
     """
 
     def __init__(self):
-        self.url = None
+        self.slug = None
         self.route_url = None
         self.calling_points = []
         self.operating_periods = set()
@@ -179,10 +179,10 @@ class Call(object):
     FINISH = 'finish' # journey completes here
 
     def __init__(
-            self, point_url=None, scheduled_arrival_time=None, public_arrival_time=None,
+            self, point_slug=None, scheduled_arrival_time=None, public_arrival_time=None,
             scheduled_departure_time=None, public_departure_time=None, activity=None
     ):
-        self.point_url = point_url
+        self.point_slug = point_slug
         self.scheduled_arrival_time = scheduled_arrival_time
         self.public_arrival_time = public_arrival_time
         self.scheduled_departure_time = scheduled_departure_time
@@ -194,17 +194,17 @@ class Call(object):
             map(
                 lambda key: getattr(self, key) == getattr(other, key),
                 (
-                    'point_url', 'scheduled_arrival_time', 'public_arrival_time',
+                    'point_slug', 'scheduled_arrival_time', 'public_arrival_time',
                     'scheduled_departure_time', 'public_departure_time', 'activity'
                     )
             )
         )
 
     def __unicode__(self):
-        return 'Call(point_url={point_url}, scheduled_arrival_time={scheduled_arrival_time}, '\
+        return 'Call(point_slug={point_slug}, scheduled_arrival_time={scheduled_arrival_time}, '\
                'public_arrival_time={public_arrival_time}, scheduled_departure_time={scheduled_departure_time}, '\
                'public_departure_time={public_departure_time}, activity={activity})'.format(
-            point_url=self.point_url,
+            point_slug=self.point_slug,
             scheduled_arrival_time=self.scheduled_arrival_time,
             public_arrival_time=self.public_arrival_time,
             scheduled_departure_time=self.scheduled_departure_time,

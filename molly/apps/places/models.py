@@ -7,17 +7,17 @@ AccessPoint = namedtuple('AccessPoint', ['names', 'location', 'accessible'])
 
 class PointOfInterest(object):
 
-    def __init__(self, uri=None, names=None, descriptions=None, identifiers=None, address=None, locality=None,
+    def __init__(self, slug=None, names=None, descriptions=None, identifiers=None, address=None, locality=None,
                  telephone_number=None, opening_hours=None, types=None, amenities=None, geography=None, location=None,
                  sources=None):
-        self.uri = uri
+        self.slug = slug
         self.names = names or []
         self.descriptions = descriptions or []
         self.identifiers = identifiers or []
         self.address = address
         self.locality = locality
         self.telephone_number = telephone_number
-        self.opening_hours = opening_hours or []
+        self.opening_hours = opening_hours
         self.types = types or []
         self.amenities = amenities or []
         self.geography = geography
@@ -39,7 +39,7 @@ class PointOfInterest(object):
 
     def _asdict(self):
         return {
-            'uri': self.uri,
+            'slug': self.slug,
             'names': [name._asdict() for name in self.names],
             'descriptions': [description._asdict() for description in self.descriptions],
             'identifiers': [identifier._asdict() for identifier in self.identifiers],
@@ -57,19 +57,19 @@ class PointOfInterest(object):
     @classmethod
     def from_dict(cls, data):
         poi = cls()
-        poi.uri = data.uri
-        poi.names = [LocalisedName(**name) for name in data['names']]
-        poi.descriptions = [LocalisedName(**name) for name in data['descriptions']]
-        poi.identifiers = Identifiers(Identifier(**name) for name in data['identifiers'])
-        poi.address = data['address']
-        poi.locality = data['locality']
-        poi.telephone_number = data['telephone_number']
-        poi.opening_hours = data['opening_hours']
-        poi.types = data['types']
-        poi.amenities = data['amenities']
-        poi.geography = wkt.loads(data['geography']) if data['geography'] else None
-        poi.location = wkt.loads(data['location']) if data['location'] else None
-        poi.sources = [Source(**source) for source in data['sources']]
+        poi.slug = data.get('slug')
+        poi.names = [LocalisedName(**name) for name in data.get('names', [])]
+        poi.descriptions = [LocalisedName(**name) for name in data.get('descriptions', [])]
+        poi.identifiers = Identifiers(Identifier(**name) for name in data.get('identifiers', []))
+        poi.address = data.get('address')
+        poi.locality = data.get('locality')
+        poi.telephone_number = data.get('telephone_number')
+        poi.opening_hours = data.get('opening_hours', [])
+        poi.types = data.get('types', [])
+        poi.amenities = data.get('amenities', [])
+        poi.geography = wkt.loads(data['geography']) if data.get('geography') else None
+        poi.location = wkt.loads(data['location']) if data.get('location') else None
+        poi.sources = [Source(**source) for source in data.get('sources', [])]
         return poi
 
 

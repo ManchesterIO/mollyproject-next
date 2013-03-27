@@ -74,11 +74,11 @@ class TestOpenStreetMapImporter(unittest2.TestCase):
 
     def test_node_has_correct_uri(self):
         poi = self._get_node_poi()
-        self.assertEquals('/osm:N12345', poi.uri)
+        self.assertEquals('osm:N12345', poi.slug)
 
     def test_way_has_correct_uri(self):
         poi = self._get_way_poi()
-        self.assertEquals('/osm:W12345', poi.uri)
+        self.assertEquals('osm:W12345', poi.slug)
 
     def test_exception_thrown_if_url_not_in_config(self):
         self.assertRaises(ConfigError, openstreetmap.OpenStreetMapImporter, {})

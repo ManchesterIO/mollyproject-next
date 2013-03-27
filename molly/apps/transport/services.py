@@ -20,13 +20,13 @@ class LocalityService(BaseService):
 
     def __init__(self, connection):
         self._connection = connection.localities
-        self._connection.ensure_index('url')
+        self._connection.ensure_index('slug')
 
-    def locality_by_url(self, locality_url):
-        return self._dict_to_locality(self._query_by_url(locality_url))
+    def locality_by_slug(self, locality_slug):
+        return self._dict_to_locality(self._query_by_slug(locality_slug))
 
     def insert_and_merge(self, locality):
-        existing_locality_dict = self._query_by_url(locality.url)
+        existing_locality_dict = self._query_by_slug(locality.slug)
 
         if existing_locality_dict is None:
             self._insert(locality, existing_locality_dict)
@@ -36,14 +36,14 @@ class LocalityService(BaseService):
                 self._insert(self._merge_localities(existing_locality, locality), existing_locality_dict)
 
     def _merge_localities(self, existing_locality, locality):
-        self._merge_attribute('parent_url', existing_locality, locality)
+        self._merge_attribute('parent_slug', existing_locality, locality)
         self._merge_attribute('geography', existing_locality, locality)
         existing_locality.identifiers.update(locality.identifiers)
         existing_locality.sources.update(locality.sources)
         return existing_locality
     
-    def _query_by_url(self, url):
-        return self._connection.find_one({'url': url})
+    def _query_by_slug(self, slug):
+        return self._connection.find_one({'slug': slug})
 
     def _dict_to_locality(self, locality_dict):
         if locality_dict is None:
@@ -62,11 +62,11 @@ class StopService(BaseService):
 
     def __init__(self, connection):
         self._connection = connection.stops
-        self._connection.ensure_index('url')
+        self._connection.ensure_index('slug')
         self._connection.ensure_index('identifiers')
 
-    def select_by_url(self, url, filter_by_type=None):
-        return self._parse_response(self._query_by_url(url, filter_by_type=self._get_type(filter_by_type)))
+    def select_by_slug(self, slug, filter_by_type=None):
+        return self._parse_response(self._query_by_slug(slug, filter_by_type=self._get_type(filter_by_type)))
 
     def select_by_identifiers(self, *identifiers, **kwargs):
         filter_by_type = kwargs.get('filter_by_type')
@@ -82,8 +82,8 @@ class StopService(BaseService):
         If the passed in stop does not have a URL (for example, some railway data sets refer to things
         only by STANOX, etc) then it is merged with things that share its identifiers
         """
-        if stop.url is not None:
-            self._do_insert_and_merge(self.select_by_url(stop.url, filter_by_type=type(stop)), stop)
+        if stop.slug is not None:
+            self._do_insert_and_merge(self.select_by_slug(stop.slug, filter_by_type=type(stop)), stop)
         else:
             existing_stops = self.select_by_identifiers(*stop.identifiers, filter_by_type=type(stop))
             if len(existing_stops) == 0:
@@ -97,7 +97,7 @@ class StopService(BaseService):
             if existing_stop is not None:
                 stop = self._merge_stop(existing_stop, stop)
             stop_dict = stop._asdict()
-            existing_stop_dict = self._query_by_url(stop.url)
+            existing_stop_dict = self._query_by_slug(stop.slug)
             if existing_stop_dict is not None:
                 stop_dict['_id'] = existing_stop_dict['_id']
             stop_dict['_type'] = self._get_type(type(stop))
@@ -108,13 +108,13 @@ class StopService(BaseService):
         existing_stop.identifiers.update(stop.identifiers)
         if isinstance(existing_stop, Stop):
             existing_stop.calling_points.update(stop.calling_points)
-        elif isinstance(existing_stop, CallingPoint) and stop.url is not None:
-            # Only change parent_url if our new model is fully formed, i.e., has a URL
-            existing_stop.parent_url = stop.parent_url
+        elif isinstance(existing_stop, CallingPoint) and stop.slug is not None:
+            # Only change parent_slug if our new model is fully formed, i.e., has a URL
+            existing_stop.parent_slug = stop.parent_slug
         return existing_stop
 
-    def _query_by_url(self, url, filter_by_type=None):
-        query = {'url': url}
+    def _query_by_slug(self, slug, filter_by_type=None):
+        query = {'slug': slug}
         if filter_by_type:
             query['_type'] = filter_by_type
         return self._connection.find_one(query)

@@ -9,7 +9,7 @@ from molly.apps.transport.models import Locality, Stop
 
 class LocalityServiceTest(unittest.TestCase):
 
-    URL = '/test'
+    SLUG = '/test'
     PARENT_URL = '/parent_test'
     IDENTIFIER = Identifier(namespace='test', value='test')
 
@@ -21,7 +21,7 @@ class LocalityServiceTest(unittest.TestCase):
     def test_insert_and_merge_looks_up_by_url(self):
         mock_connection = self._build_mock_connection()
         self._insert_and_merge_locality(mock_connection)
-        mock_connection.localities.find_one.assert_called_once_with({'url': self.URL})
+        mock_connection.localities.find_one.assert_called_once_with({'slug': self.SLUG})
 
     def test_insert_and_merge_posts_does_not_insert_when_post_exists_and_source_not_changed(self):
         locality = self._build_locality()
@@ -63,23 +63,23 @@ class LocalityServiceTest(unittest.TestCase):
         self.assertIn(locality.sources.pop()._asdict(), self._get_inserted_locality(mock_connection)['sources'])
 
     def test_insert_and_merge_replaces_parent_url(self):
-        expected_url = "/new_test"
+        expected_slug = "/new_test"
         old_locality, old_source = self._build_old_locality()
         new_locality = self._build_locality()
-        new_locality.parent_url = expected_url
+        new_locality.parent_slug = expected_slug
 
         mock_connection = self._insert_and_merge_with(new_locality, old_locality)
 
-        self.assertEqual(expected_url, self._get_inserted_locality(mock_connection)['parent_url'])
+        self.assertEqual(expected_slug, self._get_inserted_locality(mock_connection)['parent_slug'])
 
-    def test_insert_and_merge_leaves_parent_url_when_unset(self):
+    def test_insert_and_merge_leaves_parent_slug_when_unset(self):
         old_locality, old_source = self._build_old_locality()
         new_locality = self._build_locality()
-        delattr(new_locality, 'parent_url')
+        delattr(new_locality, 'parent_slug')
 
         mock_connection = self._insert_and_merge_with(new_locality, old_locality)
 
-        self.assertEqual("/parent_test", self._get_inserted_locality(mock_connection)['parent_url'])
+        self.assertEqual("/parent_test", self._get_inserted_locality(mock_connection)['parent_slug'])
 
     def test_insert_and_merge_replaces_geography(self):
         expected_geography = Point(-1, -1)
@@ -119,10 +119,10 @@ class LocalityServiceTest(unittest.TestCase):
 
         self.assertIn(self.IDENTIFIER._asdict(), self._get_inserted_locality(mock_connection)['identifiers'])
 
-    def test_url_is_indexed(self):
+    def test_slug_is_indexed(self):
         mock_connection = self._build_mock_connection()
         LocalityService(mock_connection)
-        mock_connection.localities.ensure_index.assert_called_once_with('url')
+        mock_connection.localities.ensure_index.assert_called_once_with('slug')
 
 
     def test_inserting_inserts_into_collection_with_same_id(self):
@@ -150,8 +150,8 @@ class LocalityServiceTest(unittest.TestCase):
 
     def _build_locality(self):
         locality = Locality()
-        locality.url = self.URL
-        locality.parent_url = self.PARENT_URL
+        locality.slug = self.SLUG
+        locality.parent_slug = self.PARENT_URL
         locality.sources = {Source(url='http://www.example.com', version=2, attribution=None)}
         locality.geography = Point(0, 0)
         locality.identifiers = [self.IDENTIFIER]
@@ -208,7 +208,7 @@ class StopServiceTest(unittest.TestCase):
         self._stop_service.insert_and_merge(stop)
 
         self.assertEqual(0, self._mock_connection.save.call_count)
-        self._mock_connection.stops.find_one.assert_called_once_with({'url': stop.url, '_type': 'stop'})
+        self._mock_connection.stops.find_one.assert_called_once_with({'slug': stop.slug, '_type': 'stop'})
 
     def test_insert_and_merge_does_insert_when_stop_exists_and_source_changed(self):
         old_stop = self._build_stop()
@@ -224,7 +224,7 @@ class StopServiceTest(unittest.TestCase):
 
     def _build_stop(self):
         stop = Stop()
-        stop.url = self._URL
+        stop.slug = self._URL
         stop.sources = {Source(url='http://www.example.com', version=1, attribution=None)}
         return stop
 

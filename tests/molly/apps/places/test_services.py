@@ -23,7 +23,7 @@ class TestPointsOfInterest(unittest.TestCase):
 
     def test_add_indexes(self):
         poi = PointOfInterest()
-        poi.uri = '/osm:N12345'
+        poi.slug = 'osm:N12345'
         poi.names = [LocalisedName(name='Test', lang='en')]
         poi.descriptions = [LocalisedName(name='Descriptions', lang='en')]
         poi.geography = Point(-1.6, 54.0)
@@ -43,12 +43,12 @@ class TestPointsOfInterest(unittest.TestCase):
         self._mock_mongo.pois.find_one.return_value = {
             '_id': 'abcdef', 'sources': [Source(url='http://www.example.com', version=1, attribution='OSM')]
         }
-        poi = PointOfInterest(uri='/test:test')
+        poi = PointOfInterest(slug='test:test')
         self._pois.add_or_update(poi)
         poi_dict = poi._asdict()
         poi_dict.update({'_id': 'abcdef'})
         self.assertFalse(self._mock_mongo.db.pois.insert.called)
-        self._mock_mongo.pois.update.assert_called_once_with({'uri': '/test:test'}, poi_dict)
+        self._mock_mongo.pois.update.assert_called_once_with({'slug': 'test:test'}, poi_dict)
 
     def test_add_or_update_does_not_update_if_source_has_not_changed(self):
         self._mock_mongo.pois.find_one.return_value = {
@@ -57,10 +57,25 @@ class TestPointsOfInterest(unittest.TestCase):
         }
 
         poi = PointOfInterest(
-            uri='/test:test', sources=[Source(url='http://www.example.com', version=1, attribution='OSM')]
+            slug='test:test', sources=[Source(url='http://www.example.com', version=1, attribution='OSM')]
         )
         self._pois.add_or_update(poi)
 
         self.assertFalse(self._mock_mongo.pois.insert.called)
         self.assertFalse(self._mock_mongo.pois.update.called)
         self.assertFalse(self._mock_solr.add.called)
+
+    def test_fetch_by_uri_returns_point_of_interest(self):
+        self._mock_mongo.pois.find_one.return_value = {'foo':'bar'}
+        self.assertIsInstance(self._pois.select_by_slug('/'), PointOfInterest)
+
+    def test_fetch_by_uri_looks_up_correct_item(self):
+        slug = 'foo:bar'
+        self._mock_mongo.pois.find_one.return_value = {'locality': 'Eccles'}
+        poi = self._pois.select_by_slug(slug)
+        self.assertEquals('Eccles', poi.locality)
+        self._mock_mongo.pois.find_one.assert_called_once_with({'slug': slug})
+
+    def test_fetch_by_uri_returns_none_when_nothing_found(self):
+        self._mock_mongo.pois.find_one.return_value = None
+        self.assertIsNone(self._pois.select_by_slug(''))

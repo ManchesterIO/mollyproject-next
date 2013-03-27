@@ -74,11 +74,11 @@ class NaptanParser(object):
             if len(calling_points) == 1:
                 yield self._calling_points[group]
             else:
-                parent.calling_points.remove(self._calling_points[group].url)
+                parent.calling_points.remove(self._calling_points[group].slug)
 
             for calling_point in calling_points[1:]:
-                parent.calling_points.add(calling_point.url)
-                calling_point.parent_stop = parent.url
+                parent.calling_points.add(calling_point.slug)
+                calling_point.parent_stop = parent.slug
                 yield calling_point
 
             yield parent
@@ -89,10 +89,10 @@ class NaptanParser(object):
 
         calling_point = CallingPoint()
         calling_point.sources = stop.sources
-        calling_point.url = stop.url + '/calling_point'
+        calling_point.slug = stop.slug + '/calling_point'
 
-        stop.calling_points = {calling_point.url}
-        calling_point.parent_stop = stop.url
+        stop.calling_points = {calling_point.slug}
+        calling_point.parent_stop = stop.slug
 
         return stop, calling_point
 
@@ -108,17 +108,17 @@ class NaptanParser(object):
         airport = self._build_base(elem, CallingPoint if is_terminal else Stop)
         if is_terminal:
             airport.parent_stop = '/gb/' + parent_atco_code
-            calling_point_url = self._airports[parent_atco_code].url + '/calling_point'
-            if calling_point_url in self._airports:
-                self._airports[parent_atco_code].calling_points.remove(calling_point_url)
-                del self._airports[calling_point_url]
-            self._airports[parent_atco_code].calling_points.add(airport.url)
+            calling_point_slug = self._airports[parent_atco_code].slug + '/calling_point'
+            if calling_point_slug in self._airports:
+                self._airports[parent_atco_code].calling_points.remove(calling_point_slug)
+                del self._airports[calling_point_slug]
+            self._airports[parent_atco_code].calling_points.add(airport.slug)
         else:
             calling_point = self._build_base(elem, CallingPoint)
-            calling_point.url += '/calling_point'
-            calling_point.parent_url = airport.url
-            airport.calling_points.add(calling_point.url)
-            self._airports[calling_point.url] = calling_point
+            calling_point.slug += '/calling_point'
+            calling_point.parent_slug = airport.slug
+            airport.calling_points.add(calling_point.slug)
+            self._airports[calling_point.slug] = calling_point
 
         self._airports[atco_code] = airport
 
@@ -137,9 +137,9 @@ class NaptanParser(object):
     def _build_bus_station(self, elem):
         bay = self._build_base(elem, CallingPoint)
         stop = self._build_base(elem, Stop)
-        stop.url += '/bus_station'
-        bay.parent_url = stop.url
-        stop.calling_points.add(bay.url)
+        stop.slug += '/bus_station'
+        bay.parent_slug = stop.slug
+        stop.calling_points.add(bay.slug)
         return bay, stop
 
     def _get_group_id(self, elem, elem_is_child):
@@ -160,7 +160,7 @@ class NaptanParser(object):
             attribution=self._ATTRIBUTION
         ))
         atco_code = self._get_atco_code(elem)
-        point.url = '/gb/' + atco_code
+        point.slug = '/gb/' + atco_code
         point.identifiers.add(Identifier(namespace=ATCO_NAMESPACE, value=atco_code))
 
         self._add_identifier(point, elem, CRS_NAMESPACE, self._CRS_CODE_XPATH)

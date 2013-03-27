@@ -23,7 +23,7 @@ class CifParser(object):
         self.services = []
         self._services = {}
         self.scheduled_trips = []
-        self._platform_urls = set()
+        self._platform_slugs = set()
 
     def _parse_mca_file(self, archive):
         handlers = {
@@ -76,7 +76,7 @@ class CifParser(object):
         self._current_calling_tiplocs = []
         self._current_scheduled_trip = ScheduledTrip()
         self._current_scheduled_trip.sources.add(self._source)
-        self._current_scheduled_trip.url = '/gb/rail/' + line[3:9]
+        self._current_scheduled_trip.slug = '/gb/rail/' + line[3:9]
 
     def _handle_journey_origin(self, line):
         self._add_tiploc_to_journey(
@@ -117,7 +117,7 @@ class CifParser(object):
             activity=self._get_activity(line[25:37])
         )
         route = self._get_route_for_current_journey()
-        self._current_scheduled_trip.route_url = route.url
+        self._current_scheduled_trip.route_slug = route.slug
         self.scheduled_trips.append(self._current_scheduled_trip)
 
     def _add_tiploc_to_journey(
@@ -125,10 +125,10 @@ class CifParser(object):
             scheduled_departure_time=None, public_departure_time=None
     ):
         self._current_calling_tiplocs.append(tiploc)
-        calling_point_url = self._get_calling_point(platform, tiploc)
+        calling_point_slug = self._get_calling_point(platform, tiploc)
         self._current_scheduled_trip.calling_points.append(
             Call(
-                point_url=calling_point_url,
+                point_slug=calling_point_slug,
                 scheduled_arrival_time=self._convert_to_python_time(scheduled_arrival_time),
                 public_arrival_time=self._convert_to_python_time(public_arrival_time),
                 scheduled_departure_time=self._convert_to_python_time(scheduled_departure_time),
@@ -172,27 +172,27 @@ class CifParser(object):
 
     def _get_calling_point(self, platform, tiploc):
         if platform:
-            platform_url = '/gb/9400{tiploc}/platform{platform}'.format(
+            platform_slug = '/gb/9400{tiploc}/platform{platform}'.format(
                 tiploc=tiploc, platform=platform
             )
-            if platform_url not in self._platform_urls:
-                self._build_platform(platform, platform_url, tiploc)
-            return platform_url
+            if platform_slug not in self._platform_slugs:
+                self._build_platform(platform, platform_slug, tiploc)
+            return platform_slug
         else:
             return '/gb/9400{tiploc}/calling_point'.format(tiploc=tiploc)
 
-    def _build_platform(self, platform, platform_url, tiploc):
+    def _build_platform(self, platform, platform_slug, tiploc):
         platform_calling_point = self._build_calling_point(
             '{description} Platform {platform}'.format(
                 description=self._tiploc_descriptions[tiploc],
                 platform=platform
             ), tiploc
         )
-        platform_calling_point.url = platform_url
-        platform_calling_point.parent_url = '/gb/9400{tiploc}'.format(
+        platform_calling_point.slug = platform_slug
+        platform_calling_point.parent_slug = '/gb/9400{tiploc}'.format(
             tiploc=tiploc
         )
-        self._platform_urls.add(platform_url)
+        self._platform_slugs.add(platform_slug)
         self.tiplocs.append(platform_calling_point)
 
     def _handle_file_end(self, line):
@@ -207,7 +207,7 @@ class CifParser(object):
     def _build_route(self):
         route = Route()
         route.sources.add(self._source)
-        route.url = '/gb/rail/{origin}-{destination}'.format(
+        route.slug = '/gb/rail/{origin}-{destination}'.format(
             origin=self._current_calling_tiplocs[0],
             destination=self._current_calling_tiplocs[-1]
         )
@@ -222,8 +222,8 @@ class CifParser(object):
         self.routes.append(route)
         self._routes[tuple(self._current_calling_tiplocs)] = route
         service = self._get_service_for_route(route)
-        service.routes.add(route.url)
-        route.service_url = service.url
+        service.routes.add(route.slug)
+        route.service_slug = service.slug
         return route
 
     def _get_service_for_route(self, route):
@@ -239,7 +239,7 @@ class CifParser(object):
     def _build_service(self, route):
         service = Service()
         service.sources.add(self._source)
-        service.url = route.url
+        service.slug = route.slug
         self.services.append(service)
         self._services[self._build_service_key_for_current_journey()] = service
         return service

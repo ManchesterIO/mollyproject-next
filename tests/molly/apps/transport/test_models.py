@@ -9,15 +9,15 @@ from molly.apps.common.components import Source
 class LocalityTest(unittest.TestCase):
 
     _TEST_POINT = Point(54, 2)
-    _TEST_URL = "http://tch/locality/manchester"
-    _TEST_PARENT_URL = "http://tch/locality/england"
+    _TEST_SLUG = "http://tch/locality/manchester"
+    _TEST_PARENT_SLUG = "http://tch/locality/england"
     _DUMMY_DICT = {'mock': True}
 
-    def test_locality_url_in_serialised_dict(self):
+    def test_locality_slug_in_serialised_dict(self):
         locality_dict = self._get_test_locality_dict()
 
-        self.assertIn('url', locality_dict)
-        self.assertEqual(self._TEST_URL, locality_dict['url'])
+        self.assertIn('slug', locality_dict)
+        self.assertEqual(self._TEST_SLUG, locality_dict['slug'])
 
     def test_locality_geometry_in_serialised_dict(self):
         locality_dict = self._get_test_locality_dict()
@@ -43,11 +43,11 @@ class LocalityTest(unittest.TestCase):
         self.assertEquals(self._get_point_dict(test_polygon.centroid),
             locality_dict['geography_centroid'])
 
-    def test_locality_parent_url_in_serialised_dict(self):
+    def test_locality_parent_slug_in_serialised_dict(self):
         locality_dict = self._get_test_locality_dict()
 
-        self.assertIn('parent_url', locality_dict)
-        self.assertEqual(self._TEST_PARENT_URL, locality_dict['parent_url'])
+        self.assertIn('parent_slug', locality_dict)
+        self.assertEqual(self._TEST_PARENT_SLUG, locality_dict['parent_slug'])
 
     def test_sources_in_serialised_dict(self):
         locality = self._build_test_locality()
@@ -70,8 +70,8 @@ class LocalityTest(unittest.TestCase):
     def _build_test_locality(self):
         locality = Locality()
         locality.geography = self._TEST_POINT
-        locality.url = self._TEST_URL
-        locality.parent_url = self._TEST_PARENT_URL
+        locality.slug = self._TEST_SLUG
+        locality.parent_slug = self._TEST_PARENT_SLUG
         return locality
 
     def _get_test_locality_dict(self):
@@ -90,19 +90,19 @@ class LocalityTest(unittest.TestCase):
 class StopTest(unittest.TestCase):
 
     def test_stop_as_dict_includes_appropriate_things(self):
-        url = '/test'
+        slug = '/test'
         source = Source(url='http://www.example.com', version=1, attribution=None)
-        calling_point_url = '/foo'
+        calling_point_slug = '/foo'
 
         stop = Stop()
-        stop.url = '/test'
+        stop.slug = '/test'
         stop.sources.add(source)
-        stop.calling_points.add(calling_point_url)
+        stop.calling_points.add(calling_point_slug)
 
         self.assertEquals({
-            'url': url,
+            'slug': slug,
             'sources': [source._asdict()],
-            'calling_points': [calling_point_url],
+            'calling_points': [calling_point_slug],
             'identifiers': []
         }, stop._asdict())
 
@@ -110,33 +110,33 @@ class StopTest(unittest.TestCase):
 class CallingPointTest(unittest.TestCase):
 
     def test_stop_as_dict_includes_appropriate_things(self):
-        url = '/test'
+        slug = '/test'
         source = Source(url='http://www.example.com', version=1, attribution=None)
-        parent_url = '/foo'
+        parent_slug = '/foo'
 
         calling_point = CallingPoint()
-        calling_point.url = '/test'
+        calling_point.slug = '/test'
         calling_point.sources.add(source)
-        calling_point.parent_url = parent_url
+        calling_point.parent_slug = parent_slug
 
         self.assertEquals({
-            'url': url,
+            'slug': slug,
             'sources': [source._asdict()],
-            'parent_url': parent_url,
+            'parent_slug': parent_slug,
             'identifiers': []
         }, calling_point._asdict())
 
     def test_stop_as_dict_includes_appropriate_things_when_no_parent(self):
-        url = '/test'
+        slug = '/test'
         source = Source(url='http://www.example.com', version=1, attribution=None)
 
         calling_point = CallingPoint()
-        calling_point.url = '/test'
+        calling_point.slug = '/test'
         calling_point.sources = [source]
 
         self.assertEquals({
-            'url': url,
+            'slug': slug,
             'sources': [source._asdict()],
-            'parent_url': None,
+            'parent_slug': None,
             'identifiers': []
         }, calling_point._asdict())

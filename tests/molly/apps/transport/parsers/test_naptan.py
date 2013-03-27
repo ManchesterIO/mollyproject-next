@@ -39,15 +39,15 @@ class NaptanParserTest(unittest.TestCase):
     def test_bus_calling_point_source_url_is_set_correctly(self):
         self.assertEquals(self._TEST_URL + "/NaPTAN.xml", self._get_bus_calling_point().sources.pop().url)
 
-    def test_bus_stop_has_correct_url(self):
-        self.assertEquals('/gb/639000011', self._get_bus_stop().url)
+    def test_bus_stop_has_correct_slug(self):
+        self.assertEquals('/gb/639000011', self._get_bus_stop().slug)
 
-    def test_bus_calling_point_has_correct_url(self):
-        self.assertEquals('/gb/639000011/calling_point', self._get_bus_calling_point().url)
+    def test_bus_calling_point_has_correct_slug(self):
+        self.assertEquals('/gb/639000011/calling_point', self._get_bus_calling_point().slug)
 
-    def test_second_bus_stop_has_correct_url(self):
+    def test_second_bus_stop_has_correct_slug(self):
         bus_stop = list(self._import_from_test_data())[2]
-        self.assertEquals('/gb/639000012', bus_stop.url)
+        self.assertEquals('/gb/639000012', bus_stop.slug)
 
     def test_bus_calling_point_has_stop_as_parent(self):
         self.assertEquals('/gb/639000011', self._get_bus_calling_point().parent_stop)
@@ -56,118 +56,118 @@ class NaptanParserTest(unittest.TestCase):
         self.assertEquals({'/gb/639000011/calling_point'}, self._get_bus_stop().calling_points)
 
     def test_taxi_ranks_are_not_yielded(self):
-        self.assertNotIn('/gb/6490TX001', self._get_stops_by_url().keys())
+        self.assertNotIn('/gb/6490TX001', self._get_stops_by_slugs().keys())
 
     def test_single_terminal_airports_are_yielded_as_stops(self):
-        stops_dict = self._get_stops_by_url()
+        stops_dict = self._get_stops_by_slugs()
         self.assertIsInstance(stops_dict['/gb/9200ABZ1'], Stop)
 
     def test_single_terminal_airports_have_a_calling_point(self):
-        stops_dict = self._get_stops_by_url()
+        stops_dict = self._get_stops_by_slugs()
         self.assertIsInstance(stops_dict['/gb/9200ABZ1/calling_point'], CallingPoint)
 
     def test_airport_terminals_are_yielded_as_calling_points(self):
-        stops_dict = self._get_stops_by_url()
+        stops_dict = self._get_stops_by_slugs()
         self.assertIsInstance(stops_dict['/gb/9200MAN1'], CallingPoint)
 
     def test_airport_terminals_have_airport_as_parent(self):
-        terminal = self._get_stops_by_url()['/gb/9200MAN1']
+        terminal = self._get_stops_by_slugs()['/gb/9200MAN1']
         self.assertEquals('/gb/9200MAN0', terminal.parent_stop)
 
     def test_airports_have_terminals_as_calling_points(self):
-        airport = self._get_stops_by_url()['/gb/9200MAN0']
+        airport = self._get_stops_by_slugs()['/gb/9200MAN0']
         self.assertEquals(
             {'/gb/9200MAN1', '/gb/9200MAN2', '/gb/9200MAN3'},
             airport.calling_points
         )
 
     def test_airports_with_terminals_do_not_have_own_calling_point(self):
-        self.assertNotIn('/gb/9200MAN0/calling_point', self._get_stops_by_url())
+        self.assertNotIn('/gb/9200MAN0/calling_point', self._get_stops_by_slugs())
 
     def test_airport_calling_point_has_correct_parent(self):
-        stops = self._get_stops_by_url()
-        self.assertEquals('/gb/9200ABZ1', stops['/gb/9200ABZ1/calling_point'].parent_url)
+        stops = self._get_stops_by_slugs()
+        self.assertEquals('/gb/9200ABZ1', stops['/gb/9200ABZ1/calling_point'].parent_slug)
 
     def test_airport_with_no_terminals_includes_calling_points(self):
-        stops = self._get_stops_by_url()
+        stops = self._get_stops_by_slugs()
         self.assertEquals({'/gb/9200ABZ1/calling_point'}, stops['/gb/9200ABZ1'].calling_points)
 
     def test_ferry_terminals_are_yielded_as_stops(self):
-        stops_dict = self._get_stops_by_url()
+        stops_dict = self._get_stops_by_slugs()
         self.assertIsInstance(stops_dict['/gb/9300ACH'], Stop)
 
     def test_ferry_berths_are_yielded_as_calling_points(self):
-        stops_dict = self._get_stops_by_url()
+        stops_dict = self._get_stops_by_slugs()
         self.assertIsInstance(stops_dict['/gb/9300MTS1'], CallingPoint)
 
     def test_berthless_ferry_terminals_have_generated_calling_point(self):
-        stops_dict = self._get_stops_by_url()
+        stops_dict = self._get_stops_by_slugs()
         stop = stops_dict['/gb/9300ACH']
-        calling_point_url = stop.calling_points.pop()
-        self.assertIsInstance(stops_dict[calling_point_url], CallingPoint)
+        calling_point_slug = stop.calling_points.pop()
+        self.assertIsInstance(stops_dict[calling_point_slug], CallingPoint)
 
     def test_ferry_terminals_with_berths_have_calling_point_from_naptan(self):
-        stops_dict = self._get_stops_by_url()
+        stops_dict = self._get_stops_by_slugs()
         stop = stops_dict['/gb/9300MTS']
         self.assertEquals(1, len(stop.calling_points))
         self.assertEquals({'/gb/9300MTS1'}, stop.calling_points)
 
     def test_things_without_revision_numbers_default_to_0(self):
-        stops_dict = self._get_stops_by_url()
+        stops_dict = self._get_stops_by_slugs()
         stop = stops_dict['/gb/6490IM1778']
         self.assertEquals('0', stop.sources.pop().version)
 
     def test_ferry_terminals_without_stop_area_imply_group(self):
-        stops_dict = self._get_stops_by_url()
+        stops_dict = self._get_stops_by_slugs()
         stop = stops_dict['/gb/9300EIB']
         self.assertEquals(1, len(stop.calling_points))
         self.assertEquals({'/gb/9300EIB1'}, stop.calling_points)
 
     def test_berths_have_terminal_as_parent_stop(self):
-        stops_dict = self._get_stops_by_url()
+        stops_dict = self._get_stops_by_slugs()
         stop = stops_dict['/gb/9300MTS1']
         self.assertEquals('/gb/9300MTS', stop.parent_stop)
 
     def test_rail_stations_get_stop_and_calling_point(self):
-        stops = self._get_stops_by_url()
+        stops = self._get_stops_by_slugs()
         self.assertIn('/gb/9100ABDARE', stops)
         self.assertIn('/gb/9100ABDARE/calling_point', stops)
 
     def test_metro_stations_are_yielded(self):
-        stops = self._get_stops_by_url()
+        stops = self._get_stops_by_slugs()
         self.assertIsInstance(stops['/gb/9400ZZALGWP'], Stop)
 
     def test_metro_platforms_are_yielded(self):
-        stops = self._get_stops_by_url()
+        stops = self._get_stops_by_slugs()
         self.assertIsInstance(stops['/gb/9400ZZALGWP1'], CallingPoint)
 
     def test_bus_stations_bays_are_yielded_as_calling_points(self):
-        stops = self._get_stops_by_url()
+        stops = self._get_stops_by_slugs()
         self.assertIsInstance(stops['/gb/639070011'], CallingPoint)
 
     def test_bus_station_bays_yield_stops_to_contain_them(self):
-        stops = self._get_stops_by_url()
+        stops = self._get_stops_by_slugs()
         bay = stops['/gb/639070011']
-        self.assertIsInstance(stops[bay.parent_url], Stop)
-        self.assertIn('/gb/639070011', stops[bay.parent_url].calling_points)
+        self.assertIsInstance(stops[bay.parent_slug], Stop)
+        self.assertIn('/gb/639070011', stops[bay.parent_slug].calling_points)
 
     def test_bus_stations_variable_bays_are_yielded_as_calling_points(self):
-        stops = self._get_stops_by_url()
+        stops = self._get_stops_by_slugs()
         self.assertIsInstance(stops['/gb/1400LE0400'], CallingPoint)
 
     # TODO: Handle bus station bays which are in a stop group
     # TODO: Handle bus station bays which share a name but are *not* in a stop group
 
     def test_atco_code_is_an_identifier(self):
-        stops = self._get_stops_by_url()
+        stops = self._get_stops_by_slugs()
         self.assertIn(Identifier(namespace=ATCO_NAMESPACE, value='9100ABDARE') , stops['/gb/9100ABDARE'].identifiers)
 
     def test_crs_code_is_an_identifier(self):
-        stops = self._get_stops_by_url()
+        stops = self._get_stops_by_slugs()
         self.assertIn(Identifier(namespace=CRS_NAMESPACE, value='ABA') , stops['/gb/9100ABDARE'].identifiers)
 
     def test_tiploc_code_is_an_identifier(self):
-        stops = self._get_stops_by_url()
+        stops = self._get_stops_by_slugs()
         self.assertIn(Identifier(namespace=TIPLOC_NAMESPACE, value='ABDARE') , stops['/gb/9100ABDARE'].identifiers)
 
     def _import_from_test_data(self):
@@ -179,6 +179,6 @@ class NaptanParserTest(unittest.TestCase):
     def _get_bus_calling_point(self):
         return list(self._import_from_test_data())[1]
 
-    def _get_stops_by_url(self):
+    def _get_stops_by_slugs(self):
         stops = list(self._import_from_test_data())
-        return dict(zip(map(lambda s: s.url, stops), stops))
+        return dict(zip(map(lambda s: s.slug, stops), stops))

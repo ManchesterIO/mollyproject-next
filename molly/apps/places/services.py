@@ -1,3 +1,4 @@
+from molly.apps.places.models import PointOfInterest
 
 class PointsOfInterest(object):
 
@@ -6,13 +7,17 @@ class PointsOfInterest(object):
         self._collection = connection.pois
         self._search_index = search_index
 
+    def select_by_slug(self, slug):
+        poi_dict = self._collection.find_one({'slug': slug})
+        return PointOfInterest.from_dict(poi_dict) if poi_dict else None
+
     def add_or_update(self, poi):
-        existing_poi = self._collection.find_one({'uri': poi.uri})
+        existing_poi = self._collection.find_one({'slug': poi.slug})
         if existing_poi:
             poi_dict = poi._asdict()
             poi_dict['_id'] = existing_poi['_id']
             if poi_dict['sources'] != existing_poi['sources']:
-                self._collection.update({'uri': poi.uri}, poi_dict)
+                self._collection.update({'slug': poi.slug}, poi_dict)
                 self._add_to_index(poi)
         else:
             self._collection.insert(poi._asdict())
@@ -21,7 +26,7 @@ class PointsOfInterest(object):
     def _add_to_index(self, poi):
         self._search_index.add([{
             'self': 'http://mollyproject.org/apps/places/point-of-interest',
-            'id': '/{instance_name}{uri}'.format(instance_name=self._instance_name, uri=poi.uri),
+            'id': '/{instance_name}/{slug}'.format(instance_name=self._instance_name, slug=poi.slug),
             'names': [name.name for name in poi.names],
             'descriptions': [description.name for description in poi.descriptions],
             'identifiers': [identifier.value for identifier in poi.identifiers],
