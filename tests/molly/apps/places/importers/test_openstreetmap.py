@@ -94,8 +94,8 @@ class TestOpenStreetMapImporter(unittest2.TestCase):
         poi = self._get_node_poi()
         self.assertEquals(
             [Source(url='http://www.example.com/file.pbf',
-                version=self._osm_importer._source.version,
-                attribution=u'© OpenStreetMap contributors')],
+                    version=self._osm_importer._source.version,
+                    attribution=self._osm_importer._ATTRIBUTION)],
             poi.sources
         )
 

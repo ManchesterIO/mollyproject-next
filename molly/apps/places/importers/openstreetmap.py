@@ -15,13 +15,6 @@ from molly.apps.places.models import PointOfInterest
 
 LOGGER = logging.getLogger(__name__)
 
-ATTRIBUTION = Attribution(
-    licence_name='Open Database Licence',
-    licence_url='http://www.opendatacommons.org/licenses/odbl',
-    attribution_text='OpenStreetMap contributors',
-    attribution_url='http://www.openstreetmap.org'
-)
-
 OSM_TAGS_TO_TYPES = {
     ('amenity', 'arts_centre'): 'http://mollyproject.org/poi/types/leisure/arts-centre',
     ('amenity', 'bank'): 'http://mollyproject.org/poi/types/retail/bank',
@@ -73,11 +66,17 @@ OSM_TAGS_TO_AMENITIES = {
     ('tourism', 'attraction'): 'http://mollyproject.org/poi/amenities/tourist-attraction',
 }
 
+
 class OpenStreetMapImporter(object):
     IMPORTER_NAME = 'openstreetmap'
     IMPORT_SCHEDULE = schedule(run_every=timedelta(weeks=1))
 
-    _ATTRIBUTION = u'© OpenStreetMap contributors'
+    _ATTRIBUTION = Attribution(
+        licence_name='Open Database Licence',
+        licence_url='http://www.opendatacommons.org/licenses/odbl',
+        attribution_text='OpenStreetMap contributors',
+        attribution_url='http://www.openstreetmap.org'
+    )
 
     def __init__(self, config):
         self._parser = OSMParser(
