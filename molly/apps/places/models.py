@@ -5,6 +5,7 @@ from molly.apps.common.components import LocalisedName, Identifier, Source, Iden
 
 AccessPoint = namedtuple('AccessPoint', ['names', 'location', 'accessible'])
 
+
 class PointOfInterest(object):
 
     def __init__(self, slug=None, names=None, descriptions=None, identifiers=None, address=None, locality=None,

@@ -1,5 +1,6 @@
 from molly.apps.places.models import PointOfInterest
 
+
 class PointsOfInterest(object):
 
     def __init__(self, instance_name, connection, search_index):

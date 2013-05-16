@@ -2,7 +2,9 @@ from flask import Blueprint
 from flask.ext.babel import lazy_gettext as _
 
 from molly.apps.common.app import BaseApp
+from molly.apps.places.endpoints import PointOfInterestEndpoint
 from molly.apps.places.services import PointsOfInterest
+
 
 class App(BaseApp):
 
@@ -17,5 +19,8 @@ class App(BaseApp):
             provider.poi_service = poi_service
             self._register_provider_as_importer(provider, services)
 
+        self._poi_endpoint = PointOfInterestEndpoint(instance_name, poi_service)
+
         self.blueprint = Blueprint(self.instance_name, __name__)
+        self.blueprint.add_url_rule('/<slug>', 'poi', self._poi_endpoint.get)
         self.links = []

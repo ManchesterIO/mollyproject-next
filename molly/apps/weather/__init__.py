@@ -3,6 +3,7 @@ from flask.ext.babel import lazy_gettext as _
 
 from molly.apps.weather.endpoints import ObservationsEndpoint
 
+
 class App(object):
 
     module = 'http://mollyproject.org/apps/weather'
