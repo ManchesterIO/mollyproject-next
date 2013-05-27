@@ -25,6 +25,3 @@ Feature: Point of interest
     | metadata                      | information                                               |
     | a telephone number            | a link to dial the telephone number                       |
     | a website                     | a link to the website                                     |
-    | opening times                 | a table of opening times                                  |
-    | public transport information  | a summary of upcoming departures from this stop           |
-    | public transport information  | a link to full information about transport from this stop |
