@@ -7,9 +7,10 @@ from urllib2 import urlopen
 
 from celery.schedules import schedule
 from imposm.parser import OSMParser
+import phonenumbers
 from shapely.geometry import Polygon, LineString, Point
 
-from molly.apps.common.components import Attribution, Identifiers, Identifier, Source
+from molly.apps.common.components import Attribution, Identifiers, Identifier, Source, LocalisedNames, LocalisedName
 from molly.config import ConfigError
 from molly.apps.places.models import PointOfInterest
 
@@ -123,7 +124,8 @@ class OpenStreetMapImporter(object):
         for id, tags, coords in nodes:
             self._add_poi(
                 id='N{}'.format(id),
-                geography=Point(coords)
+                geography=Point(coords),
+                tags=tags
             )
 
     def handle_ways(self, ways):
@@ -144,7 +146,8 @@ class OpenStreetMapImporter(object):
                 else:
                     self._add_poi(
                         id='W{}'.format(id),
-                        geography=geography_type([self._coords[node_id] for node_id in nodes])
+                        geography=geography_type([self._coords[node_id] for node_id in nodes]),
+                        tags=tags
                     )
 
     def filter_tags(self, tags):
@@ -152,14 +155,37 @@ class OpenStreetMapImporter(object):
             for k in tags.keys():
                 del tags[k]
 
-    def _add_poi(self, id, geography):
+    def _add_poi(self, id, geography, tags):
         self.pois.append(
             PointOfInterest(
                 slug='osm:{}'.format(id),
                 geography=geography,
                 identifiers=Identifiers({Identifier(namespace='osm', value=id)}),
-                sources=[self._source]
+                sources=[self._source],
+                amenities=[OSM_TAGS_TO_AMENITIES[tag] for tag in tags.items() if tag in OSM_TAGS_TO_AMENITIES.keys()],
+                types=[OSM_TAGS_TO_TYPES[tag] for tag in tags.items() if tag in OSM_TAGS_TO_TYPES.keys()],
+                names=self._get_names_from_tags(tags),
+                telephone_number=self._cleanup_telephone_number(tags.get('phone'))
             )
         )
+
+    def _get_names_from_tags(self, tags):
+        names = LocalisedNames()
+        for tag, value in tags.items():
+            if tag == 'name':
+                names.add(LocalisedName(name=value, lang=None))
+            elif tag.startswith('name:'):
+                names.add(LocalisedName(name=value, lang=tag[5:]))
+        return names
+
+    def _cleanup_telephone_number(self, phone_number):
+        if phone_number is None:
+            return None
+        else:
+            try:
+                return phonenumbers.format_number(phonenumbers.parse(phone_number), phonenumbers.PhoneNumberFormat.E164)
+            except phonenumbers.NumberParseException:
+                return None
+
 
 Provider = OpenStreetMapImporter

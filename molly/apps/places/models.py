@@ -1,7 +1,7 @@
 from collections import namedtuple
 from shapely import wkt
 
-from molly.apps.common.components import LocalisedName, Identifier, Source, Identifiers
+from molly.apps.common.components import LocalisedName, Identifier, Source, Identifiers, LocalisedNames
 
 AccessPoint = namedtuple('AccessPoint', ['names', 'location', 'accessible'])
 
@@ -12,9 +12,9 @@ class PointOfInterest(object):
                  telephone_number=None, opening_hours=None, types=None, amenities=None, geography=None, location=None,
                  sources=None):
         self.slug = slug
-        self.names = names or []
+        self.names = names or LocalisedNames()
         self.descriptions = descriptions or []
-        self.identifiers = identifiers or []
+        self.identifiers = identifiers or Identifiers()
         self.address = address
         self.locality = locality
         self.telephone_number = telephone_number
@@ -59,8 +59,8 @@ class PointOfInterest(object):
     def from_dict(cls, data):
         poi = cls()
         poi.slug = data.get('slug')
-        poi.names = [LocalisedName(**name) for name in data.get('names', [])]
-        poi.descriptions = [LocalisedName(**name) for name in data.get('descriptions', [])]
+        poi.names = LocalisedNames(LocalisedName(**name) for name in data.get('names', []))
+        poi.descriptions = LocalisedNames(LocalisedName(**name) for name in data.get('descriptions', []))
         poi.identifiers = Identifiers(Identifier(**name) for name in data.get('identifiers', []))
         poi.address = data.get('address')
         poi.locality = data.get('locality')

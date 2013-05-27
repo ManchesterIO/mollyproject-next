@@ -107,10 +107,34 @@ class TestOpenStreetMapImporter(unittest2.TestCase):
             12345, 'http://www.example.com/file.pbf'
         )
 
+    def test_amenities_are_correctly_populated(self):
+        self.assertEquals(['http://mollyproject.org/poi/amenities/atm'], self._get_node_poi().amenities)
 
-    def _get_node_poi(self):
+    def test_types_are_correctly_populated(self):
+        self.assertEquals(['http://mollyproject.org/poi/types/leisure/swimming-pool'], self._get_node_poi().types)
+
+    def test_name_is_correctly_set(self):
+        self.assertEquals('Foo', self._get_node_poi().names.language())
+
+    def test_i18n_names_are_correctly_set(self):
+        self.assertEquals('Bar', self._get_node_poi().names.language('fr'))
+
+    def test_telephone_number_is_correctly_set(self):
+        self.assertEquals('+442088118181', self._get_node_poi().telephone_number)
+
+    def test_telephone_number_has_some_cleanup(self):
+        self.assertEquals('+442088118181', self._get_node_poi(telephone_number='+44 (20) 8811-8181').telephone_number)
+
+    def test_telephone_number_is_none_when_unparsable(self):
+        self.assertIsNone(self._get_node_poi(telephone_number='La la lalalala').telephone_number)
+
+    def _get_node_poi(self, telephone_number='+442088118181'):
         self._osm_importer.load()
-        self._osm_importer.handle_nodes([(12345, {'atm': 'yes'}, (2, 3))])
+        self._osm_importer.handle_nodes([
+            (12345, {
+                'atm': 'yes', 'leisure': 'swimming_pool', 'name': 'Foo', 'name:fr': 'Bar', 'phone': telephone_number
+            }, (2, 3))
+        ])
         return self._osm_importer.pois[0]
 
     def _get_way_poi(self, coord_ids=(1, 2, 3, 1)):

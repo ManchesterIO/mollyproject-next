@@ -49,6 +49,16 @@ class Identifiers(set):
 LocalisedName = namedtuple('LocalisedName', ['name', 'lang'])
 
 
+class LocalisedNames(set):
+
+    def language(self, lang=None):
+        for name, lang_code in self:
+            if lang == lang_code:
+                return name
+        else:
+            return None
+
+
 class Source(namedtuple('Source', ['url', 'version', 'attribution'])):
     def _asdict(self):
         return {
