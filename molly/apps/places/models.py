@@ -51,7 +51,7 @@ class PointOfInterest(object):
             'types': self.types,
             'amenities': self.amenities,
             'geography': wkt.dumps(self.geography) if self.geography else None,
-            'location': wkt.dumps(self._location) if self._location else None,
+            'location': wkt.dumps(self.location) if self.location else None,
             'sources': [source._asdict() for source in self.sources]
         }
 
