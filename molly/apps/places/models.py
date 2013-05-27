@@ -70,7 +70,7 @@ class PointOfInterest(object):
         poi.amenities = data.get('amenities', [])
         poi.geography = wkt.loads(data['geography']) if data.get('geography') else None
         poi.location = wkt.loads(data['location']) if data.get('location') else None
-        poi.sources = [Source(**source) for source in data.get('sources', [])]
+        poi.sources = [Source.from_dict(source) for source in data.get('sources', [])]
         return poi
 
 

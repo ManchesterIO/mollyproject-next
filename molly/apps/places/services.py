@@ -12,6 +12,7 @@ class PointsOfInterest(object):
         return PointOfInterest.from_dict(poi_dict) if poi_dict else None
 
     def add_or_update(self, poi):
+        print "Inserting", poi, " ", poi.slug
         existing_poi = self._collection.find_one({'slug': poi.slug})
         if existing_poi:
             poi_dict = poi._asdict()
