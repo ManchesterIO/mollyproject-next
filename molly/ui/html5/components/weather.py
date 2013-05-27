@@ -1,14 +1,17 @@
 import dateutil.parser
 from flask import render_template
 from flaskext.babel import gettext as _
+from jinja2 import Markup
 
 from molly.ui.html5.components.component import Component
 from molly.ui.html5.components.factory import ComponentFactory
+
 
 class WeatherComponent(Component):
 
     def render_header(self):
         return render_template('apps/weather/header.html')
+
 
 @ComponentFactory.register_component('http://mollyproject.org/apps/weather')
 class WeatherHomepage(WeatherComponent):
@@ -20,7 +23,7 @@ class WeatherHomepage(WeatherComponent):
         self._components = map(self._load_component, self._data.get('links', []))
 
     def render(self):
-        return render_template('apps/weather/homepage.html', components=self._components)
+        return Markup(render_template('apps/weather/homepage.html', components=self._components))
 
 
 @ComponentFactory.register_component('http://mollyproject.org/apps/weather/observation')
@@ -50,4 +53,4 @@ class WeatherObservation(WeatherComponent):
 
     def render(self, summary_only=False):
         self._context['summary_only'] = summary_only
-        return render_template('apps/weather/observation.html', **self._context)
+        return Markup(render_template('apps/weather/observation.html', **self._context))

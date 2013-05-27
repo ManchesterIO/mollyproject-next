@@ -1,5 +1,6 @@
 from urlparse import urlparse
 
+
 class Component(object):
 
     _CSS = frozenset()

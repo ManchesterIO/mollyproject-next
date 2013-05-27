@@ -1,1 +1,6 @@
-<div class="attribution">{{ attribution_text }} (<a href="{{ license_url }}">{{ licence_name }}</a>)</div>
+<div class="attribution">
+    {% if attribution_url %}<a href="{{ attribution_url }}">{% endif %}
+        {{ attribution_text }}
+    {% if attribution_url %}</a>{% endif %}
+    (<a href="{{ licence_url }}">{{ licence_name }}</a>)
+</div>

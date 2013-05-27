@@ -12,7 +12,7 @@
         {% block header_extra %}{% endblock %}
     </header>
     <article>
-        {% block body %}{{ body.render()|safe }}{% endblock %}
+        {% block body %}{{ body.render() }}{% endblock %}
     </article>
     <footer>
         <ul>

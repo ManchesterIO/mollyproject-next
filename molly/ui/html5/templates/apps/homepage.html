@@ -1,5 +1,5 @@
 <ul class="homepage-applications-list">
     {% for application in applications %}
-        <li>{{ application.render()|safe }}</li>
+        <li>{{ application.render() }}</li>
     {% endfor %}
 </ul>
