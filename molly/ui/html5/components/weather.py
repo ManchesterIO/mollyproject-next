@@ -10,7 +10,7 @@ from molly.ui.html5.components.factory import ComponentFactory
 class WeatherComponent(Component):
 
     def render_header(self):
-        return render_template('apps/weather/header.html')
+        return Markup(render_template('apps/weather/header.html'))
 
 
 @ComponentFactory.register_component('http://mollyproject.org/apps/weather')
