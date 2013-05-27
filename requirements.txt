@@ -1,6 +1,5 @@
 celery
 cssmin
-cssselect
 Flask
 Flask-Assets
 Flask-Babel
@@ -8,11 +7,9 @@ Flask-Cache
 Flask-PyMongo
 Flask-Script
 Flask-StatsD
-git+https://github.com/willowtreeapps/flask-solr.git#egg=flask-solr
 geojson
 gunicorn
 imposm.parser
-lxml
 mock
 python-dateutil
 python-memcached

@@ -3,10 +3,9 @@ from molly.apps.places.models import PointOfInterest
 
 class PointsOfInterest(object):
 
-    def __init__(self, instance_name, connection, search_index):
+    def __init__(self, instance_name, connection):
         self._instance_name = instance_name
         self._collection = connection.pois
-        self._search_index = search_index
 
     def select_by_slug(self, slug):
         poi_dict = self._collection.find_one({'slug': slug})
@@ -19,17 +18,5 @@ class PointsOfInterest(object):
             poi_dict['_id'] = existing_poi['_id']
             if poi_dict['sources'] != existing_poi['sources']:
                 self._collection.update({'slug': poi.slug}, poi_dict)
-                self._add_to_index(poi)
         else:
             self._collection.insert(poi._asdict())
-            self._add_to_index(poi)
-
-    def _add_to_index(self, poi):
-        self._search_index.add([{
-            'self': 'http://mollyproject.org/apps/places/point-of-interest',
-            'id': '/{instance_name}/{slug}'.format(instance_name=self._instance_name, slug=poi.slug),
-            'names': [name.name for name in poi.names],
-            'descriptions': [description.name for description in poi.descriptions],
-            'identifiers': [identifier.value for identifier in poi.identifiers],
-            'location': '{lat},{lon}'.format(lat=poi.location.y, lon=poi.location.x) if poi.location else None
-        }])
