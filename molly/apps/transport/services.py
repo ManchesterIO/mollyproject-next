@@ -1,5 +1,6 @@
 from molly.apps.transport.models import Stop, CallingPoint, Locality
 
+
 class BaseService(object):
 
     def _update_needed(self, existing, new):

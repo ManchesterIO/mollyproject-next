@@ -53,11 +53,11 @@ class TestPointsOfInterest(unittest.TestCase):
     def test_add_or_update_does_not_update_if_source_has_not_changed(self):
         self._mock_mongo.pois.find_one.return_value = {
             '_id': 'abcdef',
-            'sources': [{'url': 'http://www.example.com', 'version': 1, 'attribution': 'OSM'}]
+            'sources': [Source(url='http://www.example.com', version=1, attribution=None)._asdict()]
         }
 
         poi = PointOfInterest(
-            slug='test:test', sources=[Source(url='http://www.example.com', version=1, attribution='OSM')]
+            slug='test:test', sources=[Source(url='http://www.example.com', version=1, attribution=None)]
         )
         self._pois.add_or_update(poi)
 

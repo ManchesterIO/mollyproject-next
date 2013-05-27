@@ -2,7 +2,7 @@ import datetime
 import geojson
 from shapely.geometry import asShape
 
-from molly.apps.common.components import Identifiers, Source, Identifier
+from molly.apps.common.components import Attribution, Identifiers, Source, Identifier
 
 NPTG_REGION_CODE_NAMESPACE = "http://www.naptan.org.uk/RegionCode"
 NPTG_DISTRICT_CODE_NAMESPACE = "http://www.naptan.org.uk/NptgDistrictCode"
@@ -28,9 +28,12 @@ class Locality(object):
     @staticmethod
     def from_dict(locality_dict):
         locality = Locality()
-        if 'slug' in locality_dict: locality.slug = locality_dict['slug']
-        if 'parent_slug' in locality_dict: locality.parent_slug = locality_dict['parent_slug']
-        if 'sources' in locality_dict: locality.sources = set(Source(**source) for source in locality_dict['sources'])
+        if 'slug' in locality_dict:
+            locality.slug = locality_dict['slug']
+        if 'parent_slug' in locality_dict:
+            locality.parent_slug = locality_dict['parent_slug']
+        if 'sources' in locality_dict:
+            locality.sources = set(Source.from_dict(source) for source in locality_dict['sources'])
         if 'identifiers' in locality_dict:
             locality.identifiers = Identifiers(
                 Identifier(**identifier) for identifier in locality_dict['identifiers']
@@ -75,7 +78,7 @@ class Stop(object):
         stop = Stop()
         for key, value in stop_dict.iteritems():
             if key == 'sources':
-                stop.sources = set(map(lambda source: Source(**source), value))
+                stop.sources = set(map(Source.from_dict, value))
             elif key == 'slug':
                 setattr(stop, key, value)
             elif key == 'calling_points':

@@ -2,7 +2,8 @@ import unittest2 as unittest
 
 from molly.apps.common.components import Attribution
 
-class EndpointTestCase(unittest.TestCase):
+
+class AttributionTestCase(unittest.TestCase):
     def test_attribution_serialises_fields(self):
         licence_name = 'Open Government Licence'
         licence_url = 'http://www.nationalarchives.gov'
