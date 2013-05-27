@@ -3,7 +3,7 @@ molly_user = 'molly'
 user molly_user
 
 DIRECTORIES = %w(/opt/molly /var/lib/molly /var/log/molly)
-APT_PACKAGES = %w(build-essential libgeos-c1 libprotobuf-dev protobuf-compiler rabbitmq-server mongodb git-core)
+APT_PACKAGES = %w(build-essential libgeos-c1 libprotobuf-dev protobuf-compiler rabbitmq-server mongodb git-core libxml2-dev libxslt-dev)
 SYSTEM_SERVICES = %w(rabbitmq-server mongodb)
 
 DIRECTORIES.each do | path |
@@ -26,7 +26,7 @@ APT_PACKAGES.each do | pkg |
   end
 end
 
-bash "Setup Molly" do
+bash 'Setup Molly' do
   cwd '/tmp'
   user molly_user
   group molly_user
@@ -35,7 +35,7 @@ bash "Setup Molly" do
   EOH
 end
 
-bash "Run Molly" do
+bash 'Run Molly' do
   cwd '/vagrant'
   user 'root'
   group 'root'
