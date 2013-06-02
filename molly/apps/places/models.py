@@ -1,5 +1,6 @@
 from collections import namedtuple
-from shapely import wkt
+import geojson
+from shapely.geometry import asShape
 
 from molly.apps.common.components import LocalisedName, Identifier, Source, Identifiers, LocalisedNames
 
@@ -50,10 +51,13 @@ class PointOfInterest(object):
             'opening_hours': self.opening_hours,
             'types': self.types,
             'amenities': self.amenities,
-            'geography': wkt.dumps(self.geography) if self.geography else None,
-            'location': wkt.dumps(self.location) if self.location else None,
+            'geography': self._point_to_geojson(self.geography),
+            'location': self._point_to_geojson(self.location),
             'sources': [source._asdict() for source in self.sources]
         }
+
+    def _point_to_geojson(self, geography):
+        return geojson.GeoJSONEncoder().default(geography) if geography else None
 
     @classmethod
     def from_dict(cls, data):
@@ -68,8 +72,8 @@ class PointOfInterest(object):
         poi.opening_hours = data.get('opening_hours', [])
         poi.types = data.get('types', [])
         poi.amenities = data.get('amenities', [])
-        poi.geography = wkt.loads(data['geography']) if data.get('geography') else None
-        poi.location = wkt.loads(data['location']) if data.get('location') else None
+        poi.geography = asShape(data['geography']) if data.get('geography') else None
+        poi.location = asShape(data['location']) if data.get('location') else None
         poi.sources = [Source.from_dict(source) for source in data.get('sources', [])]
         return poi
 

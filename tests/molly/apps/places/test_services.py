@@ -6,6 +6,7 @@ from molly.apps.common.components import LocalisedName, Identifier, Source
 from molly.apps.places.models import PointOfInterest
 from molly.apps.places.services import PointsOfInterest
 
+
 class TestPointsOfInterest(unittest.TestCase):
 
     def setUp(self):
