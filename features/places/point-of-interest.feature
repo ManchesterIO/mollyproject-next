@@ -15,7 +15,6 @@ Feature: Point of interest
     And the map should have a marker indicating the point of interest
     And the map should be centred on the point of interest
     And the map should be at a zoom level showing a radius of about half a mile
-    And I should see a link to find other points of interest nearby
 
   Scenario Outline: POI which has metadata
     Given I am on the page for a point of interest which has <metadata>
