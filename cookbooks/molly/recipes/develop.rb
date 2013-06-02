@@ -31,7 +31,7 @@ bash 'Setup Molly' do
   user molly_user
   group molly_user
   code <<-EOH
-    /opt/molly/bin/pip install --use-mirrors -r /vagrant/requirements.txt && /opt/molly/bin/python /vagrant/setup.py develop
+    /opt/molly/bin/pip install -r /vagrant/requirements.txt && /opt/molly/bin/python /vagrant/setup.py develop
   EOH
 end
 
