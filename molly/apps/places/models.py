@@ -1,6 +1,8 @@
 from collections import namedtuple
+from flask import request
 import geojson
 from shapely.geometry import asShape
+from flask.ext.babel import lazy_gettext as _
 
 from molly.apps.common.components import LocalisedName, Identifier, Source, Identifiers, LocalisedNames
 
@@ -25,6 +27,18 @@ class PointOfInterest(object):
         self.geography = geography
         self._location = location
         self.sources = sources or []
+
+    def name(self):
+        for lang in [request.accept_languages.best_match(self.names.language_codes()), None]:
+            name = self.names.language(lang)
+            if name is not None:
+                return name
+        else:
+            return _('Unnamed Location')
+
+    @property
+    def primary_type(self):
+        return self.types[0] if self.types else None
 
     @property
     def location(self):

@@ -1,0 +1,17 @@
+<header>
+    <h1>{{ poi.name() }}</h1>
+    {% if categories %}<h2 class="category">{% for category in categories %}{{ category }}{% if not loop.last %}, {% endif %}{% endfor %}</h2>{% endif %}
+</header>
+
+{% if poi.telephone_number %}
+    <section class="metadata">
+        <dl>
+            {% if poi.telephone_number %}
+                <dt>{% trans %}Telephone Number{% endtrans %}</dt>
+                <dd><a href="tel:{{ poi.telephone_number }}">{{ poi.telephone_number|format_telephone_number }}</a></dd>
+            {% endif %}
+        </dl>
+    </section>
+{% endif %}
+
+<div data-molly-module="map"></div>

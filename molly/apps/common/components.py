@@ -58,6 +58,9 @@ class LocalisedNames(set):
         else:
             return None
 
+    def language_codes(self):
+        return [name.lang for name in self if name.lang is not None]
+
 
 class Source(namedtuple('Source', ['url', 'version', 'attribution'])):
     def _asdict(self):

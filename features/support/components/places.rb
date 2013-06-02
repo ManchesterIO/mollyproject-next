@@ -25,7 +25,7 @@ module Places
     private
 
     def container
-      find('.point-of-interest')
+      find('article')
     end
 
   end
