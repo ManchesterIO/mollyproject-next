@@ -22,5 +22,5 @@ class App(BaseApp):
         self._poi_endpoint = PointOfInterestEndpoint(instance_name, poi_service)
 
         self.blueprint = Blueprint(self.instance_name, __name__)
-        self.blueprint.add_url_rule('/<slug>', 'poi', self._poi_endpoint.get)
+        self.blueprint.add_url_rule('/<slug>/', 'poi', self._poi_endpoint.get)
         self.links = []
