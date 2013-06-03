@@ -33,4 +33,3 @@ require(['molly/loader', 'molly/dummy'], function(loader, dummy) {
     });
 
 });
-

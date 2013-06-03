@@ -1,9 +1,11 @@
 from httplib import HTTPException
+from flask import Flask
 from mock import Mock, sentinel, call, MagicMock
 import unittest2 as unittest
-from werkzeug.exceptions import NotFound, ServiceUnavailable, BadGateway
+from werkzeug.exceptions import NotFound, ServiceUnavailable, BadGateway, InternalServerError
 
-from molly.ui.html5.router import Router, RoutingException
+from molly.ui.html5.router import Router
+
 
 class RouterTest(unittest.TestCase):
 
@@ -69,7 +71,7 @@ class RouterTest(unittest.TestCase):
         self._request_factory.request.return_value = self.build_mock_response(status=500)
         try:
             self._router('')
-        except RoutingException:
+        except InternalServerError:
             pass
         self._statsd.incr.assert_called_once_with('molly.ui.html5.api_error')
 
@@ -92,8 +94,20 @@ class RouterTest(unittest.TestCase):
             pass
         self.assertEquals(call('molly.ui.html5.page_build_error'), self._statsd.incr.call_args_list[1])
 
-    def build_mock_response(self, body='{}', status=200):
+    def test_redirect_is_propagated_to_client(self):
+        self._request_factory.request.return_value = self.build_mock_response(status=301, redirect='http://localhost:8000/foo/')
+        app = Flask(__name__)
+        app.add_url_rule('/<path:path>', 'main', view_func=self._router)
+        with app.test_request_context('/', headers=[('Accept', 'application/json')]):
+            response = self._router('foo')
+            self.assertEquals(301, response.status_code)
+            self.assertEquals('/foo/', response.headers['Location'])
+
+
+    def build_mock_response(self, body='{}', status=200, redirect=None):
         response = Mock()
         response.status = status
         response.read = Mock(return_value=body)
+        if redirect:
+            response.getheader = Mock(return_value=redirect)
         return response

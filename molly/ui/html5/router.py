@@ -1,6 +1,8 @@
 import json
-from flask import render_template
-from werkzeug.exceptions import NotFound, ServiceUnavailable, BadGateway
+from urlparse import urlparse
+from flask import render_template, redirect, url_for
+from werkzeug.exceptions import NotFound, ServiceUnavailable, BadGateway, default_exceptions, InternalServerError
+
 
 class Router(object):
 
@@ -33,21 +35,21 @@ class Router(object):
                 except Exception:
                     self._statsd.incr('molly.ui.html5.page_build_error')
                     raise
+
+        elif response.status in [301, 302, 303, 307, 308]:
+            redirect_path = urlparse(response.getheader('Location')).path
+            return redirect(url_for('main', path=redirect_path), code=response.status)
+
         elif response.status == 404:
             self._statsd.incr('molly.ui.html5.api_404')
             return NotFound()
+
         else:
             self._statsd.incr('molly.ui.html5.api_error')
-            raise RoutingException(response)
-
-
-class RoutingException(Exception):
-    """
-    Raised when the underlying Molly service returns something unexpected
-    """
-
-    def __init__(self, response):
-        self.response = response
+            try:
+                raise default_exceptions[response.status]()
+            except KeyError:
+                raise InternalServerError()
 
 
 def StaticPageRouter(template_name):
