@@ -11,8 +11,6 @@ class TestPointsOfInterest(unittest.TestCase):
 
     def setUp(self):
         self._mock_mongo = Mock()
-        self._mock_mongo.db = Mock()
-        self._mock_mongo.db.pois = Mock()
         self._pois = PointsOfInterest('test', self._mock_mongo)
         self._mock_mongo.pois.find_one.return_value = None
 
@@ -70,3 +68,9 @@ class TestPointsOfInterest(unittest.TestCase):
     def test_fetch_by_uri_returns_none_when_nothing_found(self):
         self._mock_mongo.pois.find_one.return_value = None
         self.assertIsNone(self._pois.select_by_slug(''))
+
+    def test_slug_is_indexed(self):
+        self._mock_mongo.pois.ensure_index.assert_any_call('slug')
+
+    def test_location_is_indexed(self):
+        self._mock_mongo.pois.ensure_index.assert_any_call({'location': '2dsphere'})

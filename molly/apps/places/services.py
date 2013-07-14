@@ -9,6 +9,8 @@ class PointsOfInterest(object):
     def __init__(self, instance_name, connection):
         self._instance_name = instance_name
         self._collection = connection.pois
+        self._collection.ensure_index('slug')
+        self._collection.ensure_index({'location': '2dsphere'})
 
     def select_by_slug(self, slug):
         poi_dict = self._collection.find_one({'slug': slug})
