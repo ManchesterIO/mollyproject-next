@@ -73,4 +73,4 @@ class TestPointsOfInterest(unittest.TestCase):
         self._mock_mongo.pois.ensure_index.assert_any_call('slug')
 
     def test_location_is_indexed(self):
-        self._mock_mongo.pois.ensure_index.assert_any_call({'location': '2dsphere'})
+        self._mock_mongo.pois.ensure_index.assert_any_call([('location', '2dsphere')])
