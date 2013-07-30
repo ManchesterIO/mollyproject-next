@@ -10,10 +10,11 @@ from jinja2 import PackageLoader, ChoiceLoader, PrefixLoader, FileSystemLoader, 
 from raven.contrib.flask import Sentry
 
 from molly.ui.html5.components.factory import ComponentFactory
-from molly.ui.html5.filters import FILTERS as filters
+from molly.ui.html5.filters import FILTERS as filters, register_default_filters
 from molly.ui.html5.page_decorators.page_decorator_factory import PageDecoratorFactory
 from molly.ui.html5.request_factory import HttpRequestFactory
 from molly.ui.html5.router import Router, StaticPageRouter
+
 
 class DummyStats(object):
 
@@ -68,8 +69,11 @@ def init_molly(flask_app, api_hostname, api_port):
     flask_app.add_url_rule('/developers', 'developers', view_func=StaticPageRouter('developers.html'))
     flask_app.add_url_rule('/privacy', 'privacy', view_func=StaticPageRouter('privacy.html'))
 
-    for filter_name, filter_func in filters.items():
-        flask_app.jinja_env.filters[filter_name] = filter_func
+    register_default_filters()
+    for filter_name, filter_constructor in filters.items():
+        flask_app.jinja_env.filters[filter_name] = filter_constructor(
+            component_factory=component_factory
+        )
 
 
 def configure_template_loader(flask_app, template_dir, cache):

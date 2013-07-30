@@ -1,6 +1,6 @@
 import unittest2 as unittest
 
-from molly.ui.html5.filters import format_telephone_number
+from molly.ui.html5.filters.phone_number import format_telephone_number
 
 
 class PhoneNumberFilterTest(unittest.TestCase):
