@@ -14,4 +14,8 @@
     </section>
 {% endif %}
 
+{% for attribution in attributions %}
+    {{ attribution.render() }}
+{% endfor %}
+
 <div data-molly-module="map"></div>

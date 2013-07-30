@@ -43,7 +43,8 @@ class PointOfInterestUI(Component):
             render_template(
                 'apps/places/point-of-interest.html',
                 poi=self._poi,
-                categories=[self._TYPES[type] for type in self._poi.types]
+                categories=[self._TYPES[type] for type in self._poi.types],
+                attributions=[self._load_component(source.attribution._asdict()) for source in self._poi.sources]
             )
         )
 
