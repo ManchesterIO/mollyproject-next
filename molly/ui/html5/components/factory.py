@@ -13,4 +13,10 @@ class ComponentFactory(object):
         return _register_component
 
     def __call__(self, obj):
-        return self._components.get(obj['self'], Component)(obj, self)
+        if isinstance(obj, Component):
+            return obj
+        else:
+            if hasattr(obj, '_asdict'):
+                obj = obj._asdict()
+            component = self._components.get(obj['self'], Component)
+            return component(obj, self)
