@@ -10,7 +10,7 @@ define('molly/loader', [], function() {
                 var mollyModule = mollyElements[i].getAttribute('data-molly-module');
                 (function (i) {
                     require(['molly/' + mollyModule], function(module) {
-                        module.init(mollyElements[i]);
+                        module(mollyElements[i]);
                     });
                 }(i));
             }

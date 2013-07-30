@@ -3,12 +3,9 @@ define('molly/dummy', ['vendors/signals'], function(signals) {
 
     var loadSignal = new signals.Signal();
 
-    return {
-        init: function (elem) {
-            loadSignal.dispatch(elem);
-        },
-        loadSignal: loadSignal
-    };
+    loadSignal.dispatch.signal = loadSignal;
+
+    return loadSignal.dispatch;
 });
 
 require(['molly/loader', 'molly/dummy'], function(loader, dummy) {
@@ -24,7 +21,7 @@ require(['molly/loader', 'molly/dummy'], function(loader, dummy) {
 
             queue.call(function(callbacks) {
                 loader.init(document.getElementById('test'));
-                dummy.loadSignal.add(callbacks.add(function(elem) {
+                dummy.signal.add(callbacks.add(function(elem) {
                     assertEquals(document.getElementById('test'), elem);
                 }));
             });

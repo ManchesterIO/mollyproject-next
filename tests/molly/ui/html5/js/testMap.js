@@ -13,7 +13,7 @@ require(['molly/map', 'vendors/leaflet'], function(molly_map, L) {
 
         testMapLoadedCorrectly: function() {
             /*:DOC elem = <div id="map"></div>*/
-            molly_map.init(this.elem);
+            molly_map(this.elem);
 
             assertTrue(L.Map.called);
         }

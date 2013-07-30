@@ -5,10 +5,8 @@ define('molly/map', ['vendors/leaflet'], function(L) {
         var map = new L.Map(elem);
     };
 
-    return {
-        init: function(elem) {
-            return new Map(elem);
-        }
+    return function(elem) {
+        return new Map(elem);
     };
 
 });
