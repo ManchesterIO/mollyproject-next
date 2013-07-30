@@ -7,6 +7,7 @@ import unittest2 as unittest
 
 import molly.apps.weather.providers.metoffice as provider
 
+
 class MetOfficeTest(unittest.TestCase):
 
     def setupMockUrlOpen(self, feed):

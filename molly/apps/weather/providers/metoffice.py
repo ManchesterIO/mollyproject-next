@@ -6,9 +6,10 @@ from pytz import utc
 import time
 from urllib2 import urlopen
 
-from flaskext.babel import lazy_gettext as _
+from flask.ext.babel import lazy_gettext as _
 from werkzeug.http import parse_cache_control_header
 from molly.apps.common.components import Attribution
+
 
 class Provider(object):
 
