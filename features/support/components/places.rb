@@ -15,11 +15,15 @@ module Places
     end
 
     def has_map?
-      container.has_css? '.map'
+      container.has_css? '.leaflet-container'
+    end
+
+    def has_telephone_number?
+      container.has_css? '.telephone-number'
     end
 
     def map
-      Map.new container.find('.map')
+      Map.new container.find('.leaflet-container')
     end
 
     private

@@ -29,3 +29,7 @@ end
 Then(/^the map should be at a zoom level showing a radius of about half a mile$/) do
   poi.map.zoom.should == 12
 end
+
+Then(/^I should be able to see a link to dial the telephone number$/) do
+  poi.should have_telephone_number
+end

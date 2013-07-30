@@ -23,4 +23,3 @@ Feature: Point of interest
   Examples:
     | metadata                      | information                                               |
     | a telephone number            | a link to dial the telephone number                       |
-    | a website                     | a link to the website                                     |
