@@ -8,14 +8,10 @@
         <dl>
             {% if poi.telephone_number %}
                 <dt>{% trans %}Telephone Number{% endtrans %}</dt>
-                <dd><a href="tel:{{ poi.telephone_number }}" class="telephone-number">{{ poi.telephone_number|format_telephone_number }}</a></dd>
+                <dd><a href="tel:{{ poi.telephone_number }}">{{ poi.telephone_number|format_telephone_number }}</a></dd>
             {% endif %}
         </dl>
     </section>
 {% endif %}
-
-{% for source in poi.sources %}
-    {{ source.attribution|render }}
-{% endfor %}
 
 <div data-molly-module="map"></div>

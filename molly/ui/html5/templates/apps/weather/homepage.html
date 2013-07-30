@@ -1,7 +1,7 @@
 <section class="weather-homepage-widget">
     <h1>{% trans %}Weather{% endtrans %}</h1>
     {% for component in components %}
-        {{ component|render(summary_only=True) }}
+        {{ component.render(summary_only=True) }}
     {% endfor %}
 </section>
 
