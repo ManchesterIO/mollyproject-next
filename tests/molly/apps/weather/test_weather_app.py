@@ -3,9 +3,10 @@ from mock import Mock, sentinel
 import unittest2 as unittest
 
 from flask import Flask
-from flaskext.babel import Babel
+from flask.ext.babel import Babel
 
 from molly.apps import weather
+
 
 class WeatherAppTest(unittest.TestCase):
 
