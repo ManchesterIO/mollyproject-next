@@ -7,16 +7,19 @@ import time
 from urllib2 import urlopen
 
 from flask.ext.babel import lazy_gettext as _
+from werkzeug.contrib.cache import NullCache
 from werkzeug.http import parse_cache_control_header
+
 from molly.apps.common.components import Attribution
+from molly.services.stats import NullStats
 
 
 class Provider(object):
 
     def __init__(self, config):
         self._config = config
-        self.cache = None
-        self.statsd = None
+        self.cache = NullCache()
+        self.statsd = NullStats()
 
     attribution = Attribution(
         licence_name='Open Government Licence',
@@ -25,30 +28,22 @@ class Provider(object):
     )
 
     def latest_observations(self):
-        if self.cache:
-            response = self.cache.get(self._CACHE_KEY.format(self._config['location_id']))
-        else:
-            response = None
+        response = self.cache.get(self._CACHE_KEY.format(self._config['location_id']))
 
         if not response:
-            if self.statsd: self.statsd.incr(__name__ + '.cache_miss')
-
-            if self.statsd:
-                with self.statsd.timer(__name__ + '.request_time'):
-                    response = self._make_request()
-            else:
+            self.statsd.incr(__name__ + '.cache_miss')
+            with self.statsd.timer(__name__ + '.request_time'):
                 response = self._make_request()
 
             max_age = parse_cache_control_header(response.info().getparam('Cache-Control')).max_age
 
             response = json.load(response)
-            if self.cache:
-                self.cache.set(
-                    self._CACHE_KEY.format(self._config['location_id']),
-                    response,
-                    max_age
-                )
-        elif self.statsd:
+            self.cache.set(
+                self._CACHE_KEY.format(self._config['location_id']),
+                response,
+                max_age
+            )
+        else:
             self.statsd.incr(__name__ + '.cache_hit')
 
         source_period = response['SiteRep']['DV']['Location']['Period']

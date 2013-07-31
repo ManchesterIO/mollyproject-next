@@ -9,36 +9,12 @@ from flask.ext.statsd import StatsD
 from jinja2 import PackageLoader, ChoiceLoader, PrefixLoader, FileSystemLoader, MemcachedBytecodeCache
 from raven.contrib.flask import Sentry
 
+from molly.services.stats import NullStats
 from molly.ui.html5.components.factory import ComponentFactory
 from molly.ui.html5.filters import FILTERS as filters
 from molly.ui.html5.page_decorators.page_decorator_factory import PageDecoratorFactory
 from molly.ui.html5.request_factory import HttpRequestFactory
 from molly.ui.html5.router import Router, StaticPageRouter
-
-class DummyStats(object):
-
-    class DummyTimer(object):
-
-        def __enter__(self):
-            pass
-
-        def __exit__(self, exc_type, exc_val, exc_tb):
-            pass
-
-    def timer(self, *args, **kwargs):
-        return self.DummyTimer()
-
-    def timing(self, *args, **kwargs):
-        pass
-
-    def incr(self, *args, **kwargs):
-        pass
-
-    def decr(self, *args, **kwargs):
-        pass
-
-    def gauge(self, *args, **kwargs):
-        pass
 
 
 def init_flask():
@@ -47,7 +23,7 @@ def init_flask():
     Babel(flask_app)
     if 'SENTRY_DSN' in flask_app.config:
         Sentry(flask_app)
-    statsd = StatsD(flask_app) if 'STATSD_HOST' in flask_app.config else DummyStats()
+    statsd = StatsD(flask_app) if 'STATSD_HOST' in flask_app.config else NullStats()
     return flask_app, statsd
 flask_app, statsd = init_flask()
 
