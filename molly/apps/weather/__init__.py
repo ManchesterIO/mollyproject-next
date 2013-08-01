@@ -1,7 +1,9 @@
 from flask import Blueprint
 from flask.ext.babel import lazy_gettext as _
+from werkzeug.contrib.cache import NullCache
 
 from molly.apps.weather.endpoints import ObservationsEndpoint
+from molly.services.stats import NullStats
 
 
 class App(object):
@@ -12,8 +14,8 @@ class App(object):
     def __init__(self, instance_name, config, providers, services):
         self.instance_name = instance_name
         self._provider = providers.pop()
-        self._provider.cache = services.get('cache')
-        self._provider.statsd = services.get('statsd')
+        self._provider.cache = services.get('cache', NullCache())
+        self._provider.statsd = services.get('statsd', NullStats())
 
         self._observations_endpoint = ObservationsEndpoint(self.instance_name, self._provider)
 
