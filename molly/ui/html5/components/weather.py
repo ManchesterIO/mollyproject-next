@@ -1,6 +1,6 @@
 import dateutil.parser
 from flask import render_template
-from flaskext.babel import gettext as _
+from flask.ext.babel import gettext as _
 from jinja2 import Markup
 
 from molly.ui.html5.components.component import Component
