@@ -11,8 +11,10 @@ Vagrant::Config.run do |config|
   config.vm.forward_port 8002, 8002
 
   config.vm.provision :chef_solo do | chef |
+    chef.add_recipe "mongodb::10gen_repo"
     chef.add_recipe "memcached"
     chef.add_recipe "python"
+    chef.add_recipe "mongodb::default"
     chef.add_recipe "molly::develop"
   end
 

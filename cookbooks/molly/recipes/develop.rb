@@ -3,8 +3,8 @@ molly_user = 'molly'
 user molly_user
 
 DIRECTORIES = %w(/opt/molly /var/lib/molly /var/log/molly)
-APT_PACKAGES = %w(build-essential libgeos-c1 libprotobuf-dev protobuf-compiler rabbitmq-server mongodb git-core)
-SYSTEM_SERVICES = %w(rabbitmq-server mongodb)
+APT_PACKAGES = %w(build-essential libgeos-c1 libprotobuf-dev protobuf-compiler rabbitmq-server git-core)
+SYSTEM_SERVICES = %w(rabbitmq-server)
 
 DIRECTORIES.each do | path |
   directory path do
