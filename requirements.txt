@@ -11,7 +11,7 @@ geojson
 gunicorn
 imposm.parser
 mock
-phonenumbers
+phonenumbers==5.7b2
 python-dateutil
 python-memcached
 raven
