@@ -12,7 +12,7 @@ AccessPoint = namedtuple('AccessPoint', ['names', 'location', 'accessible'])
 class PointOfInterest(object):
 
     def __init__(self, slug=None, names=None, descriptions=None, identifiers=None, address=None, locality=None,
-                 telephone_number=None, opening_hours=None, types=None, amenities=None, geography=None, location=None,
+                 telephone_number=None, opening_hours=None, categories=None, amenities=None, geography=None, location=None,
                  sources=None):
         self.slug = slug
         self.names = names or LocalisedNames()
@@ -22,7 +22,7 @@ class PointOfInterest(object):
         self.locality = locality
         self.telephone_number = telephone_number
         self.opening_hours = opening_hours
-        self.types = types or []
+        self.categories = categories or []
         self.amenities = amenities or []
         self.geography = geography
         self._location = location
@@ -38,7 +38,7 @@ class PointOfInterest(object):
 
     @property
     def primary_type(self):
-        return self.types[0] if self.types else None
+        return self.categories[0] if self.categories else None
 
     @property
     def location(self):
@@ -63,7 +63,7 @@ class PointOfInterest(object):
             'locality': self.locality,
             'telephone_number': self.telephone_number,
             'opening_hours': self.opening_hours,
-            'types': self.types,
+            'categories': self.categories,
             'amenities': self.amenities,
             'geography': self._point_to_geojson(self.geography),
             'location': self._point_to_geojson(self.location),
@@ -84,7 +84,7 @@ class PointOfInterest(object):
         poi.locality = data.get('locality')
         poi.telephone_number = data.get('telephone_number')
         poi.opening_hours = data.get('opening_hours', [])
-        poi.types = data.get('types', [])
+        poi.categories = data.get('categories', [])
         poi.amenities = data.get('amenities', [])
         poi.geography = asShape(data['geography']) if data.get('geography') else None
         poi.location = asShape(data['location']) if data.get('location') else None

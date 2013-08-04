@@ -16,7 +16,7 @@ from molly.apps.places.models import PointOfInterest
 
 LOGGER = logging.getLogger(__name__)
 
-OSM_TAGS_TO_TYPES = {
+OSM_TAGS_TO_CATEGORIES = {
     ('amenity', 'arts_centre'): 'http://mollyproject.org/poi/types/leisure/arts-centre',
     ('amenity', 'bank'): 'http://mollyproject.org/poi/types/retail/bank',
     ('amenity', 'bar'): 'http://mollyproject.org/poi/types/leisure/bar',
@@ -90,7 +90,7 @@ class OpenStreetMapImporter(object):
 
         self.poi_service = None
 
-        self._interesting_tags = set(OSM_TAGS_TO_AMENITIES.keys() + OSM_TAGS_TO_TYPES.keys())
+        self._interesting_tags = set(OSM_TAGS_TO_AMENITIES.keys() + OSM_TAGS_TO_CATEGORIES.keys())
         self.pois = []
         self._coords = {}
 
@@ -123,7 +123,7 @@ class OpenStreetMapImporter(object):
     def handle_nodes(self, nodes):
         for id, tags, coords in nodes:
             self._add_poi(
-                id='N{}'.format(id),
+                poi_id='N{}'.format(id),
                 geography=Point(coords),
                 tags=tags
             )
@@ -145,7 +145,7 @@ class OpenStreetMapImporter(object):
                         break
                 else:
                     self._add_poi(
-                        id='W{}'.format(id),
+                        poi_id='W{}'.format(id),
                         geography=geography_type([self._coords[node_id] for node_id in nodes]),
                         tags=tags
                     )
@@ -155,15 +155,17 @@ class OpenStreetMapImporter(object):
             for k in tags.keys():
                 del tags[k]
 
-    def _add_poi(self, id, geography, tags):
+    def _add_poi(self, poi_id, geography, tags):
         self.pois.append(
             PointOfInterest(
-                slug='osm:{}'.format(id),
+                slug='osm:{}'.format(poi_id),
                 geography=geography,
-                identifiers=Identifiers({Identifier(namespace='osm', value=id)}),
+                identifiers=Identifiers({Identifier(namespace='osm', value=poi_id)}),
                 sources=[self._source],
                 amenities=[OSM_TAGS_TO_AMENITIES[tag] for tag in tags.items() if tag in OSM_TAGS_TO_AMENITIES.keys()],
-                types=[OSM_TAGS_TO_TYPES[tag] for tag in tags.items() if tag in OSM_TAGS_TO_TYPES.keys()],
+                categories=[
+                    OSM_TAGS_TO_CATEGORIES[tag] for tag in tags.items() if tag in OSM_TAGS_TO_CATEGORIES.keys()
+                ],
                 names=self._get_names_from_tags(tags),
                 telephone_number=self._cleanup_telephone_number(tags.get('phone'))
             )

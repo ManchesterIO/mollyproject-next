@@ -111,7 +111,7 @@ class TestOpenStreetMapImporter(unittest2.TestCase):
         self.assertEquals(['http://mollyproject.org/poi/amenities/atm'], self._get_node_poi().amenities)
 
     def test_types_are_correctly_populated(self):
-        self.assertEquals(['http://mollyproject.org/poi/types/leisure/swimming-pool'], self._get_node_poi().types)
+        self.assertEquals(['http://mollyproject.org/poi/types/leisure/swimming-pool'], self._get_node_poi().categories)
 
     def test_name_is_correctly_set(self):
         self.assertEquals('Foo', self._get_node_poi().names.language())
