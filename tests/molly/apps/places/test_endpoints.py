@@ -1,7 +1,7 @@
 import json
 import urllib2
 from flask import Flask
-from mock import Mock
+from mock import Mock, ANY, MagicMock
 from shapely.geometry import Point
 import unittest2 as unittest
 
@@ -47,15 +47,27 @@ class NearbySearchEndpointTest(unittest.TestCase):
 
     def setUp(self):
         self._poi_service = Mock()
+        self._poi_service.count_nearby_amenity = Mock(return_value=0)
+        self._poi_service.count_nearby_category = Mock(return_value=0)
         self.maxDiff = None
+        self._endpoint = NearbySearchEndpoint('testplaces', self._poi_service)
+        self._endpoint.INTERESTING_CATEGORIES = {
+            'test': 'http://example.com/testcat',
+            'test2': 'http://example.com/testcat2'
+        }
+        self._endpoint.INTERESTING_AMENITIES = {
+            'testamen': 'http://example.com/testamen',
+        }
+        self._endpoint.SEARCH_RADIUS = 123
 
     def _make_request(self, lat, lon):
-        endpoint = NearbySearchEndpoint('testplaces', self._poi_service)
         app = Flask(__name__)
-        app.add_url_rule('/nearby/<float:lat>,<float:lon>', 'testplaces.nearby', endpoint.get)
+        app.add_url_rule('/nearby/<float:lat>,<float:lon>', 'testplaces.nearby', self._endpoint.get)
+        app.add_url_rule('/nearby/<float:lat>,<float:lon>/category/<slug>', 'testplaces.nearby_category', None)
+        app.add_url_rule('/nearby/<float:lat>,<float:lon>/amenity/<slug>', 'testplaces.nearby_amenity', None)
         app.add_url_rule('/poi/<slug>', 'testplaces.poi', None)
         with app.test_request_context('/', headers=[('Accept', 'application/json')]):
-            response = endpoint.get(lat, lon)
+            response = self._endpoint.get(lat, lon)
         return response
 
     def test_overly_precise_requests_are_rounded_down(self):
@@ -66,20 +78,52 @@ class NearbySearchEndpointTest(unittest.TestCase):
             urllib2.unquote(dict(response.headers).get('Location'))
         )
 
-    def test_search_is_passed_to_service(self):
+    def test_search_results_are_in_correct_format(self):
         self._poi_service.search_nearby.return_value = []
         response = self._make_request(54.5, 0.6)
         self.assertEqual({
-            'self': 'http://mollyproject.org/apps/places/points-of-interest',
-            'points_of_interest': []
+            'self': 'http://mollyproject.org/apps/places/categories',
+            'categories': [],
+            'amenities': []
         }, json.loads(response.data))
-        point = self._poi_service.search_nearby.call_args[0][0]
+
+    def test_interesting_pois_are_searched_against(self):
+        self._make_request(54.5, 0.6)
+
+        self._poi_service.count_nearby_category.assert_any_call(ANY, 'http://example.com/testcat', radius=123)
+        self._poi_service.count_nearby_category.assert_any_call(ANY, 'http://example.com/testcat2', radius=123)
+        self._poi_service.count_nearby_amenity.assert_any_call(ANY, 'http://example.com/testamen', radius=123)
+
+        point = self._poi_service.count_nearby_category.call_args[0][0]
         self.assertEqual((0.6, 54.5), (point.x, point.y))
 
-    def test_search_results_are_correctly_serialised(self):
-        self._poi_service.search_nearby.return_value = [
-            PointOfInterest(slug='foo:bar', telephone_number='01818118181')
-        ]
-        response = json.loads(self._make_request(54.5, 0.6).data)
-        self.assertEqual('http://localhost/poi/foo:bar', response['points_of_interest'][0]['href'])
-        self.assertEqual('01818118181', response['points_of_interest'][0]['telephone_number'])
+        point = self._poi_service.count_nearby_amenity.call_args[0][0]
+        self.assertEqual((0.6, 54.5), (point.x, point.y))
+
+    def test_result_lists_are_in_correct_form(self):
+        self._poi_service.count_nearby_category = Mock(side_effect=[3, 2])
+        self._poi_service.count_nearby_amenity = Mock(return_value=6)
+        response = json.loads(self._make_request(12.3, 6.8).data)
+        self.assertEqual({
+            'self': 'http://mollyproject.org/apps/places/categories',
+            'categories': [{
+                'self': 'http://mollyproject.org/apps/places/points-of-interest/by-category',
+                'href': 'http://localhost/nearby/12.3%2C6.8/category/test',
+                'category': 'http://example.com/testcat',
+                'count': 3,
+                'within': 123
+            }, {
+                'self': 'http://mollyproject.org/apps/places/points-of-interest/by-category',
+                'href': 'http://localhost/nearby/12.3%2C6.8/category/test2',
+                'category': 'http://example.com/testcat2',
+                'count': 2,
+                'within': 123
+            }],
+            'amenities': [{
+                'self': 'http://mollyproject.org/apps/places/points-of-interest/by-amenity',
+                'href': 'http://localhost/nearby/12.3%2C6.8/amenity/testamen',
+                'amenity': 'http://example.com/testamen',
+                'count': 6,
+                'within': 123
+            }]
+        }, response)
