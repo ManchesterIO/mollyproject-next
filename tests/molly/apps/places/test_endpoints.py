@@ -46,10 +46,14 @@ class PointOfInterestEndpointTest(unittest.TestCase):
 class NearbySearchEndpointTest(unittest.TestCase):
 
     def setUp(self):
+        self.maxDiff = None
+
         self._poi_service = Mock()
         self._poi_service.count_nearby_amenity = Mock(return_value=0)
         self._poi_service.count_nearby_category = Mock(return_value=0)
-        self.maxDiff = None
+        self._poi_service.search_nearby_amenity = Mock(return_value=[])
+        self._poi_service.search_nearby_category = Mock(return_value=[])
+
         self._endpoint = NearbySearchEndpoint('testplaces', self._poi_service)
         self._endpoint.INTERESTING_CATEGORIES = {
             'test': 'http://example.com/testcat',
@@ -60,18 +64,33 @@ class NearbySearchEndpointTest(unittest.TestCase):
         }
         self._endpoint.SEARCH_RADIUS = 123
 
-    def _make_request(self, lat, lon):
-        app = Flask(__name__)
-        app.add_url_rule('/nearby/<float:lat>,<float:lon>', 'testplaces.nearby', self._endpoint.get_categories)
-        app.add_url_rule('/nearby/<float:lat>,<float:lon>/category/<slug>', 'testplaces.nearby_category', None)
-        app.add_url_rule('/nearby/<float:lat>,<float:lon>/amenity/<slug>', 'testplaces.nearby_amenity', None)
-        app.add_url_rule('/poi/<slug>', 'testplaces.poi', None)
-        with app.test_request_context('/', headers=[('Accept', 'application/json')]):
+        self.app = Flask(__name__)
+        self.app.add_url_rule('/nearby/<float:lat>,<float:lon>', 'testplaces.nearby', self._endpoint.get_categories)
+        self.app.add_url_rule(
+            '/nearby/<float:lat>,<float:lon>/category/<slug>', 'testplaces.nearby_category', self._endpoint.get_category
+        )
+        self.app.add_url_rule(
+            '/nearby/<float:lat>,<float:lon>/amenity/<slug>', 'testplaces.nearby_amenity', self._endpoint.get_amenity
+        )
+        self.app.add_url_rule('/poi/<slug>', 'testplaces.poi', None)
+
+    def _make_categories_request(self, lat, lon):
+        with self.app.test_request_context('/', headers=[('Accept', 'application/json')]):
             response = self._endpoint.get_categories(lat, lon)
         return response
 
+    def _make_category_request(self, lat, lon, slug):
+        with self.app.test_request_context('/', headers=[('Accept', 'application/json')]):
+            response = self._endpoint.get_category(lat, lon, slug)
+        return response
+
+    def _make_amenity_request(self, lat, lon, slug):
+        with self.app.test_request_context('/', headers=[('Accept', 'application/json')]):
+            response = self._endpoint.get_amenity(lat, lon, slug)
+        return response
+
     def test_overly_precise_requests_are_rounded_down(self):
-        response = self._make_request(10.123456789, 15.987654321)
+        response = self._make_categories_request(10.123456789, 15.987654321)
         self.assertEqual(302, response.status_code)
         self.assertEqual(
             'http://localhost/nearby/10.12346,15.98765',
@@ -80,7 +99,7 @@ class NearbySearchEndpointTest(unittest.TestCase):
 
     def test_search_results_are_in_correct_format(self):
         self._poi_service.search_nearby.return_value = []
-        response = self._make_request(54.5, 0.6)
+        response = self._make_categories_request(54.5, 0.6)
         self.assertEqual({
             'self': 'http://mollyproject.org/apps/places/categories',
             'categories': [],
@@ -88,7 +107,7 @@ class NearbySearchEndpointTest(unittest.TestCase):
         }, json.loads(response.data))
 
     def test_interesting_pois_are_searched_against(self):
-        self._make_request(54.5, 0.6)
+        self._make_categories_request(54.5, 0.6)
 
         self._poi_service.count_nearby_category.assert_any_call(ANY, 'http://example.com/testcat', radius=123)
         self._poi_service.count_nearby_category.assert_any_call(ANY, 'http://example.com/testcat2', radius=123)
@@ -103,7 +122,7 @@ class NearbySearchEndpointTest(unittest.TestCase):
     def test_result_lists_are_in_correct_form(self):
         self._poi_service.count_nearby_category = Mock(side_effect=[3, 2])
         self._poi_service.count_nearby_amenity = Mock(return_value=6)
-        response = json.loads(self._make_request(12.3, 6.8).data)
+        response = json.loads(self._make_categories_request(12.3, 6.8).data)
         self.assertEqual({
             'self': 'http://mollyproject.org/apps/places/categories',
             'categories': [{
@@ -127,3 +146,87 @@ class NearbySearchEndpointTest(unittest.TestCase):
                 'within': 123
             }]
         }, response)
+
+    def test_by_category_redirects_when_appropriate(self):
+        response = self._make_category_request(10.123456789, 15.987654321, 'test')
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(
+            'http://localhost/nearby/10.12346,15.98765/category/test',
+            urllib2.unquote(dict(response.headers).get('Location'))
+        )
+
+    def test_by_amenity_redirects_when_appropriate(self):
+        response = self._make_amenity_request(10.123456789, 15.987654321, 'test')
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(
+            'http://localhost/nearby/10.12346,15.98765/amenity/test',
+            urllib2.unquote(dict(response.headers).get('Location'))
+        )
+
+    def test_by_category_response_404s_if_invalid_slug_specified(self):
+        self.assertRaises(NotFound, self._make_category_request, 6.8, 12.4, 'invalid')
+
+    def test_by_category_returns_results_in_correct_form(self):
+        response = json.loads(self._make_category_request(15.4, 12.6, 'test').data)
+        self.assertEqual(
+            {
+                'self': 'http://mollyproject.org/apps/places/points-of-interest/by-category',
+                'category': 'http://example.com/testcat',
+                'points_of_interest': [],
+                'count': 0,
+                'within': 123
+            },
+            response
+        )
+
+    def test_by_category_makes_correct_request_to_service(self):
+        self._make_category_request(15.4, 12.6, 'test')
+
+        self._poi_service.search_nearby_category.assert_any_call(ANY, 'http://example.com/testcat', radius=123)
+        point = self._poi_service.search_nearby_category.call_args[0][0]
+        self.assertEqual((12.6, 15.4), (point.x, point.y))
+
+    def test_by_category_includes_serialised_dict(self):
+        telephone_number = '+44123456789'
+        self._poi_service.search_nearby_category.return_value = [
+            PointOfInterest(telephone_number=telephone_number)
+        ]
+
+        response = json.loads(self._make_category_request(15.4, 12.6, 'test').data)
+
+        self.assertEquals(1, response['count'])
+        self.assertEquals(telephone_number, response['points_of_interest'][0]['telephone_number'])
+
+    def test_by_amenity_response_404s_if_invalid_slug_specified(self):
+        self.assertRaises(NotFound, self._make_amenity_request, 6.8, 12.4, 'invalid')
+
+    def test_by_amenity_returns_results_in_correct_form(self):
+        response = json.loads(self._make_amenity_request(15.4, 12.6, 'testamen').data)
+        self.assertEqual(
+            {
+                'self': 'http://mollyproject.org/apps/places/points-of-interest/by-amenity',
+                'amenity': 'http://example.com/testamen',
+                'points_of_interest': [],
+                'count': 0,
+                'within': 123
+            },
+            response
+        )
+
+    def test_by_amenity_makes_correct_request_to_service(self):
+        self._make_amenity_request(15.4, 12.6, 'testamen')
+
+        self._poi_service.search_nearby_amenity.assert_any_call(ANY, 'http://example.com/testamen', radius=123)
+        point = self._poi_service.search_nearby_amenity.call_args[0][0]
+        self.assertEqual((12.6, 15.4), (point.x, point.y))
+
+    def test_by_amenity_includes_serialised_dict(self):
+        telephone_number = '+44123456789'
+        self._poi_service.search_nearby_amenity.return_value = [
+            PointOfInterest(telephone_number=telephone_number)
+        ]
+
+        response = json.loads(self._make_amenity_request(15.4, 12.6, 'testamen').data)
+
+        self.assertEquals(1, response['count'])
+        self.assertEquals(telephone_number, response['points_of_interest'][0]['telephone_number'])

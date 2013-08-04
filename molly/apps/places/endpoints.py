@@ -68,14 +68,59 @@ class NearbySearchEndpoint(Endpoint):
                 })
         return amenities
 
-    def get_categories(self, lat, lon):
+    def _needs_redirect(self, lat, lon):
         fixed_lat, fixed_lon = map(lambda l: round(l, 5), (lat, lon))
-        if (fixed_lat, fixed_lon) != (lat, lon):
-            return redirect(self._href(fixed_lat, fixed_lon))
+        needs_redirect = (fixed_lat, fixed_lon) != (lat, lon)
+        return fixed_lat, fixed_lon, needs_redirect
+
+    def get_categories(self, lat, lon):
+        lat, lon, needs_redirect = self._needs_redirect(lat, lon)
+        if needs_redirect:
+            return redirect(self._href(lat, lon))
         else:
-            point = Point(fixed_lon, fixed_lat)
+            point = Point(lon, lat)
             return self._json_response({
                 'self': 'http://mollyproject.org/apps/places/categories',
                 'categories': self._get_nearby_categories(point),
                 'amenities': self._get_nearby_amenities(point)
             })
+
+    def get_category(self, lat, lon, slug):
+        lat, lon, needs_redirect = self._needs_redirect(lat, lon)
+        if needs_redirect:
+            return redirect(self._nearby_category_href(lat, lon, slug))
+        else:
+            category = self.INTERESTING_CATEGORIES.get(slug)
+            if category is None:
+                abort(404)
+            else:
+                points_of_interest = self._poi_service.search_nearby_category(
+                    Point(lon, lat), category, radius=self.SEARCH_RADIUS
+                )
+                return self._json_response({
+                    'self': 'http://mollyproject.org/apps/places/points-of-interest/by-category',
+                    'category': category,
+                    'points_of_interest': map(lambda poi: poi._asdict(), points_of_interest),
+                    'count': len(points_of_interest),
+                    'within': self.SEARCH_RADIUS
+                })
+
+    def get_amenity(self, lat, lon, slug):
+        lat, lon, needs_redirect = self._needs_redirect(lat, lon)
+        if needs_redirect:
+            return redirect(self._nearby_amenity_href(lat, lon, slug))
+        else:
+            amenity = self.INTERESTING_AMENITIES.get(slug)
+            if amenity is None:
+                abort(404)
+            else:
+                points_of_interest = self._poi_service.search_nearby_amenity(
+                    Point(lon, lat), amenity, radius=self.SEARCH_RADIUS
+                )
+                return self._json_response({
+                    'self': 'http://mollyproject.org/apps/places/points-of-interest/by-amenity',
+                    'amenity': amenity,
+                    'points_of_interest': map(lambda poi: poi._asdict(), points_of_interest),
+                    'count': len(points_of_interest),
+                    'within': self.SEARCH_RADIUS
+                })
