@@ -24,5 +24,5 @@ class App(BaseApp):
 
         self.blueprint = Blueprint(self.instance_name, __name__)
         self.blueprint.add_url_rule('/<slug>/', 'poi', self._poi_endpoint.get)
-        self.blueprint.add_url_rule('/nearby/<float:lat>,<float:lon>/', 'nearby', self._nearby_search_endpoint.get)
+        self.blueprint.add_url_rule('/nearby/<float:lat>,<float:lon>/', 'nearby', self._nearby_search_endpoint.get_categories)
         self.links = []

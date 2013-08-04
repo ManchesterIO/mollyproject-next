@@ -62,12 +62,12 @@ class NearbySearchEndpointTest(unittest.TestCase):
 
     def _make_request(self, lat, lon):
         app = Flask(__name__)
-        app.add_url_rule('/nearby/<float:lat>,<float:lon>', 'testplaces.nearby', self._endpoint.get)
+        app.add_url_rule('/nearby/<float:lat>,<float:lon>', 'testplaces.nearby', self._endpoint.get_categories)
         app.add_url_rule('/nearby/<float:lat>,<float:lon>/category/<slug>', 'testplaces.nearby_category', None)
         app.add_url_rule('/nearby/<float:lat>,<float:lon>/amenity/<slug>', 'testplaces.nearby_amenity', None)
         app.add_url_rule('/poi/<slug>', 'testplaces.poi', None)
         with app.test_request_context('/', headers=[('Accept', 'application/json')]):
-            response = self._endpoint.get(lat, lon)
+            response = self._endpoint.get_categories(lat, lon)
         return response
 
     def test_overly_precise_requests_are_rounded_down(self):
