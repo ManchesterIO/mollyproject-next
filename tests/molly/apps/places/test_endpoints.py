@@ -189,13 +189,17 @@ class NearbySearchEndpointTest(unittest.TestCase):
     def test_by_category_includes_serialised_dict(self):
         telephone_number = '+44123456789'
         self._poi_service.search_nearby_category.return_value = [
-            PointOfInterest(telephone_number=telephone_number)
+            PointOfInterest(slug='test', telephone_number=telephone_number)
         ]
 
         response = json.loads(self._make_category_request(15.4, 12.6, 'test').data)
 
         self.assertEquals(1, response['count'])
-        self.assertEquals(telephone_number, response['points_of_interest'][0]['telephone_number'])
+        self.assertEquals(
+            'http://mollyproject.org/apps/places/point-of-interest', response['points_of_interest'][0]['self']
+        )
+        self.assertEquals('http://localhost/poi/test', response['points_of_interest'][0]['href'])
+        self.assertEquals(telephone_number, response['points_of_interest'][0]['poi']['telephone_number'])
 
     def test_by_amenity_response_404s_if_invalid_slug_specified(self):
         self.assertRaises(NotFound, self._make_amenity_request, 6.8, 12.4, 'invalid')
@@ -223,10 +227,14 @@ class NearbySearchEndpointTest(unittest.TestCase):
     def test_by_amenity_includes_serialised_dict(self):
         telephone_number = '+44123456789'
         self._poi_service.search_nearby_amenity.return_value = [
-            PointOfInterest(telephone_number=telephone_number)
+            PointOfInterest(slug='test', telephone_number=telephone_number)
         ]
 
         response = json.loads(self._make_amenity_request(15.4, 12.6, 'testamen').data)
 
         self.assertEquals(1, response['count'])
-        self.assertEquals(telephone_number, response['points_of_interest'][0]['telephone_number'])
+        self.assertEquals(
+            'http://mollyproject.org/apps/places/point-of-interest', response['points_of_interest'][0]['self']
+        )
+        self.assertEquals('http://localhost/poi/test', response['points_of_interest'][0]['href'])
+        self.assertEquals(telephone_number, response['points_of_interest'][0]['poi']['telephone_number'])
