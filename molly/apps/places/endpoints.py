@@ -23,10 +23,11 @@ class PointOfInterestEndpoint(Endpoint):
             })
 
 
+DEFAULT_INTERESTING_CATEGORIES = {}
+DEFAULT_INTERESTING_AMENITIES = {}
+
 class NearbySearchEndpoint(Endpoint):
 
-    INTERESTING_CATEGORIES = {}
-    INTERESTING_AMENITIES = {}
     SEARCH_RADIUS = 1610  # 1610 metres ~ 1 mile
 
     def __init__(self, instance_name, poi_service):
@@ -39,10 +40,13 @@ class NearbySearchEndpoint(Endpoint):
         self._nearby_category_href = lambda lat, lon, slug: url_for(
             instance_name + '.nearby_category', lat=lat, lon=lon, slug=slug, _external=True
         )
+        self.interesting_categories = dict(DEFAULT_INTERESTING_CATEGORIES.items())
+        self.interesting_amenities = dict(DEFAULT_INTERESTING_AMENITIES.items())
+
 
     def _get_nearby_categories(self, point):
         categories = []
-        for slug, category in self.INTERESTING_CATEGORIES.items():
+        for slug, category in self.interesting_categories.items():
             num_pois = self._poi_service.count_nearby_category(point, category, radius=self.SEARCH_RADIUS)
             if num_pois > 0:
                 categories.append({
@@ -56,7 +60,7 @@ class NearbySearchEndpoint(Endpoint):
 
     def _get_nearby_amenities(self, point):
         amenities = []
-        for slug, amenity in self.INTERESTING_AMENITIES.items():
+        for slug, amenity in self.interesting_amenities.items():
             num_pois = self._poi_service.count_nearby_amenity(point, amenity, radius=self.SEARCH_RADIUS)
             if num_pois > 0:
                 amenities.append({
@@ -90,7 +94,7 @@ class NearbySearchEndpoint(Endpoint):
         if needs_redirect:
             return redirect(self._nearby_category_href(lat, lon, slug))
         else:
-            category = self._get_uri_from_slug(slug, self.INTERESTING_CATEGORIES)
+            category = self._get_uri_from_slug(slug, self.interesting_categories)
             points_of_interest = self._poi_service.search_nearby_category(
                 Point(lon, lat), category, radius=self.SEARCH_RADIUS
             )
@@ -101,7 +105,7 @@ class NearbySearchEndpoint(Endpoint):
         if needs_redirect:
             return redirect(self._nearby_amenity_href(lat, lon, slug))
         else:
-            amenity = self._get_uri_from_slug(slug, self.INTERESTING_AMENITIES)
+            amenity = self._get_uri_from_slug(slug, self.interesting_amenities)
             points_of_interest = self._poi_service.search_nearby_amenity(
                 Point(lon, lat), amenity, radius=self.SEARCH_RADIUS
             )

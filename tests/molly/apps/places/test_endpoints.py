@@ -55,11 +55,11 @@ class NearbySearchEndpointTest(unittest.TestCase):
         self._poi_service.search_nearby_category = Mock(return_value=[])
 
         self._endpoint = NearbySearchEndpoint('testplaces', self._poi_service)
-        self._endpoint.INTERESTING_CATEGORIES = {
+        self._endpoint.interesting_categories = {
             'test': 'http://example.com/testcat',
             'test2': 'http://example.com/testcat2'
         }
-        self._endpoint.INTERESTING_AMENITIES = {
+        self._endpoint.interesting_amenities = {
             'testamen': 'http://example.com/testamen',
         }
         self._endpoint.SEARCH_RADIUS = 123
