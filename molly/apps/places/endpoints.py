@@ -23,8 +23,45 @@ class PointOfInterestEndpoint(Endpoint):
             })
 
 
-DEFAULT_INTERESTING_CATEGORIES = {}
-DEFAULT_INTERESTING_AMENITIES = {}
+DEFAULT_INTERESTING_CATEGORIES = {
+    'arts-centre': 'http://mollyproject.org/poi/types/leisure/arts-centre',
+    'bank': 'http://mollyproject.org/poi/types/retail/bank',
+    'bar': 'http://mollyproject.org/poi/types/leisure/bar',
+    'bench': 'http://mollyproject.org/poi/types/leisure/bench',
+    'bicycle-parking': 'http://mollyproject.org/poi/transport/parking/bicycle',
+    'bicycle-rental': 'http://mollyproject.org/poi/types/transport/bicycle-rental',
+    'cinema': 'http://mollyproject.org/poi/types/leisure/cinema',
+    'health': 'http://mollyproject.org/poi/types/health',
+    'ice-rink': 'http://mollyproject.org/poi/types/leisure/ice-rink',
+    'food': 'http://mollyproject.org/poi/types/food',
+    'fuel': 'http://mollyproject.org/poi/types/transport/fuel',
+    'library': 'http://mollyproject.org/poi/types/leisure/library',
+    'marketplace': 'http://mollyproject.org/poi/types/retail/marketplace',
+    'museum': 'http://mollyproject.org/poi/types/leisure/museum',
+    'nightclub': 'http://mollyproject.org/poi/types/leisure/nightclub',
+    'park': 'http://mollyproject.org/poi/types/leisure/park',
+    'parking': 'http://mollyproject.org/poi/types/transport/parking/car',
+    'place-of-worship': 'http://mollyproject.org/poi/types/place-of-worship',
+    'police': 'http://mollyproject.org/poi/types/police-station',
+    'post-office': 'http://mollyproject.org/poi/types/retail/post-office',
+    'pub': 'http://mollyproject.org/poi/types/leisure/pub',
+    'punt-hire': 'http://mollyproject.org/poi/types/leisure/punt-hire',
+    'taxi-rank': 'http://mollyproject.org/poi/types/transport/taxi-rank',
+    'theatre': 'http://mollyproject.org/poi/types/leisure/theatre',
+    'sports-centre': 'http://mollyproject.org/poi/types/leisure/sports-centre',
+    'swimming-pool': 'http://mollyproject.org/poi/types/leisure/swimming-pool',
+    'tourist-information': 'http://mollyproject.org/poi/types/tourist-information'
+}
+
+
+DEFAULT_INTERESTING_AMENITIES = {
+    'atm': 'http://mollyproject.org/poi/amenities/atm',
+    'post-box': 'http://mollyproject.org/poi/amenities/post-box',
+    'recycling': 'http://mollyproject.org/poi/amenities/recycling',
+    'telephone': 'http://mollyproject.org/poi/amenities/telephone',
+    'tourist-attraction': 'http://mollyproject.org/poi/amenities/tourist-attraction',
+}
+
 
 class NearbySearchEndpoint(Endpoint):
 
