@@ -128,6 +128,16 @@ class TestOpenStreetMapImporter(unittest2.TestCase):
     def test_telephone_number_is_none_when_unparsable(self):
         self.assertIsNone(self._get_node_poi(telephone_number='La la lalalala').telephone_number)
 
+    def test_multiple_categories_get_applied_if_applicable(self):
+        self._osm_importer.load()
+        self._osm_importer.handle_nodes([
+            (12345, {'amenity': 'fast_food'}, (2, 3))
+        ])
+        self.assertEquals(
+            ['http://mollyproject.org/poi/types/food/fast-food', 'http://mollyproject.org/poi/types/food'],
+            self._osm_importer.pois[0].categories
+        )
+
     def _get_node_poi(self, telephone_number='+442088118181'):
         self._osm_importer.load()
         self._osm_importer.handle_nodes([
