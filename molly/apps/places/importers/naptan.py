@@ -4,7 +4,8 @@ from tempfile import TemporaryFile
 from zipfile import ZipFile
 from celery.schedules import schedule
 
-from molly.apps.transport.parsers.naptan import NaptanParser
+from molly.apps.places.parsers.naptan import NaptanParser
+
 
 class NaptanImporter(object):
 

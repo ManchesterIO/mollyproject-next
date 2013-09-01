@@ -6,6 +6,17 @@ from flask.ext.babel import lazy_gettext as _
 
 from molly.apps.common.components import LocalisedName, Identifier, Source, Identifiers, LocalisedNames
 
+NPTG_REGION_CODE_NAMESPACE = "http://www.naptan.org.uk/RegionCode"
+NPTG_DISTRICT_CODE_NAMESPACE = "http://www.naptan.org.uk/NptgDistrictCode"
+NPTG_LOCALITY_CODE_NAMESPACE = "http://www.naptan.org.uk/NptgLocalityCode"
+
+ATCO_NAMESPACE = 'http://www.naptan.org.uk/AtcoCode'
+CIF_DESCRIPTION_NAMESPACE = 'cif:description'
+CRS_NAMESPACE = 'http://www.naptan.org.uk/CrsRef'
+STANOX_NAMESPACE = 'http://datafeeds.networkrail.co.uk/stanox'
+TIPLOC_NAMESPACE = 'http://www.naptan.org.uk/TiplocRef'
+
+
 AccessPoint = namedtuple('AccessPoint', ['names', 'location', 'accessible'])
 
 

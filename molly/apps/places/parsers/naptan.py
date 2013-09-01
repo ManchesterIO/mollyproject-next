@@ -1,7 +1,9 @@
 from collections import defaultdict
 from xml.etree.cElementTree import iterparse
+
 from molly.apps.common.components import Source, Identifier, Attribution
-from molly.apps.transport.models import CallingPoint, Stop, ATCO_NAMESPACE, CRS_NAMESPACE, TIPLOC_NAMESPACE
+from molly.apps.places.models import PointOfInterest, TIPLOC_NAMESPACE, CRS_NAMESPACE, ATCO_NAMESPACE
+
 
 class NaptanParser(object):
 
@@ -24,154 +26,45 @@ class NaptanParser(object):
         licence_url='http://www.nationalarchives.gov.uk/doc/open-government-licence/'
     )
 
-    def import_from_file(self, file, source_url):
-        self._airports = dict()
-        self._stations = defaultdict(list)
-        self._calling_points = dict()
+    def import_from_file(self, xml_file, source_url):
         self._source_url = source_url
-        for event, elem in iterparse(file, events=('start', 'end',)):
+        for event, elem in iterparse(xml_file, events=('start', 'end',)):
             if elem.tag == self._ROOT_ELEM and event == 'start':
                 self._source_file = elem.attrib['FileName']
 
-            elif event == 'end':
-                if elem.tag == self._STOP_POINT_ELEM:
-                    stop_type = elem.find(self._STOP_TYPE_XPATH).text
+            elif event == 'end' and elem.tag == self._STOP_POINT_ELEM:
+                stop_type = elem.find(self._STOP_TYPE_XPATH).text
 
-                    # BCT: Bus Stop, RLY: Railway Station
-                    if stop_type in ('BCT', 'RLY'):
-                        stop, calling_point = self._build_stop_with_calling_point(elem)
-                        yield stop
-                        yield calling_point
+                # BCT: Bus Stop, RLY: Railway Station
+                # GAT: Airport/terminal
+                # FER: Ferry port, MET: Metro station
+                # BCS: Marked bus station bay, BCQ: Variable bus station bay
+                # TXR: Taxi Rank
+                if stop_type in {'BCT', 'RLY', 'GAT', 'FER', 'MET', 'BCS', 'BCQ', 'TXR'}:
+                    yield self._build_point_of_interest(elem)
 
-                    # GAT: Airport/terminal
-                    elif stop_type == 'GAT':
-                        self._build_airport(elem)
+                elem.clear()
 
-                    # FER: Ferry port, MET: Metro station
-                    elif stop_type in ('FER', 'MET'):
-                        stop, calling_point, group = self._build_station(elem)
-                        self._stations[group] = [stop]
-                        self._calling_points[group] = calling_point
-
-                    # FBT: Ferry berth, PLT: Metro platform
-                    elif stop_type in ('FBT', 'PLT'):
-                        calling_point, group = self._build_calling_point(elem)
-                        self._stations[group].append(calling_point)
-
-                    # BCS: Marked bus station bay, BCQ: Variable bus station bay
-                    elif stop_type in ('BCS', 'BCQ'):
-                        bay, stop = self._build_bus_station(elem)
-                        yield bay
-                        yield stop
-
-                    elem.clear()
-
-        for airport in self._airports.values():
-            yield airport
-
-        for group, calling_points in self._stations.iteritems():
-            parent = calling_points[0]
-            if len(calling_points) == 1:
-                yield self._calling_points[group]
-            else:
-                parent.calling_points.remove(self._calling_points[group].slug)
-
-            for calling_point in calling_points[1:]:
-                parent.calling_points.add(calling_point.slug)
-                calling_point.parent_stop = parent.slug
-                yield calling_point
-
-            yield parent
-
-
-    def _build_stop_with_calling_point(self, elem):
-        stop = self._build_base(elem)
-
-        calling_point = CallingPoint()
-        calling_point.sources = stop.sources
-        calling_point.slug = stop.slug + '.calling-point'
-
-        stop.calling_points = {calling_point.slug}
-        calling_point.parent_stop = stop.slug
-
-        return stop, calling_point
-
-    def _build_airport(self, elem):
-        atco_code = self._get_atco_code(elem)
-        # This assumes that the main airport element is the same code except with
-        # 0 at the end (this is true in the current NaPTAN dump)
-        parent_atco_code = atco_code[:-1] + '0'
-
-        # This makes the assumption that the complete airport is seen before any
-        # of the terminals - this is true in the current version of the NaPTAN dump
-        is_terminal = parent_atco_code in self._airports.keys()
-        airport = self._build_base(elem, CallingPoint if is_terminal else Stop)
-        if is_terminal:
-            airport.parent_stop = 'atco:' + parent_atco_code
-            calling_point_slug = self._airports[parent_atco_code].slug + '.calling-point'
-            if calling_point_slug in self._airports:
-                self._airports[parent_atco_code].calling_points.remove(calling_point_slug)
-                del self._airports[calling_point_slug]
-            self._airports[parent_atco_code].calling_points.add(airport.slug)
-        else:
-            calling_point = self._build_base(elem, CallingPoint)
-            calling_point.slug += '.calling-point'
-            calling_point.parent_slug = airport.slug
-            airport.calling_points.add(calling_point.slug)
-            self._airports[calling_point.slug] = calling_point
-
-        self._airports[atco_code] = airport
-
-    def _build_station(self, elem):
-        stop, calling_point = self._build_stop_with_calling_point(elem)
-        group = self._get_group_id(elem, False)
-
-        return stop, calling_point, group
-
-    def _build_calling_point(self, elem):
-        calling_point = self._build_base(elem, CallingPoint)
-        group = self._get_group_id(elem, True)
-
-        return calling_point, group
-
-    def _build_bus_station(self, elem):
-        bay = self._build_base(elem, CallingPoint)
-        stop = self._build_base(elem, Stop)
-        stop.slug += '.bus-station'
-        bay.parent_slug = stop.slug
-        stop.calling_points.add(bay.slug)
-        return bay, stop
-
-    def _get_group_id(self, elem, elem_is_child):
-        group_elem = elem.find(self._STOP_AREA_REF_XPATH)
-        if group_elem is not None:
-            group = group_elem.text
-        else:
-            group = self._get_atco_code(elem)
-            group = group[:3] + 'G' + group[4:]
-            if elem_is_child: group = group[:-1]
-        return group
-
-    def _build_base(self, elem, point_type=Stop):
-        point = point_type()
-        point.sources.add(Source(
+    def _build_point_of_interest(self, elem):
+        poi = PointOfInterest()
+        poi.sources.append(Source(
             url=self._source_url + '/' + self._source_file,
             version=elem.attrib.get('RevisionNumber', '0'),
             attribution=self._ATTRIBUTION
         ))
         atco_code = self._get_atco_code(elem)
-        point.slug = 'atco:' + atco_code
-        point.identifiers.add(Identifier(namespace=ATCO_NAMESPACE, value=atco_code))
+        poi.slug = 'atco:' + atco_code
+        poi.identifiers.add(Identifier(namespace=ATCO_NAMESPACE, value=atco_code))
 
-        self._add_identifier(point, elem, CRS_NAMESPACE, self._CRS_CODE_XPATH)
-        self._add_identifier(point, elem, TIPLOC_NAMESPACE, self._TIPLOC_CODE_XPATH)
+        self._add_identifier(poi, elem, CRS_NAMESPACE, self._CRS_CODE_XPATH)
+        self._add_identifier(poi, elem, TIPLOC_NAMESPACE, self._TIPLOC_CODE_XPATH)
 
-        return point
+        return poi
 
     def _get_atco_code(self, elem):
         return elem.find(self._ATCO_CODE_XPATH).text
 
-    def _add_identifier(self, point, elem, namespace, xpath):
+    def _add_identifier(self, poi, elem, namespace, xpath):
         code_elem = elem.find(xpath)
         if code_elem is not None:
-            point.identifiers.add(Identifier(namespace=namespace, value=code_elem.text))
+            poi.identifiers.add(Identifier(namespace=namespace, value=code_elem.text))
