@@ -1,4 +1,5 @@
 from xml.etree.cElementTree import iterparse
+from shapely.geometry import Point
 
 from molly.apps.common.components import Source, Identifier, Attribution
 from molly.apps.places.models import PointOfInterest, TIPLOC_NAMESPACE, CRS_NAMESPACE, ATCO_NAMESPACE
@@ -90,6 +91,10 @@ class NaptanParser(object):
     _TIPLOC_CODE_XPATH = './{http://www.naptan.org.uk/}StopClassification/{http://www.naptan.org.uk/}OffStreet/' \
                          '{http://www.naptan.org.uk/}Rail/{http://www.naptan.org.uk/}AnnotatedRailRef/' \
                          '{http://www.naptan.org.uk/}TiplocRef'
+    _LONGITUDE_XPATH = './{http://www.naptan.org.uk/}Place/{http://www.naptan.org.uk/}Location/' \
+                         '{http://www.naptan.org.uk/}Translation/{http://www.naptan.org.uk/}Longitude'
+    _LATITUDE_XPATH = './{http://www.naptan.org.uk/}Place/{http://www.naptan.org.uk/}Location/' \
+                         '{http://www.naptan.org.uk/}Translation/{http://www.naptan.org.uk/}Latitude'
 
     _ATTRIBUTION = Attribution(
         attribution_text="Contains public sector information licensed under the Open Government Licence v1.0",
@@ -112,18 +117,21 @@ class NaptanParser(object):
 
     def _build_point_of_interest(self, elem, stop_type):
         poi = PointOfInterest()
+        atco_code = self._get_atco_code(elem)
+        poi.slug = 'atco:' + atco_code
+        poi.categories.append(self._get_category(stop_type, atco_code))
+
+        poi.identifiers.add(Identifier(namespace=ATCO_NAMESPACE, value=atco_code))
+        self._add_identifier(poi, elem, CRS_NAMESPACE, self._CRS_CODE_XPATH)
+        self._add_identifier(poi, elem, TIPLOC_NAMESPACE, self._TIPLOC_CODE_XPATH)
+
+        self._add_location(poi, elem)
+
         poi.sources.append(Source(
             url=self._source_url + '/' + self._source_file,
             version=elem.attrib.get('RevisionNumber', '0'),
             attribution=self._ATTRIBUTION
         ))
-        atco_code = self._get_atco_code(elem)
-        poi.slug = 'atco:' + atco_code
-        poi.categories.append(self._get_category(stop_type, atco_code))
-        poi.identifiers.add(Identifier(namespace=ATCO_NAMESPACE, value=atco_code))
-
-        self._add_identifier(poi, elem, CRS_NAMESPACE, self._CRS_CODE_XPATH)
-        self._add_identifier(poi, elem, TIPLOC_NAMESPACE, self._TIPLOC_CODE_XPATH)
 
         return poi
 
@@ -141,3 +149,9 @@ class NaptanParser(object):
             return NAPTAN_STOP_TYPES_TO_CATEGORIES[stop_type][subtype]
         else:
             return NAPTAN_STOP_TYPES_TO_CATEGORIES[stop_type]
+
+    def _add_location(self, poi, elem):
+        poi.location = Point(
+            float(elem.find(self._LONGITUDE_XPATH).text),
+            float(elem.find(self._LATITUDE_XPATH).text)
+        )

@@ -1,4 +1,5 @@
 import os
+from shapely.geometry import Point
 import unittest2 as unittest
 from molly.apps.common.components import Identifier
 from molly.apps.places.models import PointOfInterest, ATCO_NAMESPACE, CRS_NAMESPACE, TIPLOC_NAMESPACE
@@ -94,6 +95,10 @@ class NaptanParserTest(unittest.TestCase):
     def test_metro_stations_get_specific_category(self):
         stops = self._get_stops_by_slugs()
         self.assertIn('http://mollyproject.org/poi/types/transport/air-line', stops['atco:9400ZZALGWP'].categories)
+
+    def test_location_is_set_on_imported_stops(self):
+        stops = self._get_stops_by_slugs()
+        self.assertEquals(Point(0.0072106498, 51.4992726379).xy, stops['atco:9400ZZALGWP'].location.xy)
 
     def _import_from_test_data(self):
         return NaptanParser().import_from_file(self._test_file, self._TEST_URL)
