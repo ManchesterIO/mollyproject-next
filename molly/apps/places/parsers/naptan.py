@@ -1,9 +1,18 @@
-from collections import defaultdict
 from xml.etree.cElementTree import iterparse
 
 from molly.apps.common.components import Source, Identifier, Attribution
 from molly.apps.places.models import PointOfInterest, TIPLOC_NAMESPACE, CRS_NAMESPACE, ATCO_NAMESPACE
 
+NAPTAN_STOP_TYPES_TO_CATEGORIES = {
+    'BCT': 'http://mollyproject.org/poi/types/transport/bus-stop',
+    'RLY': 'http://mollyproject.org/poi/types/transport/rail-station',
+    'GAT': 'http://mollyproject.org/poi/types/transport/airport',
+    'FER': 'http://mollyproject.org/poi/types/transport/ferry-terminal',
+    'MET': 'http://mollyproject.org/poi/types/transport/metro-station',
+    'BCS': 'http://mollyproject.org/poi/types/transport/bus-stop',
+    'BCQ': 'http://mollyproject.org/poi/types/transport/bus-stop',
+    'TXR': 'http://mollyproject.org/poi/types/transport/taxi-rank'
+}
 
 class NaptanParser(object):
 
@@ -12,7 +21,6 @@ class NaptanParser(object):
 
     _STOP_TYPE_XPATH = './{http://www.naptan.org.uk/}StopClassification/{http://www.naptan.org.uk/}StopType'
     _ATCO_CODE_XPATH = './{http://www.naptan.org.uk/}AtcoCode'
-    _STOP_AREA_REF_XPATH = './{http://www.naptan.org.uk/}StopAreas/{http://www.naptan.org.uk/}StopAreaRef'
     _CRS_CODE_XPATH = './{http://www.naptan.org.uk/}StopClassification/{http://www.naptan.org.uk/}OffStreet/' \
                       '{http://www.naptan.org.uk/}Rail/{http://www.naptan.org.uk/}AnnotatedRailRef/' \
                       '{http://www.naptan.org.uk/}CrsRef'
@@ -40,18 +48,19 @@ class NaptanParser(object):
                 # FER: Ferry port, MET: Metro station
                 # BCS: Marked bus station bay, BCQ: Variable bus station bay
                 # TXR: Taxi Rank
-                if stop_type in {'BCT', 'RLY', 'GAT', 'FER', 'MET', 'BCS', 'BCQ', 'TXR'}:
-                    yield self._build_point_of_interest(elem)
+                if stop_type in NAPTAN_STOP_TYPES_TO_CATEGORIES:
+                    yield self._build_point_of_interest(elem, NAPTAN_STOP_TYPES_TO_CATEGORIES[stop_type])
 
                 elem.clear()
 
-    def _build_point_of_interest(self, elem):
+    def _build_point_of_interest(self, elem, category):
         poi = PointOfInterest()
         poi.sources.append(Source(
             url=self._source_url + '/' + self._source_file,
             version=elem.attrib.get('RevisionNumber', '0'),
             attribution=self._ATTRIBUTION
         ))
+        poi.categories.append(category)
         atco_code = self._get_atco_code(elem)
         poi.slug = 'atco:' + atco_code
         poi.identifiers.add(Identifier(namespace=ATCO_NAMESPACE, value=atco_code))

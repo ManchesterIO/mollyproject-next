@@ -77,15 +77,19 @@ class NaptanParserTest(unittest.TestCase):
 
     def test_atco_code_is_an_identifier(self):
         stops = self._get_stops_by_slugs()
-        self.assertIn(Identifier(namespace=ATCO_NAMESPACE, value='9100ABDARE') , stops['atco:9100ABDARE'].identifiers)
+        self.assertIn(Identifier(namespace=ATCO_NAMESPACE, value='9100ABDARE'), stops['atco:9100ABDARE'].identifiers)
 
     def test_crs_code_is_an_identifier(self):
         stops = self._get_stops_by_slugs()
-        self.assertIn(Identifier(namespace=CRS_NAMESPACE, value='ABA') , stops['atco:9100ABDARE'].identifiers)
+        self.assertIn(Identifier(namespace=CRS_NAMESPACE, value='ABA'), stops['atco:9100ABDARE'].identifiers)
 
     def test_tiploc_code_is_an_identifier(self):
         stops = self._get_stops_by_slugs()
-        self.assertIn(Identifier(namespace=TIPLOC_NAMESPACE, value='ABDARE') , stops['atco:9100ABDARE'].identifiers)
+        self.assertIn(Identifier(namespace=TIPLOC_NAMESPACE, value='ABDARE'), stops['atco:9100ABDARE'].identifiers)
+
+    def test_categories_are_set_correctly_for_bus_stop(self):
+        stops = self._get_stops_by_slugs()
+        self.assertIn('http://mollyproject.org/poi/types/transport/bus-stop', stops['atco:639000011'].categories)
 
     def _import_from_test_data(self):
         return NaptanParser().import_from_file(self._test_file, self._TEST_URL)
