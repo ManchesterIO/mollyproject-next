@@ -1,8 +1,12 @@
+import logging
 from xml.etree.cElementTree import iterparse
 from shapely.geometry import Point
 
 from molly.apps.common.components import Source, Identifier, Attribution
 from molly.apps.places.models import PointOfInterest, TIPLOC_NAMESPACE, CRS_NAMESPACE, ATCO_NAMESPACE
+
+
+LOGGER = logging.getLogger(__name__)
 
 NAPTAN_STOP_TYPES_TO_CATEGORIES = {
     'BCT': 'http://mollyproject.org/poi/types/transport/bus-stop',
@@ -17,6 +21,7 @@ NAPTAN_STOP_TYPES_TO_CATEGORIES = {
         'BK': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
         'BL': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
         'BP': 'http://mollyproject.org/poi/types/transport/tramway-stop',
+        'BW': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
         'BV': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
         'CA': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
         'CR':'http://mollyproject.org/poi/types/transport/tramlink-stop',
@@ -143,7 +148,10 @@ class NaptanParser(object):
     def _get_category(self, stop_type, atco_code):
         if stop_type == 'MET':
             subtype = atco_code[6:8]
-            return NAPTAN_STOP_TYPES_TO_CATEGORIES[stop_type][subtype]
+            category = NAPTAN_STOP_TYPES_TO_CATEGORIES[stop_type].get(subtype)
+            if category is None:
+                LOGGER.warning('Stop %s has unrecognised MET subtype')
+            return category
         else:
             return NAPTAN_STOP_TYPES_TO_CATEGORIES[stop_type]
 
