@@ -28,7 +28,7 @@ class NaptanImporter(object):
     def load(self):
         parser = NaptanParser()
         for stop in parser.import_from_file(self._get_file_from_url(), self._url):
-            self.stop_service.insert_and_merge(stop)
+            self.poi_service.add_or_update(stop)
 
 
 Provider = NaptanImporter
