@@ -1,4 +1,5 @@
 import logging
+import geojson
 from molly.apps.places.models import PointOfInterest
 
 LOGGER = logging.getLogger(__name__)
@@ -11,6 +12,8 @@ class PointsOfInterest(object):
         self._collection = connection.pois
         self._collection.ensure_index('slug')
         self._collection.ensure_index({'location': '2dsphere'}.items())
+        self._collection.ensure_index('categories')
+        self._collection.ensure_index('amenities')
 
     def select_by_slug(self, slug):
         poi_dict = self._collection.find_one({'slug': slug})
@@ -29,3 +32,27 @@ class PointsOfInterest(object):
         else:
             self._collection.insert(poi._asdict())
             LOGGER.info("Inserting new POI %s", poi.slug)
+
+    def count_nearby_category(self, point, category, radius=None):
+        return self._count_nearby(point, 'categories', category, radius)
+
+    def count_nearby_amenity(self, point, amenity, radius=None):
+        return self._count_nearby(point, 'amenities', amenity, radius)
+
+    def search_nearby_category(self, point, category, radius=None):
+        return map(PointOfInterest.from_dict, self._search_nearby(point, 'categories', category, radius))
+
+    def search_nearby_amenity(self, point, amenity, radius=None):
+        return map(PointOfInterest.from_dict, self._search_nearby(point, 'amenities', amenity, radius))
+
+    def _count_nearby(self, point, facet, uri, radius):
+        return self._search_nearby(point, facet, uri, radius).count()
+
+    def _search_nearby(self, point, facet, uri, radius):
+        query = {
+            'location': {'$near': {'$geometry': geojson.GeoJSONEncoder().default(point)}},
+            facet: uri
+        }
+        if radius is not None:
+            query['location']['$near']['$maxDistance'] = radius
+        return self._collection.find(query)

@@ -72,5 +72,73 @@ class TestPointsOfInterest(unittest.TestCase):
     def test_slug_is_indexed(self):
         self._mock_mongo.pois.ensure_index.assert_any_call('slug')
 
+    def test_categories_are_indexed(self):
+        self._mock_mongo.pois.ensure_index.assert_any_call('categories')
+
+    def test_amenities_are_indexed(self):
+        self._mock_mongo.pois.ensure_index.assert_any_call('amenities')
+
     def test_location_is_indexed(self):
         self._mock_mongo.pois.ensure_index.assert_any_call([('location', '2dsphere')])
+
+    def test_count_nearby_category_returns_0_by_default(self):
+        self._setup_results_with_count(0)
+        self.assertEquals(0, self._pois.count_nearby_category(Point(-1.6, 54.0), 'http://www.example.com'))
+
+    def test_count_nearby_amenity_returns_0_by_default(self):
+        self._setup_results_with_count(0)
+        self.assertEquals(0, self._pois.count_nearby_amenity(Point(-1.6, 54.0), 'http://www.example.com'))
+
+    def test_count_from_search_results_for_categories_is_returned(self):
+        self._setup_results_with_count(42)
+        self.assertEquals(42, self._pois.count_nearby_category(Point(-1.6, 54.0), 'http://www.example.com'))
+
+    def test_count_from_search_results_for_amenities_is_returned(self):
+        self._setup_results_with_count(42)
+        self.assertEquals(42, self._pois.count_nearby_amenity(Point(-1.6, 54.0), 'http://www.example.com'))
+
+    def test_correct_categories_query_is_supplied_to_mongo(self):
+        self._pois.count_nearby_category(Point(-1.6, 54.0), 'http://www.example.com')
+        self._mock_mongo.pois.find.assert_called_once_with({
+            'location': {'$near': {'$geometry': {'type': 'Point', 'coordinates': (-1.6, 54.0)}}},
+            'categories': 'http://www.example.com'
+        })
+
+    def test_correct_amenities_query_is_supplied_to_mongo(self):
+        self._pois.count_nearby_amenity(Point(-1.6, 54.0), 'http://www.example.com')
+        self._mock_mongo.pois.find.assert_called_once_with({
+            'location': {'$near': {'$geometry': {'type': 'Point', 'coordinates': (-1.6, 54.0)}}},
+            'amenities': 'http://www.example.com'
+        })
+
+    def test_maxdistance_parameter_is_provided_when_radius_is(self):
+        self._pois.count_nearby_amenity(Point(-1.6, 54.0), 'http://www.example.com', radius=1234)
+        self._mock_mongo.pois.find.assert_called_once_with({
+            'location': {'$near': {'$geometry': {'type': 'Point', 'coordinates': (-1.6, 54.0)}, '$maxDistance': 1234}},
+            'amenities': 'http://www.example.com'
+        })
+
+    def test_search_nearby_categories_returns_list_by_default(self):
+        self._mock_mongo.pois.find.return_value = []
+        self.assertEquals([], self._pois.search_nearby_category(Point(-1.6, 54.0), 'http://www.example.com'))
+
+    def test_search_nearby_amenities_returns_list_by_default(self):
+        self._mock_mongo.pois.find.return_value = []
+        self.assertEquals([], self._pois.search_nearby_amenity(Point(-1.6, 54.0), 'http://www.example.com'))
+
+    def test_returned_pois_are_returned_as_models_by_category(self):
+        self._mock_mongo.pois.find.return_value = [{'slug': 'foo'}]
+        points_of_interest = self._pois.search_nearby_category(Point(-1.6, 54.0), 'http://www.example.com')
+        self.assertEquals(1, len(points_of_interest))
+        self.assertEquals('foo', points_of_interest[0].slug)
+
+    def test_returned_pois_are_returned_as_models_by_amenity(self):
+        self._mock_mongo.pois.find.return_value = [{'slug': 'foo'}]
+        points_of_interest = self._pois.search_nearby_amenity(Point(-1.6, 54.0), 'http://www.example.com')
+        self.assertEquals(1, len(points_of_interest))
+        self.assertEquals('foo', points_of_interest[0].slug)
+
+    def _setup_results_with_count(self, count):
+        mock_result = Mock()
+        mock_result.count.return_value = count
+        self._mock_mongo.pois.find.return_value = mock_result
