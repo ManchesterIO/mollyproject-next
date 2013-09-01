@@ -10,7 +10,8 @@ class NaptanParserTest(unittest.TestCase):
     _TEST_URL = 'http://www.naptan.com'
 
     def setUp(self):
-        self._test_file = open(os.path.join(os.path.dirname(__file__), 'naptan_testdata', 'naptan.xml'))
+        self._test_file = open(os.path.join(os.path.dirname(__file__), 'naptan_testdata',
+                                            '../../places/parsers/naptan_testdata/naptan.xml'))
 
     def tearDown(self):
         self._test_file.close()
