@@ -3,7 +3,8 @@ import os
 import unittest2 as unittest
 from molly.apps.common.components import Identifier
 from molly.apps.transport.parsers.cif import CifParser
-from molly.apps.transport.models import CallingPoint, TIPLOC_NAMESPACE, STANOX_NAMESPACE, CRS_NAMESPACE, CIF_DESCRIPTION_NAMESPACE, Call, CallTime
+from molly.apps.transport.models import CallingPoint, TIPLOC_NAMESPACE, STANOX_NAMESPACE, CRS_NAMESPACE,\
+    CIF_DESCRIPTION_NAMESPACE, Call, CallTime
 
 class CifParserTest(unittest.TestCase):
 
@@ -73,80 +74,80 @@ class CifParserTest(unittest.TestCase):
         self.assertEquals('Crewe to Derby', self._parser.services[0].name)
 
     def test_route_slug_is_set(self):
-        self.assertEquals('/gb/rail/CREWE-DRBY', self._parser.routes[0].slug)
+        self.assertEquals('atoc:CREWE-DRBY', self._parser.routes[0].slug)
 
     def test_return_journey_is_correctly_grouped_into_one_service(self):
-        self.assertEquals(self._parser.services[0].routes, {'/gb/rail/CREWE-DRBY', '/gb/rail/DRBY-CREWE'})
+        self.assertEquals(self._parser.services[0].routes, {'atoc:CREWE-DRBY', 'atoc:DRBY-CREWE'})
         self.assertEquals(self._parser.routes[0].service_slug, self._parser.routes[1].service_slug)
 
     def test_service_has_correct_slug(self):
-        self.assertEquals('/gb/rail/CREWE-DRBY', self._parser.services[0].slug)
+        self.assertEquals('atoc:CREWE-DRBY', self._parser.services[0].slug)
 
     def test_routes_have_service_slug(self):
-        self.assertEquals('/gb/rail/CREWE-DRBY', self._parser.routes[0].service_slug)
+        self.assertEquals('atoc:CREWE-DRBY', self._parser.routes[0].service_slug)
 
     def test_route_variations_are_correctly_identified(self):
         self.assertEquals(4, len(self._parser.routes))
 
     def test_scheduled_trips_use_uid_as_slug(self):
-        self.assertEquals('/gb/rail/C03360', self._parser.scheduled_trips[0].slug)
+        self.assertEquals('atoc:C03360', self._parser.scheduled_trips[0].slug)
 
     def test_routes_contain_correctly_ordered_slugs(self):
         self.assertEquals([
-            '/gb/9400CREWE/calling_point',
-            '/gb/9400CREWSJN/calling_point',
-            '/gb/9400BTHLYJN/calling_point',
-            '/gb/9400ALSAGER/calling_point',
-            '/gb/9400KIDSGRV/calling_point',
-            '/gb/9400LNGP/calling_point',
-            '/gb/9400STOKEOT/calling_point',
-            '/gb/9400STOKOTJ/calling_point',
-            '/gb/9400LNTN/calling_point',
-            '/gb/9400CAVRSWL/calling_point',
-            '/gb/9400BLYBDGE/calling_point',
-            '/gb/9400UTOXSB/calling_point',
-            '/gb/9400UTOXETR/calling_point',
-            '/gb/9400TUTBURY/calling_point',
-            '/gb/9400NSJDRBY/calling_point',
-            '/gb/9400STSNJN/calling_point',
-            '/gb/9400DRBY/calling_point'
+            'atco:9400CREWE.calling-point',
+            'atco:9400CREWSJN.calling-point',
+            'atco:9400BTHLYJN.calling-point',
+            'atco:9400ALSAGER.calling-point',
+            'atco:9400KIDSGRV.calling-point',
+            'atco:9400LNGP.calling-point',
+            'atco:9400STOKEOT.calling-point',
+            'atco:9400STOKOTJ.calling-point',
+            'atco:9400LNTN.calling-point',
+            'atco:9400CAVRSWL.calling-point',
+            'atco:9400BLYBDGE.calling-point',
+            'atco:9400UTOXSB.calling-point',
+            'atco:9400UTOXETR.calling-point',
+            'atco:9400TUTBURY.calling-point',
+            'atco:9400NSJDRBY.calling-point',
+            'atco:9400STSNJN.calling-point',
+            'atco:9400DRBY.calling-point'
         ], self._parser.routes[0].calling_points)
 
     def test_route_headline_is_destination(self):
         self.assertEquals('Derby', self._parser.routes[0].headline)
 
     def test_trips_have_correct_route(self):
-        self.assertEquals('/gb/rail/CREWE-DRBY', self._parser.scheduled_trips[0].route_slug)
+        self.assertEquals('atoc:CREWE-DRBY', self._parser.scheduled_trips[0].route_slug)
 
     def test_platforms_get_own_calling_points(self):
-        self.assertEquals('/gb/9400CREWE/platform4', self._parser.tiplocs[68].slug)
+        self.assertEquals('atco:9400CREWE.platform4', self._parser.tiplocs[68].slug)
 
     def test_platforms_have_parent_station(self):
-        self.assertEquals('/gb/9400CREWE', self._parser.tiplocs[68].parent_slug)
+        self.assertEquals('atco:9400CREWE', self._parser.tiplocs[68].parent_slug)
 
     def test_scheduled_journeys_correctly_populated(self):
         self.assertEquals(
             [
                 Call(
-                    point_slug='/gb/9400CREWE/platform4',
+                    point_slug='atco:9400CREWE.platform4',
                     scheduled_departure_time=CallTime(15, 5),
                     public_departure_time=CallTime(15, 5),
                     activity=Call.START
                 ),
                 Call(
-                    point_slug='/gb/9400CREWSJN/platformUDP',
+                    point_slug='atco:9400CREWSJN.platformUDP',
                     scheduled_arrival_time=CallTime(15, 8),
                     scheduled_departure_time=CallTime(15, 8),
                     activity=Call.PASS_THROUGH
                 ),
                 Call(
-                    point_slug='/gb/9400BTHLYJN/calling_point',
+                    point_slug='atco:9400BTHLYJN.calling-point',
                     scheduled_arrival_time=CallTime(15, 11),
                     scheduled_departure_time=CallTime(15, 11),
                     activity=Call.PASS_THROUGH
                 ),
                 Call(
-                    point_slug='/gb/9400ALSAGER/calling_point',
+                    point_slug='atco:9400ALSAGER.calling-point',
                     scheduled_arrival_time=CallTime(15, 14),
                     public_arrival_time=CallTime(15, 14),
                     scheduled_departure_time=CallTime(15, 14, 30),
@@ -154,7 +155,7 @@ class CifParserTest(unittest.TestCase):
                     activity=Call.NORMAL
                 ),
                 Call(
-                    point_slug='/gb/9400KIDSGRV/calling_point',
+                    point_slug='atco:9400KIDSGRV.calling-point',
                     scheduled_arrival_time=CallTime(15, 21),
                     public_arrival_time=CallTime(15, 21),
                     scheduled_departure_time=CallTime(15, 21, 30),
@@ -162,7 +163,7 @@ class CifParserTest(unittest.TestCase):
                     activity=Call.NORMAL
                 ),
                 Call(
-                    point_slug='/gb/9400LNGP/calling_point',
+                    point_slug='atco:9400LNGP.calling-point',
                     scheduled_arrival_time=CallTime(15, 26),
                     public_arrival_time=CallTime(15, 26),
                     scheduled_departure_time=CallTime(15, 26, 30),
@@ -170,7 +171,7 @@ class CifParserTest(unittest.TestCase):
                     activity=Call.NORMAL
                 ),
                 Call(
-                    point_slug='/gb/9400STOKEOT/platform1',
+                    point_slug='atco:9400STOKEOT.platform1',
                     scheduled_arrival_time=CallTime(15, 31),
                     public_arrival_time=CallTime(15, 30),
                     scheduled_departure_time=CallTime(15, 32),
@@ -178,13 +179,13 @@ class CifParserTest(unittest.TestCase):
                     activity=Call.NORMAL
                 ),
                 Call(
-                    point_slug='/gb/9400STOKOTJ/calling_point',
+                    point_slug='atco:9400STOKOTJ.calling-point',
                     scheduled_arrival_time=CallTime(15, 33, 30),
                     scheduled_departure_time=CallTime(15, 33, 30),
                     activity=Call.PASS_THROUGH
                 ),
                 Call(
-                    point_slug='/gb/9400LNTN/calling_point',
+                    point_slug='atco:9400LNTN.calling-point',
                     scheduled_arrival_time=CallTime(15, 37, 30),
                     public_arrival_time=CallTime(15, 38),
                     scheduled_departure_time=CallTime(15, 38),
@@ -192,13 +193,13 @@ class CifParserTest(unittest.TestCase):
                     activity=Call.NORMAL
                 ),
                 Call(
-                    point_slug='/gb/9400CAVRSWL/calling_point',
+                    point_slug='atco:9400CAVRSWL.calling-point',
                     scheduled_arrival_time=CallTime(15, 42),
                     scheduled_departure_time=CallTime(15, 42),
                     activity=Call.PASS_THROUGH
                 ),
                 Call(
-                    point_slug='/gb/9400BLYBDGE/calling_point',
+                    point_slug='atco:9400BLYBDGE.calling-point',
                     scheduled_arrival_time=CallTime(15, 43, 30),
                     public_arrival_time=CallTime(15, 43),
                     scheduled_departure_time=CallTime(15, 44, 30),
@@ -206,13 +207,13 @@ class CifParserTest(unittest.TestCase):
                     activity=Call.NORMAL
                 ),
                 Call(
-                    point_slug='/gb/9400UTOXSB/calling_point',
+                    point_slug='atco:9400UTOXSB.calling-point',
                     scheduled_arrival_time=CallTime(15, 54, 30),
                     scheduled_departure_time=CallTime(15, 54, 30),
                     activity=Call.PASS_THROUGH
                 ),
                 Call(
-                    point_slug='/gb/9400UTOXETR/calling_point',
+                    point_slug='atco:9400UTOXETR.calling-point',
                     scheduled_arrival_time=CallTime(15, 56),
                     public_arrival_time=CallTime(15, 56),
                     scheduled_departure_time=CallTime(15, 56, 30),
@@ -220,7 +221,7 @@ class CifParserTest(unittest.TestCase):
                     activity=Call.NORMAL
                 ),
                 Call(
-                    point_slug='/gb/9400TUTBURY/calling_point',
+                    point_slug='atco:9400TUTBURY.calling-point',
                     scheduled_arrival_time=CallTime(16, 05),
                     public_arrival_time=CallTime(16, 05),
                     scheduled_departure_time=CallTime(16, 06),
@@ -228,19 +229,19 @@ class CifParserTest(unittest.TestCase):
                     activity=Call.NORMAL
                 ),
                 Call(
-                    point_slug='/gb/9400NSJDRBY/calling_point',
+                    point_slug='atco:9400NSJDRBY.calling-point',
                     scheduled_arrival_time=CallTime(16, 13, 30),
                     scheduled_departure_time=CallTime(16, 13, 30),
                     activity=Call.PASS_THROUGH
                 ),
                 Call(
-                    point_slug='/gb/9400STSNJN/calling_point',
+                    point_slug='atco:9400STSNJN.calling-point',
                     scheduled_arrival_time=CallTime(16, 14, 30),
                     scheduled_departure_time=CallTime(16, 14, 30),
                     activity=Call.PASS_THROUGH
                 ),
                 Call(
-                    point_slug='/gb/9400DRBY/platform1',
+                    point_slug='atco:9400DRBY.platform1',
                     scheduled_arrival_time=CallTime(16, 22),
                     public_arrival_time=CallTime(16, 25),
                     activity=Call.FINISH

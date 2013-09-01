@@ -89,7 +89,7 @@ class NaptanParser(object):
 
         calling_point = CallingPoint()
         calling_point.sources = stop.sources
-        calling_point.slug = stop.slug + '/calling_point'
+        calling_point.slug = stop.slug + '.calling-point'
 
         stop.calling_points = {calling_point.slug}
         calling_point.parent_stop = stop.slug
@@ -107,15 +107,15 @@ class NaptanParser(object):
         is_terminal = parent_atco_code in self._airports.keys()
         airport = self._build_base(elem, CallingPoint if is_terminal else Stop)
         if is_terminal:
-            airport.parent_stop = '/gb/' + parent_atco_code
-            calling_point_slug = self._airports[parent_atco_code].slug + '/calling_point'
+            airport.parent_stop = 'atco:' + parent_atco_code
+            calling_point_slug = self._airports[parent_atco_code].slug + '.calling-point'
             if calling_point_slug in self._airports:
                 self._airports[parent_atco_code].calling_points.remove(calling_point_slug)
                 del self._airports[calling_point_slug]
             self._airports[parent_atco_code].calling_points.add(airport.slug)
         else:
             calling_point = self._build_base(elem, CallingPoint)
-            calling_point.slug += '/calling_point'
+            calling_point.slug += '.calling-point'
             calling_point.parent_slug = airport.slug
             airport.calling_points.add(calling_point.slug)
             self._airports[calling_point.slug] = calling_point
@@ -137,7 +137,7 @@ class NaptanParser(object):
     def _build_bus_station(self, elem):
         bay = self._build_base(elem, CallingPoint)
         stop = self._build_base(elem, Stop)
-        stop.slug += '/bus_station'
+        stop.slug += '.bus-station'
         bay.parent_slug = stop.slug
         stop.calling_points.add(bay.slug)
         return bay, stop
@@ -160,7 +160,7 @@ class NaptanParser(object):
             attribution=self._ATTRIBUTION
         ))
         atco_code = self._get_atco_code(elem)
-        point.slug = '/gb/' + atco_code
+        point.slug = 'atco:' + atco_code
         point.identifiers.add(Identifier(namespace=ATCO_NAMESPACE, value=atco_code))
 
         self._add_identifier(point, elem, CRS_NAMESPACE, self._CRS_CODE_XPATH)

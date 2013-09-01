@@ -76,7 +76,7 @@ class CifParser(object):
         self._current_calling_tiplocs = []
         self._current_scheduled_trip = ScheduledTrip()
         self._current_scheduled_trip.sources.add(self._source)
-        self._current_scheduled_trip.slug = '/gb/rail/' + line[3:9]
+        self._current_scheduled_trip.slug = 'atoc:' + line[3:9]
 
     def _handle_journey_origin(self, line):
         self._add_tiploc_to_journey(
@@ -172,14 +172,14 @@ class CifParser(object):
 
     def _get_calling_point(self, platform, tiploc):
         if platform:
-            platform_slug = '/gb/9400{tiploc}/platform{platform}'.format(
+            platform_slug = 'atco:9400{tiploc}.platform{platform}'.format(
                 tiploc=tiploc, platform=platform
             )
             if platform_slug not in self._platform_slugs:
                 self._build_platform(platform, platform_slug, tiploc)
             return platform_slug
         else:
-            return '/gb/9400{tiploc}/calling_point'.format(tiploc=tiploc)
+            return 'atco:9400{tiploc}.calling-point'.format(tiploc=tiploc)
 
     def _build_platform(self, platform, platform_slug, tiploc):
         platform_calling_point = self._build_calling_point(
@@ -189,7 +189,7 @@ class CifParser(object):
             ), tiploc
         )
         platform_calling_point.slug = platform_slug
-        platform_calling_point.parent_slug = '/gb/9400{tiploc}'.format(
+        platform_calling_point.parent_slug = 'atco:9400{tiploc}'.format(
             tiploc=tiploc
         )
         self._platform_slugs.add(platform_slug)
@@ -207,14 +207,14 @@ class CifParser(object):
     def _build_route(self):
         route = Route()
         route.sources.add(self._source)
-        route.slug = '/gb/rail/{origin}-{destination}'.format(
+        route.slug = 'atoc:{origin}-{destination}'.format(
             origin=self._current_calling_tiplocs[0],
             destination=self._current_calling_tiplocs[-1]
         )
 
         for tiploc in self._current_calling_tiplocs:
             route.calling_points.append(
-                '/gb/9400{tiploc}/calling_point'.format(tiploc=tiploc)
+                'atco:9400{tiploc}.calling-point'.format(tiploc=tiploc)
             )
 
         route.headline = self._tiploc_descriptions[self._current_calling_tiplocs[-1]]
