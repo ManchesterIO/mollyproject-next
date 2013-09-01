@@ -91,6 +91,10 @@ class NaptanParserTest(unittest.TestCase):
         stops = self._get_stops_by_slugs()
         self.assertIn('http://mollyproject.org/poi/types/transport/bus-stop', stops['atco:639000011'].categories)
 
+    def test_metro_stations_get_specific_category(self):
+        stops = self._get_stops_by_slugs()
+        self.assertIn('http://mollyproject.org/poi/types/transport/air-line', stops['atco:9400ZZALGWP'].categories)
+
     def _import_from_test_data(self):
         return NaptanParser().import_from_file(self._test_file, self._TEST_URL)
 

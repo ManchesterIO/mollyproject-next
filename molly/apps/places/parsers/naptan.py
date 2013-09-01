@@ -8,7 +8,70 @@ NAPTAN_STOP_TYPES_TO_CATEGORIES = {
     'RLY': 'http://mollyproject.org/poi/types/transport/rail-station',
     'GAT': 'http://mollyproject.org/poi/types/transport/airport',
     'FER': 'http://mollyproject.org/poi/types/transport/ferry-terminal',
-    'MET': 'http://mollyproject.org/poi/types/transport/metro-station',
+    'MET': {
+        'AL': 'http://mollyproject.org/poi/types/transport/air-line',
+        'AV': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'BB': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'BF': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'BK': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'BL': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'BP': 'http://mollyproject.org/poi/types/transport/tramway-stop',
+        'BV': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'CA': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'CR':'http://mollyproject.org/poi/types/transport/tramlink-stop',
+        'CV': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'CW': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'DF': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'DL': 'http://mollyproject.org/poi/types/transport/dlr-station',
+        'DM': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'EB': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'EK': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'EL': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'EV': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'FB': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'FF': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'GC': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'GL': 'http://mollyproject.org/poi/types/transport/subway-station',
+        'GO': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'GW': 'http://mollyproject.org/poi/types/transport/gatwick-shuttle-station',
+        'GR': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'IW': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'KD': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'KE': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'KW': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'LH': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'LL': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'LU': 'http://mollyproject.org/poi/types/transport/tube-station',
+        'MA': 'http://mollyproject.org/poi/types/transport/metrolink-station',
+        'MH': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'MN': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'NN': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'NO': 'http://mollyproject.org/poi/types/transport/net-stop',
+        'NV': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'NY': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'PD': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'PR': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'RE': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'RH': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'SD': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'SL': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'SM': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'SP': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'SR': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'ST': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'SV': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'SY': 'http://mollyproject.org/poi/types/transport/supertram-stop',
+        'TL': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'TW': 'http://mollyproject.org/poi/types/transport/tyne-and-wear-metro-station',
+        'TY': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'VR': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'WD': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'WH': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'WL': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'WM': 'http://mollyproject.org/poi/types/transport/midland-metro-stop',
+        'WS': 'http://mollyproject.org/poi/types/transport/rail-station/heritage',
+        'WW': 'http://mollyproject.org/poi/types/transport/rail-station/heritage'
+    },
     'BCS': 'http://mollyproject.org/poi/types/transport/bus-stop',
     'BCQ': 'http://mollyproject.org/poi/types/transport/bus-stop',
     'TXR': 'http://mollyproject.org/poi/types/transport/taxi-rank'
@@ -42,27 +105,21 @@ class NaptanParser(object):
 
             elif event == 'end' and elem.tag == self._STOP_POINT_ELEM:
                 stop_type = elem.find(self._STOP_TYPE_XPATH).text
-
-                # BCT: Bus Stop, RLY: Railway Station
-                # GAT: Airport/terminal
-                # FER: Ferry port, MET: Metro station
-                # BCS: Marked bus station bay, BCQ: Variable bus station bay
-                # TXR: Taxi Rank
                 if stop_type in NAPTAN_STOP_TYPES_TO_CATEGORIES:
-                    yield self._build_point_of_interest(elem, NAPTAN_STOP_TYPES_TO_CATEGORIES[stop_type])
+                    yield self._build_point_of_interest(elem, stop_type)
 
                 elem.clear()
 
-    def _build_point_of_interest(self, elem, category):
+    def _build_point_of_interest(self, elem, stop_type):
         poi = PointOfInterest()
         poi.sources.append(Source(
             url=self._source_url + '/' + self._source_file,
             version=elem.attrib.get('RevisionNumber', '0'),
             attribution=self._ATTRIBUTION
         ))
-        poi.categories.append(category)
         atco_code = self._get_atco_code(elem)
         poi.slug = 'atco:' + atco_code
+        poi.categories.append(self._get_category(stop_type, atco_code))
         poi.identifiers.add(Identifier(namespace=ATCO_NAMESPACE, value=atco_code))
 
         self._add_identifier(poi, elem, CRS_NAMESPACE, self._CRS_CODE_XPATH)
@@ -77,3 +134,10 @@ class NaptanParser(object):
         code_elem = elem.find(xpath)
         if code_elem is not None:
             poi.identifiers.add(Identifier(namespace=namespace, value=code_elem.text))
+
+    def _get_category(self, stop_type, atco_code):
+        if stop_type == 'MET':
+            subtype = atco_code[6:8]
+            return NAPTAN_STOP_TYPES_TO_CATEGORIES[stop_type][subtype]
+        else:
+            return NAPTAN_STOP_TYPES_TO_CATEGORIES[stop_type]
