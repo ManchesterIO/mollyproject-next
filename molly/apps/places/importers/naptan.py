@@ -8,6 +8,9 @@ from molly.apps.places.parsers.naptan import NaptanParser
 
 
 class NaptanImporter(object):
+    """
+    Imports points of interest from the UK's National Public Transport Access Node dataset
+    """
 
     IMPORTER_NAME = 'naptan'
     IMPORT_SCHEDULE = schedule(run_every=timedelta(weeks=1))

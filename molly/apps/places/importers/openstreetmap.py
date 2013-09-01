@@ -103,6 +103,10 @@ OSM_TAGS_TO_AMENITIES = {
 
 
 class OpenStreetMapImporter(object):
+    """
+    Imports points of interest from OpenStreetMap
+    """
+
     IMPORTER_NAME = 'openstreetmap'
     IMPORT_SCHEDULE = schedule(run_every=timedelta(weeks=1))
 
