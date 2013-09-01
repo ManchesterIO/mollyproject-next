@@ -109,7 +109,7 @@ class NaptanParser(object):
                 self._source_file = elem.attrib['FileName']
 
             elif event == 'end' and elem.tag == self._STOP_POINT_ELEM:
-                stop_type = elem.find(self._STOP_TYPE_XPATH).text
+                stop_type = self._xpath(elem, self._STOP_TYPE_XPATH)
                 if stop_type in NAPTAN_STOP_TYPES_TO_CATEGORIES:
                     yield self._build_point_of_interest(elem, stop_type)
 
@@ -117,7 +117,7 @@ class NaptanParser(object):
 
     def _build_point_of_interest(self, elem, stop_type):
         poi = PointOfInterest()
-        atco_code = self._get_atco_code(elem)
+        atco_code = self._xpath(elem, self._ATCO_CODE_XPATH)
         poi.slug = 'atco:' + atco_code
         poi.categories.append(self._get_category(stop_type, atco_code))
 
@@ -135,9 +135,6 @@ class NaptanParser(object):
 
         return poi
 
-    def _get_atco_code(self, elem):
-        return elem.find(self._ATCO_CODE_XPATH).text
-
     def _add_identifier(self, poi, elem, namespace, xpath):
         code_elem = elem.find(xpath)
         if code_elem is not None:
@@ -152,6 +149,9 @@ class NaptanParser(object):
 
     def _add_location(self, poi, elem):
         poi.location = Point(
-            float(elem.find(self._LONGITUDE_XPATH).text),
-            float(elem.find(self._LATITUDE_XPATH).text)
+            float(self._xpath(elem, self._LONGITUDE_XPATH)),
+            float(self._xpath(elem, self._LATITUDE_XPATH))
         )
+
+    def _xpath(self, elem, xpath):
+        return elem.find(xpath).text
