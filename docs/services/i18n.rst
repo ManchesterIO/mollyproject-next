@@ -1,0 +1,5 @@
+``i18n`` - internationalisation
+===============================
+
+This service provides an interface to provide i18n. This is
+`Flask-Babel <http://pythonhosted.org/Flask-Babel/>`_.

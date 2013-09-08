@@ -1,0 +1,7 @@
+Common Components
+=================
+
+.. toctree::
+    :glob:
+
+    *
