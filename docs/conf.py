@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Molly Project'
-copyright = u'2012, Molly Project'
+copyright = u'2013, Molly Project'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -243,4 +243,7 @@ texinfo_documents = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'http://docs.python.org/': None}
+intersphinx_mapping = {
+    'http://docs.python.org/': None,
+    'http://flask.readthedocs.org/en/latest': None
+}
