@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ body.title }} - {% block site_title %}Molly Demo{% endblock %}</title>
+    <title>{% block page_title %}{{ body.title }}{% endblock %} - {% block site_title %}Molly Demo{% endblock %}</title>
+    {% block inline_head %}
     {% assets bundle %}
         <link href="{{ ASSET_URL }}" rel="stylesheet">
     {% endassets %}
+    {% endblock inline_head %}
 </head>
 <body>
     <header>
