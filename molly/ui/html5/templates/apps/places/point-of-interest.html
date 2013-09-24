@@ -1,10 +1,18 @@
 <header>
     <h1>{{ poi.name() }}</h1>
-    {% if categories %}<h2 class="category">{% for category in categories %}{{ category }}{% if not loop.last %}, {% endif %}{% endfor %}</h2>{% endif %}
+    {% if categories %}<h2 class="category">{% for category in poi.categories %}<span data-category-uri="{{ category }}">{{ categories.get(category) }}</span>{% if not loop.last %}, {% endif %}{% endfor %}</h2>{% endif %}
 </header>
 
-{% if poi.telephone_number %}
+{% if poi.telephone_number or poi.amenities %}
     <section class="metadata">
+        {% if poi.amenities %}
+            <h2>{% trans %}This location has the following facilities:{% endtrans %}</h2>
+            <ul>
+                {% for amenity in poi.amenities %}
+                    <li data-amenity-uri="{{ amenity }}">{{ amenities.get(amenity) }}</li>
+                {% endfor %}
+            </ul>
+        {%  endif %}
         <dl>
             {% if poi.telephone_number %}
                 <dt>{% trans %}Telephone Number{% endtrans %}</dt>
@@ -14,8 +22,15 @@
     </section>
 {% endif %}
 
-{% for attribution in attributions %}
-    {{ attribution.render() }}
-{% endfor %}
+<div data-molly-module="map" data-point-of-interest-coordinates="{{ poi.location.y }},{{ poi.location.x }}"></div>
 
-<div data-molly-module="map"></div>
+{% if attributions %}
+<section class="attributions">
+    <p>The information on this page is provided by the following contributors:</p>
+    <ul>
+        {% for attribution in attributions %}
+            <li>{{ attribution.render() }}</li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}

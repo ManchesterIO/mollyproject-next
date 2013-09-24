@@ -8,3 +8,4 @@ test:
 serve:
   - molly/ui/html5/assets/js/modules/*.js
   - molly/ui/html5/assets/js/vendors/*.js
+  - molly/ui/html5/assets/style/vendors/*

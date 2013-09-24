@@ -43,11 +43,6 @@ body > header h2 {
     top: 10px;
 }
 
-body > article {
-    margin-bottom: 15em;
-    min-height: 100%;
-}
-
 body > footer {
     background-color: #3d3536;
 }
@@ -116,7 +111,7 @@ body > footer li a {
     }
 
     body > footer {
-        position: absolute;
+        position: fixed;
         bottom: 0;
         width: 324px;
     }

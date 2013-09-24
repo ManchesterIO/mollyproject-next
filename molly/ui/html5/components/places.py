@@ -19,6 +19,8 @@ class PlacesHomepage(Component):
 @ComponentFactory.register_component('http://mollyproject.org/apps/places/point-of-interest')
 class PointOfInterestUI(Component):
 
+    _CSS = frozenset(['style/components/places/point-of-interest.css'])
+
     def __init__(self, *args, **kwargs):
         super(PointOfInterestUI, self).__init__(*args, **kwargs)
         self._poi = PointOfInterest.from_dict(self._data['poi'])
@@ -32,8 +34,8 @@ class PointOfInterestUI(Component):
 
     @property
     def category(self):
-        if self._poi.primary_type in self._TYPES:
-            return self._TYPES[self._poi.primary_type]
+        if self._poi.primary_type in self._CATEGORIES:
+            return self._CATEGORIES[self._poi.primary_type]
         for amenity in self._poi.amenities:
             if amenity in self._AMENITIES:
                 return self._AMENITIES[amenity]
@@ -43,12 +45,13 @@ class PointOfInterestUI(Component):
             render_template(
                 'apps/places/point-of-interest.html',
                 poi=self._poi,
-                categories=[self._TYPES[type] for type in self._poi.types],
+                categories=self._CATEGORIES,
+                amenities=self._AMENITIES,
                 attributions=[self._load_component(source.attribution._asdict()) for source in self._poi.sources]
             )
         )
 
-    _TYPES = {
+    _CATEGORIES = {
         'http://mollyproject.org/poi/types/leisure/arts-centre': _('Arts Centre'),
         'http://mollyproject.org/poi/types/retail/bank': _('Bank'),
         'http://mollyproject.org/poi/types/leisure/bar': _('Bar'),

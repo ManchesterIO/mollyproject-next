@@ -26,9 +26,16 @@
         require.config({
             paths: {
                 molly: '{{ url_for('static', filename='js/modules') }}',
-                vendors: '{{ url_for('static', filename='js/vendors') }}'
+                vendors: '{{ url_for('static', filename='js/vendors') }}',
+                'vendor-styles': '{{ url_for('static', filename='style/vendors') }}'
+            },
+            map: {
+                '*': {
+                    'css': 'vendors/require-css'
+                }
             }
         });
+        define("config/static-base", function() { return "{{ url_for('static', filename='') }}" });
         require(['molly/loader'], function(loader) { loader.init() });
     </script>
 </body>
