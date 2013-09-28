@@ -29,10 +29,8 @@ Running unit tests
 * pip install -r requirements.txt
 * python setup.py test
 
-To run JavaScript unit tests, grab a copy of JSTestDriver and use the provided config file to run it (or use your
-favourite IDE), e.g.,
-
-java -jar JsTestDriver-1.3.3d.jar --reset --port 9874 --browser firefox --tests all --config JSTestDriver.jstd
+To run JavaScript unit tests, you can open the 'tests/molly/ui/html5/js/TestRunner.html' in your browser or run
+them using PhantomJS 'phantomjs tests/molly/ui/html5/js/runner.js'.
 
 
 Running behavioural tests
