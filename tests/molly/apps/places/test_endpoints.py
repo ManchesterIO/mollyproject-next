@@ -36,9 +36,18 @@ class PointOfInterestEndpointTest(unittest.TestCase):
         response = self._get_response_json()
         self.assertEquals('999', response['poi']['telephone_number'])
 
+    def test_poi_has_link_to_nearby_search(self):
+        self._poi_service.select_by_slug.return_value = PointOfInterest(
+            location=Point(-26.1, 4.5)
+        )
+        response = self._get_response_json()
+        self.assertEquals('http://localhost/nearby/4.5%2C-26.1/', response['links']['nearby'])
+
+
     def _get_response_json(self):
         app = Flask(__name__)
         app.add_url_rule('/poi/<slug>', 'testplaces.poi', self._endpoint.get)
+        app.add_url_rule('/nearby/<float:lat>,<float:lon>/', 'testplaces.nearby', lambda: None)
         with app.test_request_context('/', headers=[('Accept', 'application/json')]):
             return json.loads(self._endpoint.get('foo:bar').data)
 
