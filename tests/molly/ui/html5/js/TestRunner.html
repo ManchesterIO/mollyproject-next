@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Jasmine Spec Runner</title>
+
+    <link rel="stylesheet" type="text/css" href="vendors/jasmine/jasmine.css">
+
+    <script src="../../../../../molly/ui/html5/assets/js/vendors/require.js"></script>
+    <script>
+        require.config({
+            paths: {
+                molly: '../../../../../molly/ui/html5/assets/js/modules',
+                vendors: '../../../../../molly/ui/html5/assets/js/vendors',
+                jasmine: './vendors/jasmine/jasmine',
+                'jasmine-html': './vendors/jasmine/jasmine-html',
+                sinon: './vendors/sinon',
+                'vendor-styles': '../../../../../molly/ui/html5/assets/style/vendors'
+            },
+            map: {
+                '*': {
+                    'css': 'vendors/require-css'
+                }
+            },
+            shim: {
+                jasmine: {
+                    exports: 'jasmine'
+                },
+                'jasmine-html': {
+                    deps: ['jasmine'],
+                    exports: 'jasmine'
+                },
+                sinon: {
+                    exports: 'sinon'
+                }
+            }
+        });
+
+        define('config/static-base', function() { return "../../../../../molly/ui/html5/assets"; });
+
+        require(['jasmine-html'], function (jasmine) {
+            var jasmineEnv = jasmine.getEnv();
+            jasmineEnv.updateInterval = 1000;
+
+            var htmlReporter = new jasmine.HtmlReporter();
+
+            jasmineEnv.addReporter(htmlReporter);
+
+            jasmineEnv.specFilter = function (spec) {
+                return htmlReporter.specFilter(spec);
+            };
+
+            require([
+                'specs/loader',
+                'specs/map',
+                'specs/places/nearby-search'
+            ], function () {
+                jasmineEnv.execute();
+            });
+
+        })();
+    </script>
+
+</head>
+
+<body>
+</body>
+</html>
