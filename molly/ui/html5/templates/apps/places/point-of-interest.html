@@ -22,7 +22,17 @@
     </section>
 {% endif %}
 
-<div data-molly-module="map" data-point-of-interest-coordinates="{{ poi.location.y }},{{ poi.location.x }}"></div>
+<section class="map">
+    <div data-molly-module="map" data-point-of-interest-coordinates="{{ poi.location.y }},{{ poi.location.x }}"></div>
+</section>
+
+{% if links.nearby %}
+<section class="related">
+    <ul>
+        <li><a href="{{ links.nearby|ui_url }}">{% trans %}View other points of interest nearby{% endtrans %}</a></li>
+    </ul>
+</section>
+{% endif %}
 
 {% if attributions %}
 <section class="attributions">

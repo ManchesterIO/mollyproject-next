@@ -74,7 +74,7 @@ class NearbySearchEndpointTest(unittest.TestCase):
         self._endpoint.SEARCH_RADIUS = 123
 
         self.app = Flask(__name__)
-        self.app.add_url_rule('/nearby/<float:lat>,<float:lon>', 'testplaces.nearby', self._endpoint.get_categories)
+        self.app.add_url_rule('/nearby/<float:lat>,<float:lon>', 'testplaces.nearby', self._endpoint.get_nearby)
         self.app.add_url_rule(
             '/nearby/<float:lat>,<float:lon>/category/<slug>', 'testplaces.nearby_category', self._endpoint.get_category
         )
@@ -85,7 +85,7 @@ class NearbySearchEndpointTest(unittest.TestCase):
 
     def _make_categories_request(self, lat, lon):
         with self.app.test_request_context('/', headers=[('Accept', 'application/json')]):
-            response = self._endpoint.get_categories(lat, lon)
+            response = self._endpoint.get_nearby(lat, lon)
         return response
 
     def _make_category_request(self, lat, lon, slug):
@@ -110,7 +110,7 @@ class NearbySearchEndpointTest(unittest.TestCase):
         self._poi_service.search_nearby.return_value = []
         response = self._make_categories_request(54.5, 0.6)
         self.assertEqual({
-            'self': 'http://mollyproject.org/apps/places/categories',
+            'self': 'http://mollyproject.org/apps/places/nearby',
             'categories': [],
             'amenities': []
         }, json.loads(response.data))
@@ -133,7 +133,7 @@ class NearbySearchEndpointTest(unittest.TestCase):
         self._poi_service.count_nearby_amenity = Mock(return_value=6)
         response = json.loads(self._make_categories_request(12.3, 6.8).data)
         self.assertEqual({
-            'self': 'http://mollyproject.org/apps/places/categories',
+            'self': 'http://mollyproject.org/apps/places/nearby',
             'categories': [{
                 'self': 'http://mollyproject.org/apps/places/points-of-interest/by-category',
                 'href': 'http://localhost/nearby/12.3%2C6.8/category/test',

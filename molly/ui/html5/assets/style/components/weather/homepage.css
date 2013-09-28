@@ -1,6 +1,14 @@
 .weather-homepage-widget .weather-observation {
     margin: 0 auto;
+    padding-bottom: 1em;
     max-width: 220px;
+}
+
+.weather-homepage-widget .weather-observation:after {
+    clear: both;
+    content: " ";
+    display: block;
+    height: 0;
 }
 
 .weather-homepage-widget .weather-observation .weather-summary {

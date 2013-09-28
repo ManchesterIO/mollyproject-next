@@ -1,4 +1,4 @@
-from urlparse import urlparse
+from molly.ui.html5.filters import ui_url
 
 
 class Component(object):
@@ -16,7 +16,7 @@ class Component(object):
 
     @property
     def href(self):
-        return urlparse(self._data.get('href')).path
+        return ui_url(self._data.get('href'))
 
     @property
     def css(self):
@@ -25,7 +25,7 @@ class Component(object):
     def render_header(self):
         return ''
 
-    def render(self):
+    def render(self, **kwargs):
         raise NotImplementedError()
 
     def _add_css(self, css):

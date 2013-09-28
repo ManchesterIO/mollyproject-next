@@ -4,7 +4,7 @@ require(['molly/map', 'vendors/leaflet'], function(molly_map, L) {
     var MapTest = new TestCase('MapTest', {
 
         setUp: function() {
-            sinon.stub(L, 'map');
+            sinon.spy(L, 'map');
         },
 
         tearDown: function() {
@@ -12,7 +12,7 @@ require(['molly/map', 'vendors/leaflet'], function(molly_map, L) {
         },
 
         testMapLoadedCorrectly: function() {
-            /*:DOC elem = <div id="map"></div>*/
+            /*:DOC elem = <div id="map" data-point-of-interest-coordinates="54.0,-12.6"></div>*/
             molly_map(this.elem);
 
             assertTrue(L.map.called);

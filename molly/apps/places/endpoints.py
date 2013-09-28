@@ -17,9 +17,7 @@ class PointOfInterestEndpoint(Endpoint):
         if poi is None:
             abort(404)
         else:
-            links = {
-
-            }
+            links = {}
             if poi.location:
                 links['nearby'] = self._nearby_href(poi.location.y, poi.location.x)
             return self._json_response({
@@ -138,14 +136,14 @@ class NearbySearchEndpoint(Endpoint):
         needs_redirect = (fixed_lat, fixed_lon) != (lat, lon)
         return fixed_lat, fixed_lon, needs_redirect
 
-    def get_categories(self, lat, lon):
+    def get_nearby(self, lat, lon):
         lat, lon, needs_redirect = self._needs_redirect(lat, lon)
         if needs_redirect:
             return redirect(self._href(lat, lon))
         else:
             point = Point(lon, lat)
             return self._json_response({
-                'self': 'http://mollyproject.org/apps/places/categories',
+                'self': 'http://mollyproject.org/apps/places/nearby',
                 'categories': self._get_nearby_categories(point),
                 'amenities': self._get_nearby_amenities(point)
             })

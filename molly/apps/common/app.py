@@ -1,3 +1,4 @@
+import re
 from flask.ext.script import Command
 
 
@@ -13,3 +14,8 @@ class BaseApp(object):
                 provider=provider.IMPORTER_NAME, instance_name=self.instance_name
             ), command
         )
+
+    def _get_url_template(self, endpoint):
+        from flask.globals import current_app
+        href = current_app.url_map.iter_rules(self.instance_name + '.' + endpoint).next().rule
+        return re.sub('<[^:]+:(?P<param>[^>]+)>', '{\g<param>}', href)

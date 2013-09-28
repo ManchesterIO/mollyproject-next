@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, Flask
 from mock import Mock, sentinel, MagicMock
 import unittest2
 
@@ -37,3 +37,12 @@ class TestPlacesApp(unittest2.TestCase):
 
     def test_blueprint_exists(self):
         self.assertIsInstance(self._app.blueprint, Blueprint)
+
+    def test_homepage_includes_link_to_nearby_search(self):
+        flask = Flask(__name__)
+        flask.register_blueprint(self._app.blueprint, url_prefix="/pois")
+        with flask.test_request_context():
+            self.assertIn({
+                'self': 'http://mollyproject.org/apps/places/nearby',
+                'href': '/pois/nearby/{lat},{lon}/'
+            }, self._app.links)

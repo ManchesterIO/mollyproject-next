@@ -1,5 +1,5 @@
-<ul class="homepage-applications-list">
+<div class="homepage-applications-list">
     {% for application in applications %}
-        <li>{{ application.render() }}</li>
+        {{ application.render() }}
     {% endfor %}
-</ul>
+</div>

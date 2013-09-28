@@ -25,7 +25,7 @@ class App(BaseApp):
         self.blueprint = Blueprint(self.instance_name, __name__)
         self.blueprint.add_url_rule('/<slug>/', 'poi', self._poi_endpoint.get)
         self.blueprint.add_url_rule(
-            '/nearby/<float:lat>,<float:lon>/', 'nearby', self._nearby_search_endpoint.get_categories
+            '/nearby/<float:lat>,<float:lon>/', 'nearby', self._nearby_search_endpoint.get_nearby
         )
         self.blueprint.add_url_rule(
             '/nearby/<float:lat>,<float:lon>/category/<slug>/', 'nearby_category',
@@ -35,4 +35,16 @@ class App(BaseApp):
             '/nearby/<float:lat>,<float:lon>/amenity/<slug>/', 'nearby_amenity',
             self._nearby_search_endpoint.get_amenity
         )
-        self.links = []
+
+    @property
+    def links(self):
+        return [
+            self.nearby_homepage_component
+        ]
+
+    @property
+    def nearby_homepage_component(self):
+        return {
+            'self': 'http://mollyproject.org/apps/places/nearby',
+            'href': self._get_url_template('nearby')
+        }

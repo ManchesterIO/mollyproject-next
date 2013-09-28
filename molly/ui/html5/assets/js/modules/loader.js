@@ -1,4 +1,4 @@
-define('molly/loader', [], function() {
+define([], function() {
     "use strict";
 
     return {

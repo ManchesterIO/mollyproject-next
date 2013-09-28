@@ -13,7 +13,12 @@ class PlacesHomepage(Component):
         self._components = map(self._load_component, self._data.get('links', []))
 
     def render(self):
-        return ''
+        return Markup(
+            render_template(
+                'apps/places/homepage.html',
+                components=self._components
+            )
+        )
 
 
 @ComponentFactory.register_component('http://mollyproject.org/apps/places/point-of-interest')
@@ -45,6 +50,7 @@ class PointOfInterestUI(Component):
             render_template(
                 'apps/places/point-of-interest.html',
                 poi=self._poi,
+                links=self._data['links'],
                 categories=self._CATEGORIES,
                 amenities=self._AMENITIES,
                 attributions=[self._load_component(source.attribution._asdict()) for source in self._poi.sources]
@@ -98,3 +104,17 @@ class PointOfInterestUI(Component):
         'http://mollyproject.org/poi/amenities/telephone': _('Public telephone'),
         'http://mollyproject.org/poi/amenities/tourist-attraction': _('Tourist Attraction'),
     }
+
+
+@ComponentFactory.register_component('http://mollyproject.org/apps/places/nearby')
+class NearbyPlacesUI(Component):
+
+    _CSS = frozenset(['style/components/places/nearby-search-homepage.css'])
+
+    def render(self):
+        return Markup(
+            render_template(
+                'apps/places/nearby-search-homepage.html',
+                href=self.href
+            )
+        )
