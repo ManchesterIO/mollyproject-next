@@ -35,6 +35,11 @@
                 '*': {
                     'css': 'vendors/require-css'
                 }
+            },
+            shim: {
+                'vendors/geoPosition': {
+                    exports: 'geoPosition'
+                }
             }
         });
         define("config/static-base", function() { return "{{ url_for('static', filename='') }}" });
