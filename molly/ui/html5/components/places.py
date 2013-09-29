@@ -129,7 +129,8 @@ class PointOfInterestListUI(PlacesComponent):
 
     def __init__(self, data, component_factory):
         super(PointOfInterestListUI, self).__init__(data, component_factory)
-        self._point = asShape(data['location_filter']['centre'])
+        if 'location_filter' in data:
+            self._point = asShape(data['location_filter']['centre'])
 
     def render(self):
         if 'href' in self._data:
@@ -146,8 +147,9 @@ class PointOfInterestListUI(PlacesComponent):
         )
 
     def _render_link(self):
-        context = {'href': self.href}
+        context = {}
         context.update(self._data)
+        context['href'] = self.href
         template = 'apps/places/point-of-interest-list-link.html'
         return template, context
 
