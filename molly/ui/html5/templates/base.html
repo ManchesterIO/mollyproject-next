@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>{% block page_title %}{{ body.title }}{% endblock %} - {% block site_title %}Molly Demo{% endblock %}</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/header-logo-small.png') }}">
     {% block inline_head %}
     {% assets bundle %}
         <link href="{{ ASSET_URL }}" rel="stylesheet">

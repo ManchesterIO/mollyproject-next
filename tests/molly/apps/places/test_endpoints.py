@@ -185,6 +185,10 @@ class NearbySearchEndpointTest(unittest.TestCase):
         self.assertEqual(
             {
                 'self': 'http://mollyproject.org/apps/places/points-of-interest/by-category',
+                'location_filter': {
+                    'within': 123,
+                    'centre': {"type": "Point", "coordinates": [12.6, 15.4]}
+                },
                 'category': 'http://example.com/testcat',
                 'points_of_interest': [],
                 'count': 0,
@@ -223,6 +227,10 @@ class NearbySearchEndpointTest(unittest.TestCase):
         self.assertEqual(
             {
                 'self': 'http://mollyproject.org/apps/places/points-of-interest/by-amenity',
+                'location_filter': {
+                    'within': 123,
+                    'centre': {"type": "Point", "coordinates": [12.6, 15.4]}
+                },
                 'amenity': 'http://example.com/testamen',
                 'points_of_interest': [],
                 'count': 0,

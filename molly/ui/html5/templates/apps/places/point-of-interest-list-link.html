@@ -1,0 +1,29 @@
+{% if href %}
+    <a href="{{ href }}">
+        <strong>
+            {% if category %}
+                {% if category in CATEGORIES %}
+                    {% if count > 1 %}
+                        {{ CATEGORIES.get(category)[1] }}
+                    {% else %}
+                        {{ CATEGORIES.get(category)[0] }}
+                    {% endif %}
+                {% else %}
+                    {% trans %}Unknown category{% endtrans %}
+                {% endif %}
+            {% endif %}
+            {% if amenity %}
+                {% if amenity in AMENITIES %}
+                    {% if count > 1 %}
+                        {{ AMENITIES.get(amenity)[1] }}
+                    {% else %}
+                        {{ AMENITIES.get(amenity)[0] }}
+                    {% endif %}
+                {% else %}
+                    {% trans %}Unknown facility{% endtrans %}
+                {% endif %}
+            {% endif %}
+        </strong>
+        {% trans %}({{ count }} nearby){% endtrans %}
+    </a>
+{% endif %}

@@ -19,4 +19,6 @@ ASSET_DIR = '/opt/molly/static'
 # If you would like statsd support, please specify the hostname of the statsd server below
 #STATSD_HOST = "localhost"
 
+CACHE_TYPE = 'memcached'
+
 CLOUDMADE_API_KEY = '878630acb91c470fac653232731f4764'

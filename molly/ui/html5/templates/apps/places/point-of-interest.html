@@ -1,6 +1,6 @@
 <header>
     <h1>{{ poi.name() }}</h1>
-    {% if categories %}<h2 class="category">{% for category in poi.categories %}<span data-category-uri="{{ category }}">{{ categories.get(category) }}</span>{% if not loop.last %}, {% endif %}{% endfor %}</h2>{% endif %}
+    {% if categories %}<h2 class="category">{% for category in poi.categories %}<span data-category-uri="{{ category }}">{{ categories.get(category)[0] }}</span>{% if not loop.last %}, {% endif %}{% endfor %}</h2>{% endif %}
 </header>
 
 {% if poi.telephone_number or poi.amenities %}

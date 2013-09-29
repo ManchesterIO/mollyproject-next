@@ -1,3 +1,4 @@
+from urllib import unquote
 from molly.ui.html5.filters import ui_url
 
 
@@ -16,7 +17,7 @@ class Component(object):
 
     @property
     def href(self):
-        return ui_url(self._data.get('href'))
+        return ui_url(unquote(self._data.get('href')))
 
     @property
     def css(self):

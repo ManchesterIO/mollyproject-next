@@ -103,7 +103,6 @@ class NearbySearchEndpoint(Endpoint):
         self.interesting_categories = dict(DEFAULT_INTERESTING_CATEGORIES.items())
         self.interesting_amenities = dict(DEFAULT_INTERESTING_AMENITIES.items())
 
-
     def _get_nearby_categories(self, point):
         categories = []
         for slug, category in self.interesting_categories.items():
@@ -157,10 +156,11 @@ class NearbySearchEndpoint(Endpoint):
             return redirect(self._nearby_category_href(lat, lon, slug))
         else:
             category = self._get_uri_from_slug(slug, self.interesting_categories)
+            centre_point = Point(lon, lat)
             points_of_interest = self._poi_service.search_nearby_category(
-                Point(lon, lat), category, radius=self.SEARCH_RADIUS
+                centre_point, category, radius=self.SEARCH_RADIUS
             )
-            return self._build_poi_list(points_of_interest, 'category', category)
+            return self._build_poi_list(centre_point, points_of_interest, 'category', category)
 
     def get_amenity(self, lat, lon, slug):
         lat, lon, needs_redirect = self._needs_redirect(lat, lon)
@@ -168,15 +168,20 @@ class NearbySearchEndpoint(Endpoint):
             return redirect(self._nearby_amenity_href(lat, lon, slug))
         else:
             amenity = self._get_uri_from_slug(slug, self.interesting_amenities)
+            centre_point = Point(lon, lat)
             points_of_interest = self._poi_service.search_nearby_amenity(
-                Point(lon, lat), amenity, radius=self.SEARCH_RADIUS
+                centre_point, amenity, radius=self.SEARCH_RADIUS
             )
-            return self._build_poi_list(points_of_interest, 'amenity', amenity)
+            return self._build_poi_list(centre_point, points_of_interest, 'amenity', amenity)
 
-    def _build_poi_list(self, points_of_interest, filter_key, filter_value):
+    def _build_poi_list(self, centre_point, points_of_interest, filter_key, filter_value):
         return self._json_response({
             'self': 'http://mollyproject.org/apps/places/points-of-interest/by-' + filter_key,
             filter_key: filter_value,
+            'location_filter': {
+                'centre': GeoJSONEncoder().default(centre_point),
+                'within': self.SEARCH_RADIUS
+            },
             'points_of_interest': map(lambda poi: {
                 'self': 'http://mollyproject.org/apps/places/point-of-interest',
                 'href': self._poi_href(poi.slug),
