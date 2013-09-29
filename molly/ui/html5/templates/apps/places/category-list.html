@@ -1,0 +1,4 @@
+<header>
+    <h1>{% trans %}Points of Interest nearby{% endtrans %}</h1>
+    <h2>{% trans distance=within|humanise_distance, location=centre_point|reverse_geocode %}Searched within {{ distance }} of {{ location }}{% endtrans %}</h2>
+</header>

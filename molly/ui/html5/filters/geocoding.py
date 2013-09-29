@@ -45,8 +45,10 @@ def reverse_geocode(point):
     cache_key = CACHE_KEY.format(lat=point.y, lon=point.x)
     cached_result = current_app.cache.get(cache_key)
     if cached_result:
+        current_app.statsd.incr(__name__ + '.reverse_geocode_cache_hit')
         return cached_result
     else:
+        current_app.statsd.incr(__name__ + '.reverse_geocode_cache_miss')
         result, success = _do_reverse_geocode(point)
         if success:
             current_app.cache.set(cache_key, result, CACHE_TIMEOUT)

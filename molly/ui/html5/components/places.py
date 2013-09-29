@@ -2,8 +2,11 @@
 from flask import request, render_template
 from flask.ext.babel import lazy_gettext as _
 from jinja2 import Markup
+from shapely.geometry import asShape
 from molly.apps.places.models import PointOfInterest
 from molly.ui.html5.components import ComponentFactory, Component
+from molly.ui.html5.filters import reverse_geocode
+
 
 @ComponentFactory.register_component('http://mollyproject.org/apps/places')
 class PlacesHomepage(Component):
@@ -70,6 +73,27 @@ class NearbyPlacesUI(Component):
             render_template(
                 'apps/places/nearby-search.html',
                 href=self.href
+            )
+        )
+
+
+@ComponentFactory.register_component('http://mollyproject.org/apps/places/categories')
+class CategoryListUI(Component):
+
+    def __init__(self, data, component_factory):
+        super(CategoryListUI, self).__init__(data, component_factory)
+        self._point = asShape(data['location_filter']['centre'])
+
+    @property
+    def title(self):
+        return _('Points of Interest near to %(location)s', location=reverse_geocode(self._point))
+
+    def render(self):
+        return Markup(
+            render_template(
+                'apps/places/category-list.html',
+                within=self._data['location_filter']['within'],
+                centre_point=self._point
             )
         )
 
