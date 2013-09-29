@@ -1,6 +1,7 @@
 import celery
 import celery.beat
 
+
 class Service(celery.Celery):
 
     def __init__(self, flask_app):
@@ -12,7 +13,7 @@ class Service(celery.Celery):
         @manager.command
         def taskbeat():
             beat = self.Beat()
-            beat.scheduler_cls=Scheduler
+            beat.scheduler_cls = Scheduler
             beat.run()
 
         @manager.command

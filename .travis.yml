@@ -5,7 +5,7 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install build-essential libgeos-c1 libprotobuf-dev protobuf-compiler
 install:
-  - pip install -r requirements.txt
+  - python setup.py develop
 script:
   - python setup.py test
   - phantomjs tests/molly/ui/html5/js/runner.js
