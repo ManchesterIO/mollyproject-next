@@ -5,6 +5,12 @@ define(['molly/places/nearby-search', 'sinon', 'vendors/geoPosition'], function(
 
         var div, link, setWindowLocation;
 
+        var clickLink = function() {
+            var ev = document.createEvent('MouseEvent');
+            ev.initMouseEvent("click");
+            link.dispatchEvent(ev);
+        };
+
         beforeEach(function() {
             div = document.createElement('div');
             div.style.display = 'none';
@@ -40,7 +46,7 @@ define(['molly/places/nearby-search', 'sinon', 'vendors/geoPosition'], function(
 
         it("changes to a loading spinner when clicked on", function() {
             nearbySearch(div);
-            link.dispatchEvent(new window.MouseEvent('click'));
+            clickLink();
             expect(link.classList.contains('loading')).toBeTruthy();
             expect(link.innerText).toBe("Determining your location");
             expect(link.disabled).toBeTruthy();
@@ -49,14 +55,14 @@ define(['molly/places/nearby-search', 'sinon', 'vendors/geoPosition'], function(
         it("when geolocation returns result, user is navigated to page", function() {
             geoPosition.getCurrentPosition.callsArgWith(0, {coords: {latitude: 12.3, longitude: 45.6}});
             setWindowLocation = sinon.stub(nearbySearch(div), 'setWindowLocation');
-            link.dispatchEvent(new window.MouseEvent('click'));
+            clickLink();
             expect(setWindowLocation.calledWith('/places/12.3,45.6')).toBeTruthy();
         });
 
         it("shows an error message when geolocation fails", function() {
             geoPosition.getCurrentPosition.callsArgWith(1, {code: 1});
             nearbySearch(div);
-            link.dispatchEvent(new window.MouseEvent('click'));
+            clickLink();
             expect(link.classList.contains('loading')).toBeFalsy();
             expect(link.classList.contains('failed')).toBeTruthy();
             expect(link.innerText).toBe("Failed to determine your location");
