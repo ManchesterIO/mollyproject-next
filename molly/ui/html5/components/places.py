@@ -227,7 +227,7 @@ _CATEGORIES = {
     'http://mollyproject.org/poi/types/place-of-worship/mosque': (_('Mosque'), _('Mosques')),
     'http://mollyproject.org/poi/types/leisure/swimming-pool': (_('Swimming Pool'), _('Swimming Pools')),
     'http://mollyproject.org/poi/types/tourist-information': (_('Tourist Information'), _('Tourist Information')),
-    'http://mollyproject.org/poi/types/transport/bus-stop': (_('Bus Stop'), _('Bus Tops')),
+    'http://mollyproject.org/poi/types/transport/bus-stop': (_('Bus Stop'), _('Bus Stops')),
     'http://mollyproject.org/poi/types/transport/rail-station': (_('Rail Station'), _('Rail Stations')),
     'http://mollyproject.org/poi/types/transport/airport': (_('Airport'), _('Airports')),
     'http://mollyproject.org/poi/types/transport/ferry-terminal': (_('Port'), _('Ports')),
