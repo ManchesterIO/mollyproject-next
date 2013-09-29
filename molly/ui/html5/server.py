@@ -23,9 +23,10 @@ def init_flask():
     Babel(flask_app)
     if 'SENTRY_DSN' in flask_app.config:
         Sentry(flask_app)
-    statsd = StatsD(flask_app) if 'STATSD_HOST' in flask_app.config else NullStats()
-    return flask_app, statsd
-flask_app, statsd = init_flask()
+    flask_app.statsd = StatsD(flask_app) if 'STATSD_HOST' in flask_app.config else NullStats()
+    flask_app.cache = Cache(flask_app)
+    return flask_app
+flask_app = init_flask()
 
 
 def init_molly(flask_app, api_hostname, api_port):
@@ -36,7 +37,7 @@ def init_molly(flask_app, api_hostname, api_port):
         assets.debug = True
     page_decorator_factory = PageDecoratorFactory(assets)
 
-    router = Router(request_factory, component_factory, page_decorator_factory, statsd)
+    router = Router(request_factory, component_factory, page_decorator_factory, flask_app.statsd)
 
     flask_app.add_url_rule('/', 'homepage', view_func=router)
     flask_app.add_url_rule('/<path:path>', 'main', view_func=router)
@@ -48,7 +49,7 @@ def init_molly(flask_app, api_hostname, api_port):
         flask_app.jinja_env.filters[filter_name] = filter_func
 
 
-def configure_template_loader(flask_app, template_dir, cache):
+def configure_template_loader(flask_app, template_dir):
     if template_dir:
         loaders = [FileSystemLoader(template_dir)]
     else:
@@ -59,8 +60,7 @@ def configure_template_loader(flask_app, template_dir, cache):
         PrefixLoader({'molly_default': PackageLoader('molly.ui.html5', 'templates')})
     ])
 
-    if cache:
-        flask_app.jinja_env.bytecode_cache = MemcachedBytecodeCache(cache)
+    flask_app.jinja_env.bytecode_cache = MemcachedBytecodeCache(flask_app.cache)
 
 
 def collect_static(override_location, output_location, debug):
@@ -72,7 +72,7 @@ def collect_static(override_location, output_location, debug):
         for dirpath, dirnames, filenames in os.walk(root):
             for filename in filenames:
                 source = os.path.join(dirpath, filename)
-                destination = os.path.join(output_location, dirpath[len(root)+1:], filename)
+                destination = os.path.join(output_location, dirpath[len(root) + 1:], filename)
                 print source, destination
                 if not os.path.exists(os.path.dirname(destination)):
                     os.makedirs(os.path.dirname(destination))
@@ -86,13 +86,12 @@ def collect_static(override_location, output_location, debug):
 
 def start_debug(address=None):
     flask_app.debug = True
-    cache = Cache(flask_app)
     init_molly(
         flask_app,
         flask_app.config.get('MOLLY_API_HOSTNAME', 'localhost'),
         flask_app.config.get('MOLLY_API_PORT', 8000)
     )
-    configure_template_loader(flask_app, flask_app.config.get('TEMPLATE_DIR'), cache)
+    configure_template_loader(flask_app, flask_app.config.get('TEMPLATE_DIR'))
 
     flask_app.static_folder = flask_app.config.get('ASSET_DIR')
     flask_app.static_url_path = 'static'

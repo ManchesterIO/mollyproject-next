@@ -15,6 +15,7 @@ phonenumbers==5.7b2
 python-dateutil
 python-memcached
 raven
+requests
 Shapely
 supervisor
 unittest2

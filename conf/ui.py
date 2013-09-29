@@ -16,5 +16,7 @@ ASSET_DIR = '/opt/molly/static'
 # If you would like to add Sentry support to the UI, please specify your DSN below
 #SENTRY_DSN = ''
 
-# If you would like statsd support, please specify the hostname of the statsd server belo
+# If you would like statsd support, please specify the hostname of the statsd server below
 #STATSD_HOST = "localhost"
+
+CLOUDMADE_API_KEY = '878630acb91c470fac653232731f4764'
