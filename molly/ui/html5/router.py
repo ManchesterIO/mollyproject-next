@@ -1,5 +1,5 @@
 import json
-from urlparse import urlparse
+from urlparse import urlparse, unquote
 from flask import render_template, redirect, url_for
 from werkzeug.exceptions import NotFound, ServiceUnavailable, BadGateway, default_exceptions, InternalServerError
 
@@ -38,7 +38,7 @@ class Router(object):
 
         elif response.status in [301, 302, 303, 307, 308]:
             redirect_path = urlparse(response.getheader('Location')).path
-            return redirect(url_for('main', path=redirect_path), code=response.status)
+            return redirect(url_for('main', path=unquote(redirect_path)), code=response.status)
 
         elif response.status == 404:
             self._statsd.incr('molly.ui.html5.api_404')
