@@ -110,7 +110,11 @@ class NearbySearchEndpointTest(unittest.TestCase):
         self._poi_service.search_nearby.return_value = []
         response = self._make_categories_request(54.5, 0.6)
         self.assertEqual({
-            'self': 'http://mollyproject.org/apps/places/nearby',
+            'self': 'http://mollyproject.org/apps/places/categories',
+            'location_filter': {
+                'within': 123,
+                'centre': {"type": "Point", "coordinates": [0.6, 54.5]}
+            },
             'categories': [],
             'amenities': []
         }, json.loads(response.data))
@@ -133,26 +137,27 @@ class NearbySearchEndpointTest(unittest.TestCase):
         self._poi_service.count_nearby_amenity = Mock(return_value=6)
         response = json.loads(self._make_categories_request(12.3, 6.8).data)
         self.assertEqual({
-            'self': 'http://mollyproject.org/apps/places/nearby',
+            'self': 'http://mollyproject.org/apps/places/categories',
+            'location_filter': {
+                'within': 123,
+                'centre': {"type": "Point", "coordinates": [6.8, 12.3]}
+            },
             'categories': [{
                 'self': 'http://mollyproject.org/apps/places/points-of-interest/by-category',
                 'href': 'http://localhost/nearby/12.3%2C6.8/category/test',
                 'category': 'http://example.com/testcat',
-                'count': 3,
-                'within': 123
+                'count': 3
             }, {
                 'self': 'http://mollyproject.org/apps/places/points-of-interest/by-category',
                 'href': 'http://localhost/nearby/12.3%2C6.8/category/test2',
                 'category': 'http://example.com/testcat2',
-                'count': 2,
-                'within': 123
+                'count': 2
             }],
             'amenities': [{
                 'self': 'http://mollyproject.org/apps/places/points-of-interest/by-amenity',
                 'href': 'http://localhost/nearby/12.3%2C6.8/amenity/testamen',
                 'amenity': 'http://example.com/testamen',
-                'count': 6,
-                'within': 123
+                'count': 6
             }]
         }, response)
 

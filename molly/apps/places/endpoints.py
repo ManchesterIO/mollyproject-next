@@ -1,4 +1,5 @@
 from flask import url_for, redirect
+from geojson import GeoJSONEncoder
 from shapely.geometry import Point
 from werkzeug.exceptions import abort
 
@@ -112,8 +113,7 @@ class NearbySearchEndpoint(Endpoint):
                     'self': 'http://mollyproject.org/apps/places/points-of-interest/by-category',
                     'href': self._nearby_category_href(point.y, point.x, slug),
                     'category': category,
-                    'count': num_pois,
-                    'within': self.SEARCH_RADIUS
+                    'count': num_pois
                 })
         return categories
 
@@ -126,8 +126,7 @@ class NearbySearchEndpoint(Endpoint):
                     'self': 'http://mollyproject.org/apps/places/points-of-interest/by-amenity',
                     'href': self._nearby_amenity_href(point.y, point.x, slug),
                     'amenity': amenity,
-                    'count': num_pois,
-                    'within': self.SEARCH_RADIUS
+                    'count': num_pois
                 })
         return amenities
 
@@ -143,7 +142,11 @@ class NearbySearchEndpoint(Endpoint):
         else:
             point = Point(lon, lat)
             return self._json_response({
-                'self': 'http://mollyproject.org/apps/places/nearby',
+                'self': 'http://mollyproject.org/apps/places/categories',
+                'location_filter': {
+                    'centre': GeoJSONEncoder().default(point),
+                    'within': self.SEARCH_RADIUS
+                },
                 'categories': self._get_nearby_categories(point),
                 'amenities': self._get_nearby_amenities(point)
             })
