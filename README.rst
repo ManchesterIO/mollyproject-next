@@ -26,7 +26,6 @@ Running unit tests
 (you'll be best doing development in a virtualenv)
 
 * You'll need libgeos, protobufs and a compiler installed (Use brew on Mac or your favourite package manager)
-* pip install -r requirements.txt
 * python setup.py test
 
 To run JavaScript unit tests, you can open the 'tests/molly/ui/html5/js/TestRunner.html' in your browser or run

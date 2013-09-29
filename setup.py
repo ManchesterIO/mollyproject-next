@@ -12,6 +12,27 @@ setup(
     setup_requires=['setuptools'],
     tests_require=['unittest2', 'mock'],
     test_suite='unittest2.collector',
+    install_requires=[
+        'celery',
+        'cssmin',
+        'Flask',
+        'Flask-Assets',
+        'Flask-Babel',
+        'Flask-Cache',
+        'Flask-PyMongo',
+        'Flask-Script',
+        'Flask-StatsD',
+        'geojson',
+        'gunicorn',
+        'imposm.parser',
+        'phonenumbers==5.7b2',
+        'python-dateutil',
+        'python-memcached',
+        'raven',
+        'requests',
+        'Shapely',
+        'supervisor'
+    ],
     entry_points={
         'console_scripts': [
             'mollyui = molly.command:ui_main',
