@@ -25,16 +25,18 @@ def init_flask():
         Sentry(flask_app)
     flask_app.statsd = StatsD(flask_app) if 'STATSD_HOST' in flask_app.config else NullStats()
     flask_app.cache = Cache(flask_app)
+
+    configure_template_loader(flask_app, flask_app.config.get('TEMPLATE_DIR'))
+
+    flask_app.static_folder = flask_app.config.get('ASSET_DIR')
+    flask_app.static_url_path = 'static'
     return flask_app
-flask_app = init_flask()
 
 
 def init_molly(flask_app, api_hostname, api_port):
     request_factory = HttpRequestFactory(hostname=api_hostname, port=api_port)
     component_factory = ComponentFactory()
     assets = Assets(flask_app)
-    if flask_app.debug:
-        assets.debug = True
     page_decorator_factory = PageDecoratorFactory(assets)
 
     router = Router(request_factory, component_factory, page_decorator_factory, flask_app.statsd)
@@ -83,18 +85,16 @@ def collect_static(override_location, output_location, debug):
                 else:
                     copyfile(source, destination)
 
+flask_app = init_flask()
+init_molly(
+    flask_app,
+    flask_app.config.get('MOLLY_API_HOSTNAME', 'localhost'),
+    flask_app.config.get('MOLLY_API_PORT', 8000)
+)
+
 
 def start_debug(address=None):
-    flask_app.debug = True
-    init_molly(
-        flask_app,
-        flask_app.config.get('MOLLY_API_HOSTNAME', 'localhost'),
-        flask_app.config.get('MOLLY_API_PORT', 8000)
-    )
-    configure_template_loader(flask_app, flask_app.config.get('TEMPLATE_DIR'))
-
-    flask_app.static_folder = flask_app.config.get('ASSET_DIR')
-    flask_app.static_url_path = 'static'
+    flask_app.jinja_env.assets_environment.debug = flask_app.debug = True
 
     collect_static(flask_app.config.get('OVERRIDE_ASSET_DIR'), flask_app.static_folder, True)
 
