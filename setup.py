@@ -7,6 +7,7 @@ setup(
     name='molly',
     version='2.0dev',
     packages=find_packages(exclude=['tests']),
+    include_package_data=True,
     url='http://mollyproject.org/',
     author='The Molly Project',
     setup_requires=['setuptools'],
