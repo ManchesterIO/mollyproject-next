@@ -1,0 +1,3 @@
+include setup.py README.rst MANIFEST.in LICENSE NOTICE.md molly/supervisor.cfg molly/supervisor-debug.cfg
+recursive-include molly/ui/html5/assets *
+recursive-include molly/ui/html5/templates *
