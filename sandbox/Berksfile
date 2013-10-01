@@ -1,7 +1,6 @@
 site :opscode
 
 cookbook 'memcached'
+cookbook 'mollyproject', git: 'https://github.com/ManchesterIO/cookbook-molly.git'
 cookbook 'mongodb', git: 'https://github.com/edelight/chef-mongodb.git'
-cookbook 'python'
 cookbook 'rabbitmq'
-cookbook 'supervisor'
