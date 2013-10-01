@@ -15,6 +15,7 @@ Running Molly
 -------------
 
 * Make sure Vagrant is installed
+* Install the Berkshelf plugin for Vagrant: vagrant plugin install vagrant-berkshelf
 * Run 'vagrant up' in the root
 * Visit http://192.168.33.10:8000/ for the REST endpoints
 * Visit http://192.168.33.10:8002/ for the prototype HTML5 frontend

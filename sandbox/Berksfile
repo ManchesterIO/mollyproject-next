@@ -1,0 +1,7 @@
+site :opscode
+
+cookbook 'memcached'
+cookbook 'mongodb', git: 'https://github.com/edelight/chef-mongodb.git'
+cookbook 'python'
+cookbook 'rabbitmq'
+cookbook 'supervisor'
