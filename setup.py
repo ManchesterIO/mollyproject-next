@@ -22,26 +22,19 @@ setup(
         'Flask-Cache',
         'Flask-PyMongo',
         'Flask-Script',
-        'Flask-StatsD',
         'geojson',
         'gunicorn',
         'imposm.parser',
         'phonenumbers==5.7b2',
         'python-dateutil',
         'python-memcached',
-        'raven',
         'requests',
-        'Shapely',
-        'supervisor'
+        'Shapely'
     ],
     entry_points={
         'console_scripts': [
             'mollyui = molly.command:ui_main',
-            'mollyrest = molly.command:rest_main',
-            'mollyd = molly.command:mollyd',
-            'mollydebugd = molly.command:mollydebugd',
-            'mollyctl = molly.command:mollyctl',
-            'mollydebugctl = molly.command:mollydebugctl'
+            'mollyrest = molly.command:rest_main'
         ]
     }
 )

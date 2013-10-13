@@ -1,9 +1,9 @@
 from importlib import import_module
-from sys import argv
 import os
 
 from flask.ext.script import Manager
 from gunicorn.app.base import Application
+
 
 def configure_manager(manager, flask_app, debug, default_port=8000):
 
@@ -24,9 +24,11 @@ def configure_manager(manager, flask_app, debug, default_port=8000):
 
     return manager
 
+
 def rest_main():
     from molly.rest import flask_app, cli_manager, start_debug
     configure_manager(cli_manager, flask_app, start_debug).run()
+
 
 def ui_main():
     package, app_name = os.environ.get('MOLLY_UI_MODULE', 'molly.ui.html5.server:flask_app').split(':', 1)
@@ -35,28 +37,3 @@ def ui_main():
     configure_manager(
         Manager(flask_app, with_default_commands=False), flask_app, getattr(module, 'start_debug'), 8002
     ).run()
-
-def run_supervisord(config):
-    from supervisor.supervisord import main
-    main([
-         '-c', os.path.abspath(os.path.join(os.path.dirname(__file__), config)),
-         '-i', 'mollyd'
-     ] + argv[1:])
-
-def run_supervisorctl(config):
-    from supervisor.supervisorctl import main
-    main([
-         '-c', os.path.abspath(os.path.join(os.path.dirname(__file__), config)),
-     ] + argv[1:])
-
-def mollyd():
-    run_supervisord('supervisor.cfg')
-
-def mollydebugd():
-    run_supervisord('supervisor-debug.cfg')
-
-def mollyctl():
-    run_supervisorctl('supervisor.cfg')
-
-def mollydebugctl():
-    run_supervisorctl('supervisor-debug.cfg')
