@@ -6,7 +6,7 @@
     "mollyproject": {
       "locked_version": "0.0.0",
       "git": "https://github.com/ManchesterIO/cookbook-molly.git",
-      "ref": "67f3af10459b900f4ba60241359d4c4053bbaba0"
+      "ref": "b93da3fb78be997620c4f6c6a16734787dcf2f3d"
     },
     "mongodb": {
       "locked_version": "0.13.2",

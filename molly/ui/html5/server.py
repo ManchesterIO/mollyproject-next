@@ -5,9 +5,7 @@ from flask import Flask
 from flask.ext.assets import Environment as Assets
 from flask.ext.babel import Babel
 from flask.ext.cache import Cache
-from flask.ext.statsd import StatsD
 from jinja2 import PackageLoader, ChoiceLoader, PrefixLoader, FileSystemLoader, MemcachedBytecodeCache
-from raven.contrib.flask import Sentry
 
 from molly.services.stats import NullStats
 from molly.ui.html5.components.factory import ComponentFactory
@@ -22,8 +20,13 @@ def init_flask():
     flask_app.config.from_envvar('MOLLY_UI_SETTINGS')
     Babel(flask_app)
     if 'SENTRY_DSN' in flask_app.config:
+        from raven.contrib.flask import Sentry
         Sentry(flask_app)
-    flask_app.statsd = StatsD(flask_app) if 'STATSD_HOST' in flask_app.config else NullStats()
+    if 'STATSD_HOST' in flask_app.config:
+        from flask.ext.statsd import StatsD
+        flask_app.statsd = StatsD(flask_app)
+    else:
+        flask_app.statsd = NullStats()
     flask_app.cache = Cache(flask_app)
 
     configure_template_loader(flask_app, flask_app.config.get('TEMPLATE_DIR'))
