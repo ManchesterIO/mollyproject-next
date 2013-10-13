@@ -6,6 +6,7 @@ class Service(celery.Celery):
 
     def __init__(self, flask_app):
         super(Service, self).__init__(__package__, loader='default')
+        self.config_from_object(flask_app.config)
         self.periodic_tasks = {}
 
     def init_cli_commands(self, manager):
