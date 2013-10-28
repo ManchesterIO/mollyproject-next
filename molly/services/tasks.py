@@ -9,7 +9,7 @@ class Service(celery.Celery):
         self.config_from_object(flask_app.config)
         self.periodic_tasks = {}
 
-    def init_cli_commands(self, manager):
+    def init_cli(self, manager):
 
         @manager.command
         def taskbeat():
@@ -20,6 +20,10 @@ class Service(celery.Celery):
         @manager.command
         def taskworker():
             self.Worker().run()
+
+    def init_sentry(self, sentry):
+        from raven.contrib.celery import register_signal
+        register_signal(sentry)
 
     def periodic_task(self, *args, **kwargs):
         crontab = kwargs.pop('crontab')

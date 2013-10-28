@@ -17,8 +17,9 @@ def configure_flask_app():
             apps, services = config_loader.load_from_config(fd)
 
     for service in services.values():
-        if hasattr(service, 'init_cli_commands'):
-            service.init_cli_commands(services['cli'])
+        for dependent_service_name, dependent_service in services.iteritems():
+            if hasattr(service, 'init_{0}'.format(dependent_service_name)):
+                getattr(service, 'init_{0}'.format(dependent_service_name))(dependent_service)
 
     for app in apps:
         flask_app.register_blueprint(app.blueprint, url_prefix='/' + app.instance_name)

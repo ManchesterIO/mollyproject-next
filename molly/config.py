@@ -3,6 +3,7 @@ from collections import OrderedDict
 from importlib import import_module
 from flask.ext.script import Manager
 
+
 class ConfigLoader(object):
 
     def __init__(self, flask_app):
