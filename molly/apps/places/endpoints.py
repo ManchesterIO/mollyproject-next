@@ -1,4 +1,4 @@
-from flask import url_for, redirect
+from flask import url_for, redirect, request
 from geojson import GeoJSONEncoder
 from shapely.geometry import Point
 from werkzeug.exceptions import abort
@@ -197,3 +197,15 @@ class NearbySearchEndpoint(Endpoint):
             abort(404)
         else:
             return uri
+
+
+class PointOfInterestSearchEndpoint(Endpoint):
+
+    def __init__(self, instance_name, poi_service):
+        self._poi_service = poi_service
+        self.href = lambda: url_for(instance_name + '.search', _external=True)
+
+    def get(self):
+        return self._json_response({
+            'results': self._poi_service.search_name(request.args['q'])
+        })

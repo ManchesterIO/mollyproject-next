@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask.ext.babel import lazy_gettext as _
 
 from molly.apps.common.app import BaseApp
-from molly.apps.places.endpoints import PointOfInterestEndpoint, NearbySearchEndpoint
+from molly.apps.places.endpoints import PointOfInterestEndpoint, NearbySearchEndpoint, PointOfInterestSearchEndpoint
 from molly.apps.places.services import PointsOfInterest
 
 
@@ -21,6 +21,7 @@ class App(BaseApp):
 
         self._poi_endpoint = PointOfInterestEndpoint(instance_name, poi_service)
         self._nearby_search_endpoint = NearbySearchEndpoint(instance_name, poi_service)
+        self._search_endpoint = PointOfInterestSearchEndpoint(instance_name, poi_service)
 
         self.blueprint = Blueprint(self.instance_name, __name__)
         self.blueprint.add_url_rule('/<slug>/', 'poi', self._poi_endpoint.get)
@@ -35,11 +36,16 @@ class App(BaseApp):
             '/nearby/<float:lat>,<float:lon>/amenity/<slug>/', 'nearby_amenity',
             self._nearby_search_endpoint.get_amenity
         )
+        self.blueprint.add_url_rule(
+            '/search', 'search',
+            self._search_endpoint.get
+        )
 
     @property
     def links(self):
         return [
-            self.nearby_homepage_component
+            self.nearby_homepage_component,
+            self.search_homepage_component
         ]
 
     @property
@@ -47,4 +53,11 @@ class App(BaseApp):
         return {
             'self': 'http://mollyproject.org/apps/places/nearby',
             'href': self._get_url_template('nearby')
+        }
+
+    @property
+    def search_homepage_component(self):
+        return {
+            'self': 'http://mollyproject.org/apps/places/search',
+            'href': self._search_endpoint.href()
         }

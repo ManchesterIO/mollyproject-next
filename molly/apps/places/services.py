@@ -45,6 +45,9 @@ class PointsOfInterest(object):
     def search_nearby_amenity(self, point, amenity, radius=None):
         return map(PointOfInterest.from_dict, self._search_nearby(point, 'amenities', amenity, radius))
 
+    def search_name(self, search_terms):
+        return []
+
     def _count_nearby(self, point, facet, uri, radius):
         return self._search_nearby(point, facet, uri, radius).count()
 

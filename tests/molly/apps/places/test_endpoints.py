@@ -1,4 +1,5 @@
 import json
+from urllib import quote_plus
 import urllib2
 from flask import Flask
 from mock import Mock, ANY, MagicMock
@@ -7,7 +8,7 @@ import unittest2 as unittest
 
 from werkzeug.exceptions import NotFound
 
-from molly.apps.places.endpoints import PointOfInterestEndpoint, NearbySearchEndpoint
+from molly.apps.places.endpoints import PointOfInterestEndpoint, NearbySearchEndpoint, PointOfInterestSearchEndpoint
 from molly.apps.places.models import PointOfInterest
 
 
@@ -42,7 +43,6 @@ class PointOfInterestEndpointTest(unittest.TestCase):
         )
         response = self._get_response_json()
         self.assertEquals('http://localhost/nearby/4.5%2C-26.1/', response['links']['nearby'])
-
 
     def _get_response_json(self):
         app = Flask(__name__)
@@ -260,3 +260,26 @@ class NearbySearchEndpointTest(unittest.TestCase):
         )
         self.assertEquals('http://localhost/poi/test', response['points_of_interest'][0]['href'])
         self.assertEquals(telephone_number, response['points_of_interest'][0]['poi']['telephone_number'])
+
+
+class PointOfInterestSearchEndpointTest(unittest.TestCase):
+
+    def setUp(self):
+        self._poi_service = Mock()
+        self._poi_service.name_search = Mock(return_value=[])
+
+        self._app = Flask(__name__)
+        self._endpoint = PointOfInterestSearchEndpoint(self._poi_service)
+        self._app.add_url_rule('/search', 'testplaces.search', self._endpoint.get)
+
+    def test_making_search_passes_it_to_service(self):
+        search_terms = "test search"
+        self._make_search_request(search_terms)
+        self._poi_service.search_name.assert_called_once_with(search_terms)
+
+    def _make_search_request(self, search_terms):
+        with self._app.test_request_context(
+            '/search?q={q}'.format(q=quote_plus(search_terms)), headers=[('Accept', 'application/json')]
+        ):
+            response = self._endpoint.get()
+        return json.loads(response.data)

@@ -46,3 +46,12 @@ class TestPlacesApp(unittest2.TestCase):
                 'self': 'http://mollyproject.org/apps/places/nearby',
                 'href': '/pois/nearby/{lat},{lon}/'
             }, self._app.links)
+
+    def test_homepage_includes_link_to_free_text_search(self):
+        flask = Flask(__name__)
+        flask.register_blueprint(self._app.blueprint, url_prefix="/pois")
+        with flask.test_request_context():
+            self.assertIn({
+                'self': 'http://mollyproject.org/apps/places/search',
+                'href': 'http://localhost/pois/search'
+            }, self._app.links)
