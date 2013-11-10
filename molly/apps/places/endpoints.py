@@ -204,8 +204,13 @@ class PointOfInterestSearchEndpoint(Endpoint):
     def __init__(self, instance_name, poi_service):
         self._poi_service = poi_service
         self.href = lambda: url_for(instance_name + '.search', _external=True)
+        self._poi_href = lambda slug: url_for(instance_name + '.poi', slug=slug, _external=True)
 
     def get(self):
         return self._json_response({
-            'results': self._poi_service.search_name(request.args['q'])
+            'results': map(lambda poi: {
+                'self': 'http://mollyproject.org/apps/places/point-of-interest',
+                'href': self._poi_href(poi.slug),
+                'poi': poi._asdict()
+            }, self._poi_service.search_name(request.args['q'])),
         })

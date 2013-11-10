@@ -270,12 +270,19 @@ class PointOfInterestSearchEndpointTest(unittest.TestCase):
 
         self._app = Flask(__name__)
         self._endpoint = PointOfInterestSearchEndpoint('test', self._poi_service)
-        self._app.add_url_rule('/search', 'testplaces.search', self._endpoint.get)
+        self._app.add_url_rule('/search', 'test.search', self._endpoint.get)
+        self._app.add_url_rule('/<slug>', 'test.poi', self._endpoint.get)
 
     def test_making_search_passes_it_to_service(self):
+        self._poi_service.search_name.return_value = []
         search_terms = "test search"
         self._make_search_request(search_terms)
         self._poi_service.search_name.assert_called_once_with(search_terms)
+
+    def test_return_value_from_service_is_serialised_to_json(self):
+        self._poi_service.search_name.return_value = [PointOfInterest(slug='test:test')]
+        response = self._make_search_request("test")
+        self.assertEquals('test:test', response['results'][0]['poi']['slug'])
 
     def _make_search_request(self, search_terms):
         with self._app.test_request_context(

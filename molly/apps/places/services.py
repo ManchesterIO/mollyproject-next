@@ -56,7 +56,7 @@ class PointsOfInterest(object):
         return map(PointOfInterest.from_dict, self._search_nearby(point, 'amenities', amenity, radius))
 
     def search_name(self, search_terms):
-        self._search.search(
+        results = self._search.search(
             {
                 'query': {
                     'bool': {
@@ -70,7 +70,16 @@ class PointsOfInterest(object):
             index=self._instance_name,
             doc_type='poi'
         )
-        return []
+        slugs = [result['_id'] for result in results['hits']['hits']]
+        if len(slugs) > 0:
+            poi_dicts = {
+                data['slug']: PointOfInterest.from_dict(data)
+                    for data in self._collection.find({'$or': [{'slug': slug} for slug in slugs]})
+            }
+
+            return [poi_dicts[slug] for slug in slugs]
+        else:
+            return []
 
     def _count_nearby(self, point, facet, uri, radius):
         return self._search_nearby(point, facet, uri, radius).count()

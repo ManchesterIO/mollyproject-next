@@ -157,6 +157,8 @@ class TestPointsOfInterest(unittest.TestCase):
         )
 
     def test_searching_by_name_constructs_correct_query(self):
+        self._mock_elasticsearch.search.return_value = {'hits': {'hits': []}}
+        self._mock_mongo.pois.find.return_value = []
         self._pois.search_name("hello world")
         self._mock_elasticsearch.search.assert_called_once_with(
             {
@@ -172,6 +174,44 @@ class TestPointsOfInterest(unittest.TestCase):
             index='test',
             doc_type='poi'
         )
+
+    def test_search_results_are_fetched_from_mongo(self):
+        self._mock_elasticsearch.search.return_value = {
+            'hits': {
+                'hits': [
+                    {'_id': 'test:test1'},
+                    {'_id': 'test:test2'}
+                ]
+            }
+        }
+        self._mock_mongo.pois.find.return_value = [
+            PointOfInterest(slug='test:test2')._asdict(),
+            PointOfInterest(slug='test:test1')._asdict()
+        ]
+        self._pois.search_name("hello world")
+        self._mock_mongo.pois.find.assert_called_once_with({"$or": [{"slug": 'test:test1'}, {'slug': 'test:test2'}]})
+
+    def test_pois_are_returned_from_search_by_name(self):
+        self._mock_elasticsearch.search.return_value = {
+            'hits': {
+                'hits': [
+                    {'_id': 'test:test1'},
+                    {'_id': 'test:test2'}
+                ]
+            }
+        }
+        self._mock_mongo.pois.find.return_value = [
+            PointOfInterest(slug='test:test2')._asdict(),
+            PointOfInterest(slug='test:test1')._asdict()
+        ]
+        pois = self._pois.search_name("hello world")
+        self.assertEquals('test:test1', pois[0].slug)
+        self.assertEquals('test:test2', pois[1].slug)
+
+    def test_when_no_results_mongo_is_not_called(self):
+        self._mock_elasticsearch.search.return_value = {'hits': {'hits': []}}
+        self._pois.search_name("hello world")
+        self._mock_mongo.pois.assert_never_called()
 
     def _setup_results_with_count(self, count):
         mock_result = Mock()
