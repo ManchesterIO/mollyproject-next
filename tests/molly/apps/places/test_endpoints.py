@@ -269,7 +269,7 @@ class PointOfInterestSearchEndpointTest(unittest.TestCase):
         self._poi_service.name_search = Mock(return_value=[])
 
         self._app = Flask(__name__)
-        self._endpoint = PointOfInterestSearchEndpoint(self._poi_service)
+        self._endpoint = PointOfInterestSearchEndpoint('test', self._poi_service)
         self._app.add_url_rule('/search', 'testplaces.search', self._endpoint.get)
 
     def test_making_search_passes_it_to_service(self):

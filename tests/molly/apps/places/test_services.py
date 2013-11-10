@@ -2,7 +2,7 @@ from mock import Mock
 from shapely.geometry import Point
 import unittest2 as unittest
 
-from molly.apps.common.components import LocalisedName, Identifier, Source
+from molly.apps.common.components import LocalisedName, Identifier, Source, LocalisedNames, Identifiers
 from molly.apps.places.models import PointOfInterest
 from molly.apps.places.services import PointsOfInterest
 
@@ -11,7 +11,8 @@ class TestPointsOfInterest(unittest.TestCase):
 
     def setUp(self):
         self._mock_mongo = Mock()
-        self._pois = PointsOfInterest('test', self._mock_mongo)
+        self._mock_elasticsearch = Mock()
+        self._pois = PointsOfInterest('test', self._mock_mongo, self._mock_elasticsearch)
         self._mock_mongo.pois.find_one.return_value = None
 
     def test_add_adds_to_database(self):
@@ -137,6 +138,40 @@ class TestPointsOfInterest(unittest.TestCase):
         points_of_interest = self._pois.search_nearby_amenity(Point(-1.6, 54.0), 'http://www.example.com')
         self.assertEquals(1, len(points_of_interest))
         self.assertEquals('foo', points_of_interest[0].slug)
+
+    def test_adding_new_poi_adds_it_to_elasticsearch_index(self):
+        poi = PointOfInterest(
+            slug='test:test',
+            names=LocalisedNames([LocalisedName(name="Hello world", lang="en-gb")]),
+            identifiers=Identifiers([Identifier(value="id1", namespace="test")])
+        )
+        self._pois.add_or_update(poi)
+        self._mock_elasticsearch.index.assert_called_once_with(
+            'test',
+            'poi',
+            {
+                'names': ['Hello world'],
+                'identifiers': ['id1']
+            },
+            'test:test'
+        )
+
+    def test_searching_by_name_constructs_correct_query(self):
+        self._pois.search_name("hello world")
+        self._mock_elasticsearch.search.assert_called_once_with(
+            {
+                'query': {
+                    'bool': {
+                        'should': [
+                            {'match': {'names': "hello world"}},
+                            {'term': {'identifiers': "hello world"}}
+                        ]
+                    }
+                }
+            },
+            index='test',
+            doc_type='poi'
+        )
 
     def _setup_results_with_count(self, count):
         mock_result = Mock()

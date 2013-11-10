@@ -7,19 +7,29 @@ LOGGER = logging.getLogger(__name__)
 
 class PointsOfInterest(object):
 
-    def __init__(self, instance_name, connection):
+    def __init__(self, instance_name, kv, search):
         self._instance_name = instance_name
-        self._collection = connection.pois
+        self._collection = kv.pois
         self._collection.ensure_index('slug')
         self._collection.ensure_index({'location': '2dsphere'}.items())
         self._collection.ensure_index('categories')
         self._collection.ensure_index('amenities')
+        self._search = search
 
     def select_by_slug(self, slug):
         poi_dict = self._collection.find_one({'slug': slug})
         return PointOfInterest.from_dict(poi_dict) if poi_dict else None
 
     def add_or_update(self, poi):
+        self._search.index(
+            self._instance_name,
+            'poi',
+            {
+                'names': [name.name for name in poi.names],
+                "identifiers": [identifier.value for identifier in poi.identifiers]
+            },
+            poi.slug
+        )
         existing_poi = self._collection.find_one({'slug': poi.slug})
         if existing_poi:
             poi_dict = poi._asdict()
@@ -46,6 +56,20 @@ class PointsOfInterest(object):
         return map(PointOfInterest.from_dict, self._search_nearby(point, 'amenities', amenity, radius))
 
     def search_name(self, search_terms):
+        self._search.search(
+            {
+                'query': {
+                    'bool': {
+                        'should': [
+                            {'match': {'names': search_terms}},
+                            {'term': {'identifiers': search_terms}}
+                        ]
+                    }
+                }
+            },
+            index=self._instance_name,
+            doc_type='poi'
+        )
         return []
 
     def _count_nearby(self, point, facet, uri, radius):

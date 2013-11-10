@@ -13,7 +13,7 @@ class App(BaseApp):
 
     def __init__(self, instance_name, config, providers, services):
         self.instance_name = instance_name
-        poi_service = PointsOfInterest(instance_name, services['kv'].db[instance_name])
+        poi_service = PointsOfInterest(instance_name, services['kv'].db[instance_name], services['search'])
 
         for provider in providers:
             provider.poi_service = poi_service

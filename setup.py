@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from setuptools import setup, find_packages
 from sys import version_info
 
@@ -26,6 +28,7 @@ setup(
         'gunicorn',
         'imposm.parser',
         'phonenumbers==5.7b2',
+        'pyelasticsearch',
         'python-dateutil',
         'python-memcached',
         'requests',

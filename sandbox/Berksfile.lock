@@ -1,5 +1,11 @@
 {
   "sources": {
+    "elasticsearch": {
+      "locked_version": "0.3.7"
+    },
+    "java": {
+      "locked_version": "1.14.0"
+    },
     "memcached": {
       "locked_version": "1.5.0"
     },
@@ -16,11 +22,29 @@
     "rabbitmq": {
       "locked_version": "2.3.0"
     },
-    "runit": {
-      "locked_version": "1.2.0"
-    },
     "build-essential": {
       "locked_version": "1.4.2"
+    },
+    "xml": {
+      "locked_version": "1.2.0"
+    },
+    "monit": {
+      "locked_version": "0.7.1"
+    },
+    "ark": {
+      "locked_version": "0.4.0"
+    },
+    "windows": {
+      "locked_version": "1.10.0"
+    },
+    "chef_handler": {
+      "locked_version": "1.1.4"
+    },
+    "aws": {
+      "locked_version": "1.0.0"
+    },
+    "runit": {
+      "locked_version": "1.2.0"
     },
     "yum": {
       "locked_version": "2.3.2"
@@ -30,12 +54,6 @@
     },
     "dmg": {
       "locked_version": "2.0.2"
-    },
-    "windows": {
-      "locked_version": "1.10.0"
-    },
-    "chef_handler": {
-      "locked_version": "1.1.4"
     },
     "python": {
       "locked_version": "1.4.0"

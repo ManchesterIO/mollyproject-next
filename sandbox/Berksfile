@@ -1,5 +1,7 @@
 site :opscode
 
+cookbook 'elasticsearch'
+cookbook 'java'
 cookbook 'memcached'
 cookbook 'mollyproject', git: 'https://github.com/ManchesterIO/cookbook-molly.git'
 cookbook 'mongodb', git: 'https://github.com/edelight/chef-mongodb.git'
