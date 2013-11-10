@@ -100,8 +100,13 @@ class NaptanParserTest(unittest.TestCase):
         stops = self._get_stops_by_slugs()
         self.assertEquals(Point(0.0072106498, 51.4992726379).xy, stops['atco:9400ZZALGWP'].location.xy)
 
+    def test_uninteresting_codes_are_ignored(self):
+        self.assertNotIn('atco:1230TX001', self._get_stops_by_slugs().keys())
+
     def _import_from_test_data(self):
-        return NaptanParser().import_from_file(self._test_file, self._TEST_URL)
+        return NaptanParser(['140', '639', '649', '910', '920', '930', '940']).import_from_file(
+            self._test_file, self._TEST_URL
+        )
 
     def _get_bus_stop(self):
         return self._import_from_test_data().next()

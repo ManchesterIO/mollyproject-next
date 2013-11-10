@@ -21,6 +21,7 @@ class NaptanImporter(object):
     def __init__(self, config):
         self._http_connection = httplib.HTTPConnection(self.HTTP_HOST)
         self._url = "http://%s%s" % (self.HTTP_HOST, self.REMOTE_PATH)
+        self.parser = NaptanParser(config['codes'].split(','))
 
     def _get_file_from_url(self):
         temporary = TemporaryFile()
@@ -29,8 +30,7 @@ class NaptanImporter(object):
         return ZipFile(temporary).open('NaPTAN.xml')
 
     def load(self):
-        parser = NaptanParser()
-        for stop in parser.import_from_file(self._get_file_from_url(), self._url):
+        for stop in self.parser.import_from_file(self._get_file_from_url(), self._url):
             self.poi_service.add_or_update(stop)
 
 

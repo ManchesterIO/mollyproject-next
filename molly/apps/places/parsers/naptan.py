@@ -107,6 +107,9 @@ class NaptanParser(object):
         licence_url='http://www.nationalarchives.gov.uk/doc/open-government-licence/'
     )
 
+    def __init__(self, interesting_codes):
+        self._interesting_codes = set(interesting_codes)
+
     def import_from_file(self, xml_file, source_url):
         self._source_url = source_url
         for event, elem in iterparse(xml_file, events=('start', 'end',)):
@@ -114,15 +117,15 @@ class NaptanParser(object):
                 self._source_file = elem.attrib['FileName']
 
             elif event == 'end' and elem.tag == self._STOP_POINT_ELEM:
+                atco_code = self._xpath(elem, self._ATCO_CODE_XPATH)
                 stop_type = self._xpath(elem, self._STOP_TYPE_XPATH)
-                if stop_type in NAPTAN_STOP_TYPES_TO_CATEGORIES:
-                    yield self._build_point_of_interest(elem, stop_type)
+                if atco_code[:3] in self._interesting_codes and stop_type in NAPTAN_STOP_TYPES_TO_CATEGORIES:
+                    yield self._build_point_of_interest(elem, atco_code, stop_type)
 
                 elem.clear()
 
-    def _build_point_of_interest(self, elem, stop_type):
+    def _build_point_of_interest(self, elem, atco_code, stop_type):
         poi = PointOfInterest()
-        atco_code = self._xpath(elem, self._ATCO_CODE_XPATH)
         poi.slug = 'atco:' + atco_code
         poi.categories.append(self._get_category(stop_type, atco_code))
 
