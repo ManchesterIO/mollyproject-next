@@ -16,7 +16,7 @@ setup(
     tests_require=['unittest2', 'mock'],
     test_suite='unittest2.collector',
     install_requires=[
-        'celery',
+        'celery==3.0.24',
         'cssmin',
         'Flask',
         'Flask-Assets',
