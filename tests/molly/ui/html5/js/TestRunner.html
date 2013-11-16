@@ -6,16 +6,16 @@
 
     <link rel="stylesheet" type="text/css" href="vendors/jasmine/jasmine.css">
 
-    <script src="../../../../../molly/ui/html5/assets/js/vendors/require.js"></script>
+    <script src="../../../../../src/molly/ui/html5/assets/js/vendors/require.js"></script>
     <script>
         require.config({
             paths: {
-                molly: '../../../../../molly/ui/html5/assets/js/modules',
-                vendors: '../../../../../molly/ui/html5/assets/js/vendors',
+                molly: '../../../../../src/molly/ui/html5/assets/js/modules',
+                vendors: '../../../../../src/molly/ui/html5/assets/js/vendors',
                 jasmine: './vendors/jasmine/jasmine',
                 'jasmine-html': './vendors/jasmine/jasmine-html',
                 sinon: './vendors/sinon',
-                'vendor-styles': '../../../../../molly/ui/html5/assets/style/vendors'
+                'vendor-styles': '../../../../../src/molly/ui/html5/assets/style/vendors'
             },
             map: {
                 '*': {
@@ -39,7 +39,7 @@
             }
         });
 
-        define('config/static-base', function() { return "../../../../../molly/ui/html5/assets"; });
+        define('config/static-base', function() { return "../../../../../src/molly/ui/html5/assets"; });
 
         require(['jasmine-html'], function (jasmine) {
             var jasmineEnv = jasmine.getEnv();
