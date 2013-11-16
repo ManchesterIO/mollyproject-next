@@ -40,6 +40,14 @@ def init_molly(flask_app, api_hostname, api_port):
     request_factory = HttpRequestFactory(hostname=api_hostname, port=api_port)
     component_factory = ComponentFactory()
     assets = Assets(flask_app)
+    flask_app.config['COMPASS_PLUGINS'] = ['zurb-foundation']
+    flask_app.config['COMPASS_CONFIG'] = {
+        'css_dir': "style",
+        'sass_dir': "sass",
+        'images_dir': "img",
+        'javascripts_dir': "js"
+    }
+    flask_app.jinja_env.assets_environment.url = flask_app.static_url_path
     page_decorator_factory = PageDecoratorFactory(assets)
 
     router = Router(request_factory, component_factory, page_decorator_factory, flask_app.statsd)

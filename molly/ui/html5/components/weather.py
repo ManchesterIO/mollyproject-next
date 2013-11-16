@@ -16,8 +16,6 @@ class WeatherComponent(Component):
 @ComponentFactory.register_component('http://mollyproject.org/apps/weather')
 class WeatherHomepage(WeatherComponent):
 
-    _CSS = frozenset(['style/components/weather/homepage.css'])
-
     def __init__(self, *args, **kwargs):
         super(WeatherHomepage, self).__init__(*args, **kwargs)
         self._components = map(self._load_component, self._data.get('links', []))
@@ -28,8 +26,6 @@ class WeatherHomepage(WeatherComponent):
 
 @ComponentFactory.register_component('http://mollyproject.org/apps/weather/observation')
 class WeatherObservation(WeatherComponent):
-
-    _CSS = frozenset(['style/components/weather/observation.css'])
 
     def __init__(self, *args, **kwargs):
         super(WeatherObservation, self).__init__(*args, **kwargs)

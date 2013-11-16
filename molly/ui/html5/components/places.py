@@ -37,8 +37,6 @@ class PlacesHomepage(Component):
 @ComponentFactory.register_component('http://mollyproject.org/apps/places/point-of-interest')
 class PointOfInterestUI(Component):
 
-    _CSS = frozenset(['style/components/places/point-of-interest.css'])
-
     def __init__(self, *args, **kwargs):
         super(PointOfInterestUI, self).__init__(*args, **kwargs)
         self._poi = PointOfInterest.from_dict(self._data['poi'])
@@ -80,8 +78,6 @@ class PointOfInterestUI(Component):
 
 @ComponentFactory.register_component('http://mollyproject.org/apps/places/nearby')
 class NearbyPlacesUI(Component):
-
-    _CSS = frozenset(['style/components/places/nearby-search.css'])
 
     def render(self):
         return Markup(
