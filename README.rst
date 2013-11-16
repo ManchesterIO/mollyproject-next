@@ -31,11 +31,3 @@ Running unit tests
 
 To run JavaScript unit tests, you can open the 'tests/molly/ui/html5/js/TestRunner.html' in your browser or run
 them using PhantomJS 'phantomjs tests/molly/ui/html5/js/runner.js'.
-
-
-Running behavioural tests
--------------------------
-
-The behavioural tests are written using Cucumber and Ruby, so you need to have a Ruby runtime installed and phantomjs.
-RVM is recommended and there's a .rvmrc file in here which should configure Ruby correctly if you're using RVM. To
-install the dependencies, run 'bundle' in the root, and to run the tests themselves, execute 'bundle exec cucumber'.

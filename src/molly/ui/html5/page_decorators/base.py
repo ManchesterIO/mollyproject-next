@@ -11,14 +11,15 @@ class BasePageDecorator(object):
 
     def _build_bundle(self):
         bundle_name = 'molly'
-        self._assets.register(
-            bundle_name,
-            Bundle(
-                'sass/app.scss',
-                filters=['compass', 'cssmin', 'cssrewrite'],
-                output='stylec/{}.%(version)s.css'.format(hash)
+        if bundle_name not in self._assets:
+            self._assets.register(
+                bundle_name,
+                Bundle(
+                    'sass/app.scss',
+                    filters=['compass', 'cssmin', 'cssrewrite'],
+                    output='stylec/%(version)s.css'
+                )
             )
-        )
         return bundle_name
 
     def _render_template(self, template, component, **kwargs):

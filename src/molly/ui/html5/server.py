@@ -32,7 +32,7 @@ def init_flask():
     configure_template_loader(flask_app, flask_app.config.get('TEMPLATE_DIR'))
 
     flask_app.static_folder = flask_app.config.get('ASSET_DIR')
-    flask_app.static_url_path = 'static'
+    flask_app.static_url_path = '/static'
     return flask_app
 
 
@@ -90,7 +90,7 @@ def collect_static(override_location, output_location, debug):
                 if not os.path.exists(os.path.dirname(destination)):
                     os.makedirs(os.path.dirname(destination))
                 if debug:
-                    if os.path.exists(destination):
+                    if os.path.lexists(destination):
                         os.remove(destination)
                     os.symlink(source, destination)
                 else:

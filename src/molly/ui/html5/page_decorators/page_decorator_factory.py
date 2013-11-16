@@ -1,6 +1,7 @@
 from molly.ui.html5.page_decorators.default import DefaultPageDecorator
 from molly.ui.html5.page_decorators.homepage import HomepageDecorator
 
+
 class PageDecoratorFactory(object):
 
     def __init__(self, assets):
