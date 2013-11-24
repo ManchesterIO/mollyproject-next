@@ -1,6 +1,9 @@
 Configuring your Molly install
 ==============================
 
+Config File format
+------------------
+
 Your Molly install config file is a standard config file similar to .ini files found on Windows systems.
 
 ::
@@ -10,12 +13,7 @@ Your Molly install config file is a standard config file similar to .ini files f
     i18n = flask.ext.babel:Babel
     kv = flask.ext.pymongo:PyMongo
     tasks = molly.services.tasks
-
-    # To enable Sentry on this install, simply uncomment this and the SENTRY_DSN line below,
-    # and add your DSN for Sentry to the config value
     #sentry = raven.contrib.flask:Sentry
-
-    # To enable statsd on this install, simply uncomment this and the STATSD_HOST below
     #statsd = flask.ext.statsd:StatsD
 
     [global]
@@ -36,20 +34,35 @@ Your Molly install config file is a standard config file similar to .ini files f
     provider.metoffice.api_key = 123456-456789
     provider.metoffice.location_id = 3330
 
-Services
---------
+The config file is structured with 2 required sections called ``services`` and ``global``, followed by a section for
+each application enabled on this install. Lines starting with the ``#`` symbol are ignored.
 
-This area configures services which are available to all apps. Each service is specified under a well known name
+``[services]``
+--------------
+
+This area configures services which are available to all apps. Each service is specified by giving a name of the service
+which applications expect to find (e.g., ``kv`` for the KV store, ``cache`` for a caching service, etc)
 and the value is in the form of ``module:class`` (if ``:class`` is omitted it defaults to :class:``Service``)
 
-Global
-------
+In order to simplify things, services are opinionated, and expect to implement a particular interface which may be
+heavily coupled to a particular server type. For example, the ``kv`` service is expected to be MongoDB.
 
-Flask extensions do not support the instance specific configs of themselves, but are used as Molly services, and
-expect global configuration values on the Flask object. This area of the config can be used to set those type of values.
+.. seealso: :doc:`../extending/writing-a-service`
+
+.. todo:: Ship with default service configuration, only override if need be. Services need configuring way better.
+
+``[global]``
+------------
+
+There are some settings which apply to the entire server, rather than just a single app installed on it. This includes
+most of the service configuration.
+
+.. todo:: List important settings and link to full list for interested parties.
 
 Applications
 ------------
+
+.. todo:: Explain this better and include lots of examples
 
 Applications are specified in the form::
 
@@ -63,4 +76,9 @@ Providers
 
 If an application supports providers, you can specify them by adding a key in the form: ``provider.NAME = MODULE``.
 If the provider takes any more configuration options, they can be added by having config values in the form:
- ``provider.NAME.OPTION = VALUE``
+``provider.NAME.OPTION = VALUE``
+
+UI Config
+---------
+
+.. todo:: All of this

@@ -18,7 +18,7 @@ Your App class should look like this:
     :type config: dict
     :param providers: A list of instantiated providers for your app as defined in the config file
     :type providers: list
-    :param services: A dictionary of objects which provide an advertised service
+    :param services: A dictionary of objects which provide common :doc:`services <writing-a-service>`
     :type services: dict
 
     Applications are instantiated with config read from the config file, a unique instance name, and any providers which
@@ -28,11 +28,13 @@ Your App class should look like this:
     .. attribute:: module
 
         :type: str
+
         This should be a URI uniquely identifying this module, e.g., http://mollyproject.org/apps/example
 
     .. attribute:: human_name
 
         :type: unicode
+
         This should be this should a human-readable name for the instance. As applications can be instantiated multiple
         times, you may find it useful to include some sort of disambiguator here. For example, if you are building a
         weather app, then you might want to include the name of the forecast area, so if multiple copies of the weather
@@ -42,17 +44,20 @@ Your App class should look like this:
     .. attribute:: instance_name
 
         :type: str
+
         This is the slug which identifies which instance of the app this is, in most circumstances this will be set to
         the value which is passed to the constructor
 
     .. attribute:: blueprint
 
         :type: :class:`flask.Blueprint`
+
         This is a `Flask blueprint <http://flask.pocoo.org/docs/blueprints/>`_ object which will be added to the
         deployed Flask app at a URL prefix of ``/instance_name``
 
     .. attribute:: links
 
         :type: list
+
         This should return a list of dictionaries which correspond to the components you wish to expose on the homepage
         for this app.

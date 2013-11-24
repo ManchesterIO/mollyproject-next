@@ -18,11 +18,13 @@ Overview
 .. toctree::
    :maxdepth: 1
 
+   getting-started/quick-start
    getting-started/installing
    getting-started/configuring
    getting-started/deploying
    getting-started/customising
    extending/writing-an-application
+   extending/writing-a-service
    extending/writing-a-custom-frontend
    developers/hateoas
    developers/contributing
@@ -33,11 +35,9 @@ Applications
 
 .. toctree::
     :maxdepth: 1
+    :glob:
 
-    apps/homepage/index.rst
-    apps/places/index.rst
-    apps/weather/index.rst
-    apps/common/index.rst
+    apps/*/index
 
 Services
 --------

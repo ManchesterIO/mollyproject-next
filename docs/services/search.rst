@@ -1,0 +1,2 @@
+``search`` - Free-text searching
+================================

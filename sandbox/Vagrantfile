@@ -1,38 +1,41 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-Vagrant.configure("2") do |config|
-  config.vm.box = "precise64"
-  config.vm.box_url = "http://files.vagrantup.com/precise64.box"
+Vagrant.configure('2') do |config|
+  config.vm.box = 'precise64'
+  config.vm.box_url = 'http://files.vagrantup.com/precise64.box'
 
-  config.vm.provider "virtualbox" do | v |
-    v.customize ["modifyvm", :id, "--memory", 1024]
+  config.vm.provider 'virtualbox' do | v |
+    v.customize ['modifyvm', :id, '--memory', 1024]
   end
 
-  config.vm.network "private_network", ip: "192.168.33.10"
-  config.vm.synced_folder "../", "/molly"
+  config.vm.network 'private_network', ip: '192.168.33.10'
+  config.vm.synced_folder '../', '/molly'
 
-  config.vm.provision :shell, :inline => "apt-get update"
+  config.vm.provision :shell, :inline => 'apt-get update'
 
-  config.vm.provision "chef_solo" do | chef |
+  config.vm.provision 'chef_solo' do | chef |
     chef.json = {
-        "mollyproject" => {
-            "debug" => true,
-            "sandbox" => true,
-            "bind_all" => true,
-            "config" => "/vagrant/conf/default.conf",
-            "ui" => { "settings" => "/vagrant/conf/ui.py" }
+        'elasticsearch' => {
+            'allocated_memory' => '180m'
+        },
+        'mollyproject' => {
+            'debug' => true,
+            'sandbox' => true,
+            'bind_all' => true,
+            'config' => '/vagrant/conf/default.conf',
+            'ui' => { 'settings' => '/vagrant/conf/ui.py'}
         }
     }
 
-    chef.add_recipe "java"
-    chef.add_recipe "elasticsearch"
-    chef.add_recipe "mongodb::10gen_repo"
-    chef.add_recipe "mongodb::default"
-    chef.add_recipe "memcached"
-    chef.add_recipe "rabbitmq"
-    chef.add_recipe "mollyproject::install_vagrant"
-    chef.add_recipe "mollyproject"
+    chef.add_recipe 'java'
+    chef.add_recipe 'elasticsearch'
+    chef.add_recipe 'mongodb::10gen_repo'
+    chef.add_recipe 'mongodb::default'
+    chef.add_recipe 'memcached'
+    chef.add_recipe 'rabbitmq'
+    chef.add_recipe 'mollyproject::install_vagrant'
+    chef.add_recipe 'mollyproject'
   end
 
 end

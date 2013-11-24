@@ -26,7 +26,7 @@ observation.
     }
 
 Blocks of this type are localised according to the Accept-Language headers sent in
-the HTTP request. Attribution is a reference to an :doc:`attribution block </api/common/attribution>`.
+the HTTP request. Attribution is a reference to an :doc:`attribution block </apps/common/attribution>`.
 
 The observation object consists of the following fields:
 
