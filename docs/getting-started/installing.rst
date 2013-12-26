@@ -22,14 +22,9 @@ Molly requires the following software libraries to be installed on your system, 
 a package manager on most platforms:
 
 * Python 2.7
-* Ruby
+* Compass (and the modular-scale extension)
 * `libgeos <http://trac.osgeo.org/geos/>`_ (Ubuntu: ``libgeos-c1``)
 * `protobuf <https://code.google.com/p/protobuf/>`_ (Ubuntu: ``llibprotobuf-dev`` and ``protobuf-compiler``)
-
-Additionally the following Ruby Gems need to be installed, this can be done by using the ``gem`` command:
-
-* compass
-* zurb-foundation
 
 Services
 ~~~~~~~~

@@ -12,7 +12,7 @@
     "mollyproject": {
       "locked_version": "2.0.0",
       "git": "https://github.com/ManchesterIO/cookbook-molly.git",
-      "ref": "f3bfc3dc0f54d9c821d80d81e38797fdbade7f7c"
+      "ref": "63c1c64e63e2e3f6178bf158c218a3674b4a2efd"
     },
     "mongodb": {
       "locked_version": "0.13.2",

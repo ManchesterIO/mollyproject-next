@@ -9,3 +9,4 @@
 conf/local.conf
 docs/_build
 dist/
+molly/ui/html5/assets/bower_components

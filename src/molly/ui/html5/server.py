@@ -40,7 +40,7 @@ def init_molly(flask_app, api_hostname, api_port):
     request_factory = HttpRequestFactory(hostname=api_hostname, port=api_port)
     component_factory = ComponentFactory()
     assets = Assets(flask_app)
-    flask_app.config['COMPASS_PLUGINS'] = ['zurb-foundation']
+    flask_app.config['COMPASS_PLUGINS'] = ['modular-scale']
     flask_app.config['COMPASS_CONFIG'] = {
         'css_dir': "style",
         'sass_dir': "sass",
