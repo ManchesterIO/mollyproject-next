@@ -18,7 +18,7 @@ $max-device-width: 2880px;						// Max Document Size
 $nav-distance: 0; 							// Navigation distance from the top of the viewport
 
 // Typography
-$font-family: "Open Sans";
+$font-family: "Lato";
 $font-style-italic: italic;
 $icons: entypo;
 $font-smoothing: antialiased;
@@ -67,7 +67,7 @@ $tremendous: ms(9);
 $absurd: ms(10);
 
 // Typography Colors
-$header-font-color: #444444 !default;
+$header-font-color: #3d3536 !default;
 $header-link-color: #d04526 !default;
 $header-link-hover-color: #c03d20 !default;
 $body-font-color: #555555 !default;
@@ -76,8 +76,8 @@ $body-link-hover-color: #c03d20 !default;
 
 // User Interface Colors
 $global-bg-color: #fff;
-$navbar-color: #4a4d50;
-$navbar-link-color: #fff;
+$navbar-color: $global-bg-color;
+$navbar-link-color: #3d3536;
 
 $primary-color: #3085d6;
 $secondary-color: #42a35a;

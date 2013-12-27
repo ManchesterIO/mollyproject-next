@@ -16,6 +16,7 @@ class BasePageDecorator(object):
                 bundle_name,
                 Bundle(
                     'sass/app.scss',
+                    depends='sass/*.scss',
                     filters=['compass', 'cssmin', 'cssrewrite'],
                     output='stylec/%(version)s.css'
                 )

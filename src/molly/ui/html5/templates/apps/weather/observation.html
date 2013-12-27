@@ -1,6 +1,6 @@
 <section class="weather-observation">
     <div class="weather-summary weather-{{ weather_type_id }}">
-        <span>{{ weather_type }}</span>
+        <p>{{ weather_type }}</p>
     </div>
 
     <div class="weather-detail">
@@ -28,7 +28,7 @@
 
         {% if not summary_only %}
             <aside class="observation-details">
-                {% trans location=observation_location, datetime=observation_time %}Observation made at {{ location }} on {{ datetime }}{% endtrans %}
+                {% trans location=observation_location, datetime=observation_time.strftime('%I:%M %p') %}Observation made at {{ location }} on {{ datetime }}{% endtrans %}
             </aside>
             {{ attribution.render() }}
         {% else %}

@@ -11,8 +11,10 @@
 </head>
 <body>
     <header>
-        <h1><a href="/">{% block site_h1 %}Molly Demo{% endblock %}</a></h1>
-        {% block header_extra %}{% endblock %}
+        <div class="breadcrumbs">
+            <h1><a href="/">{% block site_h1 %}Molly Demo{% endblock %}</a></h1>
+            {% block header_extra %}{% endblock %}
+        </div>
     </header>
     <article>
         {% block body %}{{ body.render() }}{% endblock %}
