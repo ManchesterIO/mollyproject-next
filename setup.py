@@ -21,9 +21,7 @@ setup(
     test_suite='unittest2.collector',
     install_requires=[
         'celery==3.0.24',
-        'cssmin',
         'Flask',
-        'Flask-Assets',
         'Flask-Babel',
         'Flask-Cache',
         'Flask-PyMongo',
@@ -40,8 +38,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'mollyui = molly.command:ui_main',
-            'mollyrest = molly.command:rest_main'
+            'molly = molly.command:main'
         ]
     }
 )

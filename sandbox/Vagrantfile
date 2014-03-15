@@ -10,7 +10,7 @@ Vagrant.configure('2') do |config|
   end
 
   config.vm.network 'private_network', ip: '192.168.33.10'
-  config.vm.synced_folder '../', '/molly'
+  config.vm.synced_folder '../', '/molly', owner: 'molly', group: 'molly'
 
   config.vm.provision :shell, :inline => 'apt-get update'
 
@@ -23,8 +23,7 @@ Vagrant.configure('2') do |config|
             'debug' => true,
             'sandbox' => true,
             'bind_all' => true,
-            'config' => '/vagrant/conf/default.conf',
-            'ui' => { 'settings' => '/vagrant/conf/ui.py'}
+            'config' => '/vagrant/default.conf'
         }
     }
 

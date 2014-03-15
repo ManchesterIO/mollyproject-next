@@ -8,4 +8,3 @@ install:
   - python setup.py develop
 script:
   - python setup.py test
-  - phantomjs tests/molly/ui/html5/js/runner.js
